@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tf_union/constants/tfcolors.dart';
+import 'package:tf_union/constants/nav_items.dart';
+import 'package:tf_union/widgets/header_desktop.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,22 +15,17 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: tfcolors.scaffoldBg,
+      backgroundColor: TFColors.scaffoldBg,
       body: ListView(
         scrollDirection: Axis.vertical,
-        children: [
-          // Home
-          Container(
-            height: 1000,
-            width: double.maxFinite,
-          
-
-          ),
+        children: [ 
+          // header
+          HeaderDesktop(),
           // About
           Container(
-            height: 1000,
+            height: 700,
             width: double.maxFinite,
-            color: Colors.blue,
+            color: TFColors.bglight1,
           ),
           // Projects
           Container(
