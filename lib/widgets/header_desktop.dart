@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/nav_items.dart';
 import 'package:tf_union/widgets/logo.dart';
-import 'package:tf_union/widgets/logo_mobile.dart';
 
 class HeaderDesktop extends StatelessWidget {
   const HeaderDesktop({super.key});
