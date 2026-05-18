@@ -1,0 +1,1 @@
+const double MobileWidth = 700;
