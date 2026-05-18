@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/nav_items.dart';
+import 'package:tf_union/constants/social_items.dart';
 
 class DrawerMobile extends StatelessWidget {
   const DrawerMobile({super.key});
@@ -46,6 +47,20 @@ class DrawerMobile extends StatelessWidget {
                 ),),
                 onTap:(){},
               ),
+
+              SizedBox(height: 150,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (int i = 0; i < socialItems.length; i++)
+                                SizedBox(
+                                  width: 50,
+                                  child: Expanded(
+                                    child: IconButton(onPressed: (){}, icon: socialItems[i]),
+                                  ),
+                                )
+                ],
+              )
 
 
           ],

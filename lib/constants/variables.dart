@@ -1,1 +1,1 @@
-const double MobileWidth = 700;
+const double mobileWidth = 700;

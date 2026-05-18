@@ -4,6 +4,7 @@ List<String> navItems = [
   'Home',
   'About',
   'Projects',
+  'Docs',
 ];
 
 List<String> log = [
@@ -15,6 +16,7 @@ List<IconData> navIcons = [
   Icons.home,
   Icons.info,
   Icons.work,
+  Icons.description,
 ];
 
 List<IconData> logIcons = [
