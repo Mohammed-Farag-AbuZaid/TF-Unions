@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 
-class LogoDesktop extends StatelessWidget {
-  const LogoDesktop({super.key, this.onTap});
+class Logo extends StatelessWidget {
+  const Logo({super.key, this.onTap});
   final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) {
