@@ -3,12 +3,18 @@ import 'package:flutter/widgets.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/nav_items.dart';
 import 'package:tf_union/constants/variables.dart';
+import 'package:tf_union/widgets/about.dart';
 import 'package:tf_union/widgets/header_desktop.dart';
 import 'package:tf_union/widgets/header_mobile.dart';
 import 'package:tf_union/widgets/hero_desktop.dart';
 import 'package:tf_union/widgets/hero_mobile.dart';
 import 'package:tf_union/widgets/logo.dart';
 import 'package:tf_union/widgets/drawer_mobile.dart';
+import 'package:flutter/gestures.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:tf_union/pages/docs_page.dart';
+import 'package:footer/footer.dart';
+import 'package:footer/footer_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -50,17 +56,16 @@ class _HomePageState extends State<HomePage> {
                 HeroMobile(),
               
               // About
+              About(),
+              // Footer
               Container(
-                height: 650,
-                width: double.maxFinite,
-                color: TFColors.scaffoldBg,
-              ),
-              // Projects
-              Container(
-                height: 1000,
-                width: double.maxFinite,
-        ),
-        
+                color: TFColors.bglight1,
+                
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Text('Copyright © 2026 TF Unions. All rights reserved.\nPowerd by SalamTech', style: TextStyle(color: TFColors.whitePrimary, height: 1.5),textAlign: TextAlign.center,),
+                ),
+              )
         
             ],
           )
