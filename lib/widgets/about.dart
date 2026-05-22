@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/pages/docs_page.dart';
+import 'package:tf_union/pages/projects_page.dart';
 
 class About extends StatelessWidget {
   const About({super.key});
@@ -34,7 +35,7 @@ class About extends StatelessWidget {
                               ..onTap = ()  {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => const DocsPage()),
+                                  MaterialPageRoute(builder: (context) => const ProjectsPage()),
                                 );
                                             },
                                         ),
