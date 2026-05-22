@@ -34,7 +34,7 @@ class HeroDesktop extends StatelessWidget {
                           width: 300,
                           height: 50,
                           
-                          child: ElevatedButton(onPressed: (){}, style: ElevatedButton.styleFrom(backgroundColor: TFColors.yellowPrimary, foregroundColor: TFColors.whitePrimary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))), child: const Text('Join if you are', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),),)
+                          child: ElevatedButton(onPressed: (){}, style: ElevatedButton.styleFrom(backgroundColor: TFColors.yellowSecondary, foregroundColor: TFColors.whitePrimary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))), child: const Text('Join if you are', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),),)
                       ],
                     ),
                     SizedBox(height: 70,),
