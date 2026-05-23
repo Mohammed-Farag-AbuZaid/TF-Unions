@@ -20,8 +20,15 @@ class _RegisterPageState extends State<RegisterPage> {
   final phone = TextEditingController();
   final personalEmail = TextEditingController();
   final mobileCode = TextEditingController();
-  final mailCode = TextEditingController();  
+  final mailCode = TextEditingController();
+  final prepSchool = TextEditingController();
+  final thanawySchool = TextEditingController();
+  final university = TextEditingController();
+  final eduEmail = TextEditingController();
+  String? stemSchool ;
   String? _selectedValue;
+  String? _selectedGrade;
+  String? _selectedYear;
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +210,183 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Column(
                 children: [
                   if (_selectedValue == 'Prep School')
-                    TextFormField()
+                    TextFormField(
+                      controller: prepSchool,
+                      decoration: InputDecoration(
+                            labelText: 'Offecial School Name',
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey)
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide( color: Colors.blue)
+                              ),
+                        ),
+                    ),
+                  if (_selectedValue == 'Thanawy')
+                    TextFormField(
+                      controller: thanawySchool,
+                      decoration: InputDecoration(
+                            labelText: 'Offecial School Name',
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey)
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide( color: Colors.blue)
+                              ),
+                        ),
+                    ),
+                                  if (_selectedValue =='STEM')
+                  Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                          labelText: 'School',
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey)
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide( color: Colors.blue)
+                            ),
+                      ),
+                    value: stemSchool,
+                    items: [
+  
+  '6th of October STEM School for Boys',
+  'October STEM School',
+  'Maadi STEM School for Girls',
+  'New Cairo STEM School',
+  'Alexandria STEM School',
+  'Dakahlia STEM School',
+  'Ismailia STEM High School',
+  'Red Sea STEM School',
+  'Assiut STEM School',
+  'Luxor STEM School',
+  'Sers El-Lyan STEM School for Girls',
+  'El-Sadat STEM School for Boys',
+  'Gharbia STEM School',
+  'Obour STEM School',
+  'Sharqia STEM School',
+  'Qena STEM School',
+  'Fayoum STEM School for Boys',
+  'Beni Suef STEM School',
+  'Minya STEM School for Boys',
+  'Sohag STEM School for Girls',
+  'Arish STEM School',
+]
+                      .map((option) => DropdownMenuItem<String>(
+                        value: option,
+                        child: Text(option),
+                      )).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        stemSchool = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Please select and option';
+                      }
+                      return null ;
+                    },
+                    ),
+                  ),
+
+                  if (_selectedValue != 'University') 
+                  Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                          labelText: 'Grade',
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey)
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide( color: Colors.blue)
+                            ),
+                      ),
+                    value: _selectedGrade,
+                    items: ['Grade 7','Grade 8','Grade 9','Grade 10','Grade 11','Grade 12']
+                      .map((option) => DropdownMenuItem<String>(
+                        value: option,
+                        child: Text(option),
+                      )).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedGrade = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Please select and option';
+                      }
+                      return null ;
+                    },
+                    ),
+                ),
+                if (_selectedValue == 'University')
+                TextFormField(
+                      controller: university,
+                      decoration: InputDecoration(
+                            labelText: 'Offecial University Name',
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey)
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide( color: Colors.blue)
+                              ),
+                        ),
+                    ),
+
+                 if (_selectedValue == 'University')
+                  Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                          labelText: 'Year',
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey)
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide( color: Colors.blue)
+                            ),
+                      ),
+                    value: _selectedYear,
+                    items: ['1st year','2nd year','3rd year','4th year','5th year','Master','PhD']
+                      .map((option) => DropdownMenuItem<String>(
+                        value: option,
+                        child: Text(option),
+                      )).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedYear = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Please select and option';
+                      }
+                      return null ;
+                    },
+                    ),
+                ),
+                if (_selectedValue =='STEM' || _selectedValue == 'University')
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: EZEmailField(
+                    controller: eduEmail,
+                    decoration: InputDecoration(
+                        labelText: 'Education Email',
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey)
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide( color: Colors.blue)
+                          ),
+                      ),
+                    
+                  ),
+                ),
+
 
                 ],
               ),
