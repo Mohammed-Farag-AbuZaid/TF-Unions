@@ -19,6 +19,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _birthDate =TextEditingController();
   final phone = TextEditingController();
   final personalEmail = TextEditingController();
+  final mobileCode = TextEditingController();
+  final mailCode = TextEditingController();  
   String? _selectedValue;
 
   @override
@@ -28,7 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
         type: StepperType.horizontal,
         steps: [
           Step(
-            isActive: currentStep == 0,
+            isActive: currentStep >= 0,
             title: Text('Account'),
             content: Container(
               child: Column(children: [
@@ -152,11 +154,69 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           Step(
             isActive: currentStep >= 1,
-            title: Text('Academic Info'),
-            content: Container(),
+            title: Text('Verification'),
+            content: Container(
+              child: Column(
+                children: [
+                  Text('You have resived 2 different codes in both your Mobile number and your personal Email', style: TextStyle(color: Colors.blue),),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: mobileCode,
+                      decoration: InputDecoration(
+                            labelText: 'Mobile Verification Code',
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey)
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide( color: Colors.blue)
+                              ),
+                        ),
+                    
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: mailCode,
+                      decoration: InputDecoration(
+                            labelText: 'Email Verification Code',
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey)
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide( color: Colors.blue)
+                              ),
+                        ),
+                    
+                    ),
+                  )
+
+                ],
+              ),
+            ),
           ),
           Step(
             isActive: currentStep >= 2,
+            title: Text('Academic Info'),
+            content: Container(
+              child: Column(
+                children: [
+                  if (_selectedValue == 'Prep School')
+                    TextFormField()
+
+                ],
+              ),
+            )
+          ),
+          
+          Step(
+            isActive: currentStep >= 3,
+            title: Text('verification'),
+            content: Container(),
+          ),
+          Step(
+            isActive: currentStep >= 4,
             title: Text('Complete'),
             content: Container(),
           ),
@@ -164,7 +224,7 @@ class _RegisterPageState extends State<RegisterPage> {
         currentStep: currentStep,
         onStepContinue: (){
           
-          final isLastStep = currentStep == 2;
+          final isLastStep = currentStep == 4;
           if (isLastStep) {
             print('completed');
           }
