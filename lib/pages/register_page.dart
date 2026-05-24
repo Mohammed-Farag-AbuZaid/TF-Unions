@@ -149,7 +149,7 @@ Widget buildMailField({
 }
 
   @override
-  void disposal(){
+  void dispose(){
     firstName.dispose();
     lastName.dispose();
     email.dispose();
@@ -234,12 +234,12 @@ Widget buildMailField({
 
                   if (_selectedValue =='STEM')
                     buildDropdown(label: 'School', value: stemSchool, items: ['6th of October STEM School for Boys','October STEM School','Maadi STEM School for Girls','New Cairo STEM School','Alexandria STEM School','Dakahlia STEM School','Ismailia STEM High School','Red Sea STEM School','Assiut STEM School','Luxor STEM School','Sers El-Lyan STEM School for Girls','El-Sadat STEM School for Boys','Gharbia STEM School','Obour STEM School','Sharqia STEM School','Qena STEM School','Fayoum STEM School for Boys','Beni Suef STEM School','Minya STEM School for Boys','Sohag STEM School for Girls','Arish STEM School'], 
-                    onChanged: (value) => setState(() => _selectedValue = value),
+                    onChanged: (value) => setState(() => stemSchool = value),
                     validator: (value) => value == null ? 'please select an option' : null),
 
                   if (_selectedValue != 'University') 
                   buildDropdown(label: 'Grade', value: _selectedGrade, items: ['Grade 7','Grade 8','Grade 9','Grade 10','Grade 11','Grade 12'], 
-                  onChanged:(value) => setState(() => _selectedValue = value), ),
+                  onChanged:(value) => setState(() => _selectedGrade = value), ),
                   
                 if (_selectedValue == 'University')
                 buildTextField(controller: university, label: 'Offecial University Name'),
@@ -247,7 +247,7 @@ Widget buildMailField({
 
                 if (_selectedValue == 'University')
                 buildDropdown(label: 'year', value: _selectedYear, items: ['1st year','2nd year','3rd year','4th year','5th year','Master','PhD'], 
-                onChanged: (value) => setState(() => _selectedValue = value), ),
+                onChanged: (value) => setState(() => _selectedYear = value), ),
                   
                 if (_selectedValue =='STEM' || _selectedValue == 'University')
                 buildMailField(controller: eduEmail, label: 'Education Email')
