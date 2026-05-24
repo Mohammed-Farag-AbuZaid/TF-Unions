@@ -25,12 +25,90 @@ class _RegisterPageState extends State<RegisterPage> {
   final thanawySchool = TextEditingController();
   final university = TextEditingController();
   final eduEmail = TextEditingController();
+  final eduMailCode = TextEditingController();
+  final username = TextEditingController();
+  final password = TextEditingController();
   String? stemSchool ;
   String? _selectedValue;
   String? _selectedGrade;
   String? _selectedYear;
 
+  Widget buildTextField({
+    required TextEditingController controller,
+    required String label,
+    String? Function(String?)? validator,
+    VoidCallback? onTap,
+    TextInputType keyboardType = TextInputType.text,
+    bool readOnly = false,
+  }){
+    return Padding(padding: const EdgeInsets.all(8.0),
+    child: TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey)
+            ),
+            focusedBorder: OutlineInputBorder(
+             borderSide: BorderSide( color: Colors.blue)
+            ),
+      ),
+      validator: validator,
+      readOnly: readOnly,
+      onTap: onTap,
+      keyboardType: keyboardType,
+    )
+    );
+  }
+
+ Widget buildDropdown<T>({
+  required String label,
+  required T? value,
+  required List<T> items,
+  required void Function(T?) onChanged,
+  String? Function(T?)? validator,
+}) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: DropdownButtonFormField<T>(
+      decoration: InputDecoration(
+        labelText: label,
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue),
+        ),
+      ),
+      value: value,
+      items: items
+          .map((option) => DropdownMenuItem<T>(
+                value: option,
+                child: Text(option.toString()),
+              ))
+          .toList(),
+      onChanged: onChanged,
+      validator: validator,
+    ),
+  );
+}
+
   @override
+  void disposal(){
+    firstName.dispose();
+    lastName.dispose();
+    email.dispose();
+    _birthDate.dispose();
+    phone.dispose();
+    personalEmail.dispose();
+    mobileCode.dispose();
+    mailCode.dispose();
+    prepSchool.dispose();
+    thanawySchool.dispose();
+    university.dispose();
+    password.dispose();
+    super.dispose();
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stepper(
@@ -41,57 +119,15 @@ class _RegisterPageState extends State<RegisterPage> {
             title: Text('Account'),
             content: Container(
               child: Column(children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: firstName,
-                    decoration: InputDecoration(
-                      labelText: 'First Name',
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey)
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide( color: Colors.blue)
-                      ),
-                    ),
-                  
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: lastName,
-                    decoration: InputDecoration(
-                      labelText: 'Last Name',
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey)
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide( color: Colors.blue)
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: _birthDate,
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      labelText: 'Birth Date',
-                      prefixIcon: Icon(Icons.calendar_today),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey)
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide( color: Colors.blue)
-                      ),
-                    ),
-                    onTap: (){
+                buildTextField(controller: firstName, label: 'First Name'),
+                buildTextField(controller: lastName, label: "Last Name"),
+                buildTextField(controller: _birthDate, label: "Birth Date",
+                readOnly: true,
+                onTap: (){
                       _selectDate();
                     } ,
                     ),
-                ),
+                 
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: IntlPhoneField(
@@ -125,37 +161,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                          labelText: 'Academic Level',
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey)
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide( color: Colors.blue)
-                            ),
-                      ),
-                    value: _selectedValue,
-                    items: ['Prep School','Thanawy','STEM','University']
-                      .map((option) =>DropdownMenuItem<String>(
-                        value: option,
-                        child: Text(option),
-                      )).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedValue = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select and option';
-                      }
-                      return null ;
-                    },
-                    ),
-                )
+                buildDropdown(label: 'Academic Level', value: _selectedValue, items: ['Prep School','Thanawy','STEM','University'], onChanged: (value) => setState(() => _selectedValue = value),
+                validator: (value) => value == null ? 'please select an option' : null),
               ],)
             ),
           ),
@@ -210,88 +217,45 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Column(
                 children: [
                   if (_selectedValue == 'Prep School')
-                    TextFormField(
-                      controller: prepSchool,
-                      decoration: InputDecoration(
-                            labelText: 'Offecial School Name',
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey)
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide( color: Colors.blue)
-                              ),
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        controller: prepSchool,
+                        decoration: InputDecoration(
+                              labelText: 'Offecial School Name',
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey)
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide( color: Colors.blue)
+                                ),
+                          ),
+                      ),
                     ),
                   if (_selectedValue == 'Thanawy')
-                    TextFormField(
-                      controller: thanawySchool,
-                      decoration: InputDecoration(
-                            labelText: 'Offecial School Name',
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey)
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide( color: Colors.blue)
-                              ),
-                        ),
-                    ),
-                                  if (_selectedValue =='STEM')
-                  Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                          labelText: 'School',
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey)
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide( color: Colors.blue)
-                            ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        controller: thanawySchool,
+                        decoration: InputDecoration(
+                              labelText: 'Offecial School Name',
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey)
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide( color: Colors.blue)
+                                ),
+                          ),
                       ),
-                    value: stemSchool,
-                    items: [
-  
-  '6th of October STEM School for Boys',
-  'October STEM School',
-  'Maadi STEM School for Girls',
-  'New Cairo STEM School',
-  'Alexandria STEM School',
-  'Dakahlia STEM School',
-  'Ismailia STEM High School',
-  'Red Sea STEM School',
-  'Assiut STEM School',
-  'Luxor STEM School',
-  'Sers El-Lyan STEM School for Girls',
-  'El-Sadat STEM School for Boys',
-  'Gharbia STEM School',
-  'Obour STEM School',
-  'Sharqia STEM School',
-  'Qena STEM School',
-  'Fayoum STEM School for Boys',
-  'Beni Suef STEM School',
-  'Minya STEM School for Boys',
-  'Sohag STEM School for Girls',
-  'Arish STEM School',
-]
-                      .map((option) => DropdownMenuItem<String>(
-                        value: option,
-                        child: Text(option),
-                      )).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        stemSchool = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select and option';
-                      }
-                      return null ;
-                    },
                     ),
-                  ),
+                  if (_selectedValue =='STEM')
+                    buildDropdown(label: 'School', value: stemSchool, items: ['6th of October STEM School for Boys','October STEM School','Maadi STEM School for Girls','New Cairo STEM School','Alexandria STEM School','Dakahlia STEM School','Ismailia STEM High School','Red Sea STEM School','Assiut STEM School','Luxor STEM School','Sers El-Lyan STEM School for Girls','El-Sadat STEM School for Boys','Gharbia STEM School','Obour STEM School','Sharqia STEM School','Qena STEM School','Fayoum STEM School for Boys','Beni Suef STEM School','Minya STEM School for Boys','Sohag STEM School for Girls','Arish STEM School'], 
+                    onChanged: (value) => setState(() => _selectedValue = value),
+                    validator: (value) => value == null ? 'please select an option' : null),
 
                   if (_selectedValue != 'University') 
+                  buildDropdown(label: 'Grade', value: _selectedGrade, items: ['Grade 7','Grade 8','Grade 9','Grade 10','Grade 11','Grade 12'], 
+                  onChanged:(value) => setState(() => _selectedValue = value), ),
                   Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: DropdownButtonFormField<String>(
@@ -324,18 +288,21 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                 ),
                 if (_selectedValue == 'University')
-                TextFormField(
-                      controller: university,
-                      decoration: InputDecoration(
-                            labelText: 'Offecial University Name',
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey)
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide( color: Colors.blue)
-                              ),
-                        ),
-                    ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                        controller: university,
+                        decoration: InputDecoration(
+                              labelText: 'Offecial University Name',
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey)
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide( color: Colors.blue)
+                                ),
+                          ),
+                      ),
+                ),
 
                  if (_selectedValue == 'University')
                   Padding(
@@ -396,12 +363,75 @@ class _RegisterPageState extends State<RegisterPage> {
           Step(
             isActive: currentStep >= 3,
             title: Text('verification'),
-            content: Container(),
+            content: Container(
+              child: Column(
+                children: [
+                  if (_selectedValue == 'STEM' || _selectedValue == 'University')
+                    Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: eduMailCode,
+                      decoration: InputDecoration(
+                            labelText: 'Email Verification Code',
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey)
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide( color: Colors.blue)
+                              ),
+                        ),
+                    
+                    ),
+                  )
+                else
+                Text("you're all Done")
+
+                ],
+              ),
+            ),
           ),
           Step(
             isActive: currentStep >= 4,
             title: Text('Complete'),
-            content: Container(),
+            content: Container(
+              child: Column(
+                children: [
+                  Text('create your username and password', style: TextStyle(color: Colors.blue),),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: username,
+                      decoration: InputDecoration(
+                            labelText: 'username',
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey)
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide( color: Colors.blue)
+                              ),
+                        ),
+                    
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: password,
+                      decoration: InputDecoration(
+                            labelText: 'Password',
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey)
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide( color: Colors.blue)
+                              ),
+                        ),
+                    
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
         ],
         currentStep: currentStep,
