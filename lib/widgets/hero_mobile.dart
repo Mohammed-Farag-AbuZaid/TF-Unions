@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
-import 'package:tf_union/constants/variables.dart';
 
 class HeroMobile extends StatelessWidget {
   const HeroMobile({super.key});

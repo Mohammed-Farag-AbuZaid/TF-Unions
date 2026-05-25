@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
-import 'package:tf_union/constants/variables.dart';
 import 'package:tf_union/constants/social_items.dart';
 
 
@@ -27,7 +26,7 @@ class HeroDesktop extends StatelessWidget {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(20),
-                          child: Text('A None-Profit Organization \nbuilt Specially for standout students of Egypt.', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500, height: 1.5),textAlign: TextAlign.center,),
+                          child: Text('A None-Profit Organization \nbuilt Specially for standout students of Egypt.', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500, height: 1.5, color: TFColors.whitePrimary),textAlign: TextAlign.center,),
                         ),
                         SizedBox(height: 30,),
                         SizedBox(

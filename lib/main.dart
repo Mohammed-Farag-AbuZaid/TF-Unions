@@ -10,9 +10,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData.dark(),
       title: 'TF-Unions',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(),
       home: const HomePage(),
     );
   }

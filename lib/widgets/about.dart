@@ -1,8 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
-import 'package:tf_union/pages/docs_page.dart';
-import 'package:tf_union/pages/projects_page.dart';
 import 'package:tf_union/pages/register_page.dart';
 
 class About extends StatelessWidget {
@@ -18,7 +16,7 @@ class About extends StatelessWidget {
                   child: Column(
                     children: [
                       SizedBox(height: 90,),
-                      Text('About Us', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
+                      Text('About Us', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: TFColors.whitePrimary), textAlign: TextAlign.center,),
                       SizedBox(height: 30,),
                       
                       Padding(
