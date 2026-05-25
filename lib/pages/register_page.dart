@@ -307,10 +307,10 @@ required TextEditingController controller,
               child: Column(
                 children: [
                   if (_selectedValue == 'Prep School')
-                  buildTextField(controller: prepSchool, label: 'Offecial School Name'),
+                  buildTextField(controller: prepSchool, label: 'Official School Name'),
                     
                   if (_selectedValue == 'Thanawy')
-                  buildTextField(controller: thanawySchool, label: 'Offecial School Name'),
+                  buildTextField(controller: thanawySchool, label: 'Official School Name'),
 
                   if (_selectedValue =='STEM')
                     buildDropdown(label: 'School', value: stemSchool, items: ['6th of October STEM School for Boys','October STEM School','Maadi STEM School for Girls','New Cairo STEM School','Alexandria STEM School','Dakahlia STEM School','Ismailia STEM High School','Red Sea STEM School','Assiut STEM School','Luxor STEM School','Sers El-Lyan STEM School for Girls','El-Sadat STEM School for Boys','Gharbia STEM School','Obour STEM School','Sharqia STEM School','Qena STEM School','Fayoum STEM School for Boys','Beni Suef STEM School','Minya STEM School for Boys','Sohag STEM School for Girls','Arish STEM School'], 
@@ -324,7 +324,7 @@ required TextEditingController controller,
                   
                   
                 if (_selectedValue == 'University')
-                buildTextField(controller: university, label: 'Offecial University Name'),
+                buildTextField(controller: university, label: 'Official University Name'),
                 
 
                 if (_selectedValue == 'University')
@@ -403,8 +403,10 @@ required TextEditingController controller,
         controlsBuilder: (BuildContext context, ControlsDetails details){
           return Row(
             children: <Widget>[
-              if (currentStep <5)
+              if (currentStep <4)
                 ElevatedButton(onPressed: details.onStepContinue, child: const Text('Next')),
+              if (currentStep == 4)
+                ElevatedButton(onPressed: details.onStepContinue, child: const Text('Register')),
               if (currentStep > 0 && currentStep < 5)
                 TextButton(onPressed: details.onStepCancel, child: const Text('Previous'))
             ],
