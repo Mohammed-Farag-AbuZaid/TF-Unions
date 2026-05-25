@@ -12,7 +12,11 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   int currentStep = 0;
-
+  final _accountFormKey = GlobalKey<FormState>();
+  final _firstVerificationFormKey = GlobalKey<FormState>();
+  final _academicFormKey = GlobalKey<FormState>();
+  final _secondVerificationFormKey =GlobalKey<FormState>();
+  final _userInfoFormKey = GlobalKey<FormState>();
   final firstName = TextEditingController();
   final lastName = TextEditingController();
   final email = TextEditingController();
@@ -53,7 +57,12 @@ class _RegisterPageState extends State<RegisterPage> {
              borderSide: BorderSide( color: Colors.blue)
             ),
       ),
-      validator: validator,
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Please enter your ' + label;
+        }
+        return null;
+      },
       readOnly: readOnly,
       onTap: onTap,
       keyboardType: keyboardType,
@@ -96,7 +105,6 @@ class _RegisterPageState extends State<RegisterPage> {
 Widget buildVerificationFeild({
     required TextEditingController controller,
     required String label,
-    String? Function(String?)? validator,
     VoidCallback? onTap,
     TextInputType keyboardType = TextInputType.number,
     bool readOnly = false,
@@ -113,7 +121,15 @@ Widget buildVerificationFeild({
              borderSide: BorderSide( color: Colors.blue)
             ),
       ),
-      validator: validator,
+      validator: (value){
+  if (value == null || value.trim().isEmpty) {
+    return 'This field is required';
+  }
+  if (!RegExp(r"^\d{6}$").hasMatch(value.trim())) {
+    return 'Enter a valid 6-digit code';
+  }
+  return null;
+},
       readOnly: readOnly,
       onTap: onTap,
       keyboardType: keyboardType,
@@ -148,6 +164,54 @@ Widget buildMailField({
     );
 }
 
+Widget buildUsernameField({
+
+required TextEditingController controller,
+    required String label,
+    String? Function(String?)? validator,
+    VoidCallback? onTap,
+    TextInputType keyboardType = TextInputType.text,
+    bool readOnly = false,
+  }){
+    return Padding(padding: const EdgeInsets.all(8.0),
+    child: TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey)
+            ),
+            focusedBorder: OutlineInputBorder(
+             borderSide: BorderSide( color: Colors.blue)
+            ),
+      ),
+      validator: (String? value) {
+      if (value == null || value.trim().isEmpty) {
+        return 'Please enter a username';
+      }
+
+
+      final validUsername = RegExp(r'^[a-z0-9_]+$');
+
+      if (!validUsername.hasMatch(value)) {
+        return 'Use lowercase letters, numbers, and underscores only';
+      }
+
+      if (value.contains(' ')) {
+        return 'No spaces allowed';
+      }
+
+  return null;
+},
+      readOnly: readOnly,
+      onTap: onTap,
+      keyboardType: keyboardType,
+    )
+    );
+  }
+
+
+
   @override
   void dispose(){
     firstName.dispose();
@@ -172,7 +236,8 @@ Widget buildMailField({
           Step(
             isActive: currentStep >= 0,
             title: Text('Account'),
-            content: Container(
+            content: Form(
+              key: _accountFormKey,
               child: Column(children: [
                 buildTextField(controller: firstName, label: 'First Name'),
                 buildTextField(controller: lastName, label: "Last Name"),
@@ -210,7 +275,8 @@ Widget buildMailField({
           Step(
             isActive: currentStep >= 1,
             title: Text('Verification'),
-            content: Container(
+            content: Form(
+              key: _firstVerificationFormKey,              
               child: Column(
                 children: [
                   Text('You have resived 2 different codes in both your Mobile number and your personal Email', style: TextStyle(color: Colors.blue),),
@@ -223,7 +289,8 @@ Widget buildMailField({
           Step(
             isActive: currentStep >= 2,
             title: Text('Academic Info'),
-            content: Container(
+            content: Form(
+              key: _academicFormKey,              
               child: Column(
                 children: [
                   if (_selectedValue == 'Prep School')
@@ -239,7 +306,9 @@ Widget buildMailField({
 
                   if (_selectedValue != 'University') 
                   buildDropdown(label: 'Grade', value: _selectedGrade, items: ['Grade 7','Grade 8','Grade 9','Grade 10','Grade 11','Grade 12'], 
-                  onChanged:(value) => setState(() => _selectedGrade = value), ),
+                  onChanged:(value) => setState(() => _selectedGrade = value),
+                  validator: (value) => value == null ? 'please select an option' : null ),
+                  
                   
                 if (_selectedValue == 'University')
                 buildTextField(controller: university, label: 'Offecial University Name'),
@@ -261,7 +330,8 @@ Widget buildMailField({
           Step(
             isActive: currentStep >= 3,
             title: Text('verification'),
-            content: Container(
+            content: Form(
+              key: _secondVerificationFormKey,              
               child: Column(
                 children: [
                   if (_selectedValue == 'STEM' || _selectedValue == 'University')
@@ -277,11 +347,12 @@ Widget buildMailField({
           Step(
             isActive: currentStep >= 4,
             title: Text('Complete'),
-            content: Container(
+            content: Form(
+              key: _userInfoFormKey,              
               child: Column(
                 children: [
                   Text('create your username and password', style: TextStyle(color: Colors.blue),),
-                  buildTextField(controller: username, label: 'username'),
+                  buildUsernameField(controller: username, label: 'username', ),
                   buildTextField(controller: password, label: 'password')
                   
                 ],
@@ -290,13 +361,24 @@ Widget buildMailField({
           ),
         ],
         currentStep: currentStep,
-        onStepContinue: (){
-          
-          final isLastStep = currentStep == 4;
-          if (isLastStep) {
-            print('completed');
+        onStepContinue: () {
+          if (currentStep == 0) {
+            if (_accountFormKey.currentState?.validate() ?? false) {
+              setState(() => currentStep += 1);}
+          } else if (currentStep == 1){
+            if (_firstVerificationFormKey.currentState?.validate() ?? false){
+              setState(() => currentStep += 1);}
+          } else if (currentStep == 2){
+            if (_academicFormKey.currentState?.validate() ?? false){
+              setState(() => currentStep += 1);}
+          } else if (currentStep == 3){
+            if (_secondVerificationFormKey.currentState?.validate() ?? false){
+              setState(() => currentStep += 1);}
+          } else if (currentStep == 4){
+            if (_userInfoFormKey.currentState?.validate() ?? false){
+              setState(() => currentStep += 1);}
           }
-          setState(() => currentStep += 1);
+
         },
         onStepCancel: (){
           currentStep == 0 ? null : setState(() => currentStep -= 1);
