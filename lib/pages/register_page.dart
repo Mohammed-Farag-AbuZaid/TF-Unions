@@ -1,6 +1,8 @@
 import 'package:ez_email_field/ez_email_field.dart';
+import 'package:fancy_password_field/fancy_password_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
+import 'package:flutter/services.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -31,7 +33,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final eduEmail = TextEditingController();
   final eduMailCode = TextEditingController();
   final username = TextEditingController();
-  final password = TextEditingController();
+  final FancyPasswordController password = FancyPasswordController();
+  final passwordVerify = TextEditingController();
   String? stemSchool ;
   String? _selectedValue;
   String? _selectedGrade;
@@ -44,6 +47,8 @@ class _RegisterPageState extends State<RegisterPage> {
     VoidCallback? onTap,
     TextInputType keyboardType = TextInputType.text,
     bool readOnly = false,
+    bool obscureText =false,
+    Widget? suffixIcon,
   }){
     return Padding(padding: const EdgeInsets.all(8.0),
     child: TextFormField(
@@ -56,6 +61,7 @@ class _RegisterPageState extends State<RegisterPage> {
             focusedBorder: OutlineInputBorder(
              borderSide: BorderSide( color: Colors.blue)
             ),
+            suffixIcon: suffixIcon,
       ),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
@@ -66,6 +72,7 @@ class _RegisterPageState extends State<RegisterPage> {
       readOnly: readOnly,
       onTap: onTap,
       keyboardType: keyboardType,
+      obscureText: obscureText,
     )
     );
   }
@@ -133,6 +140,9 @@ Widget buildVerificationFeild({
       readOnly: readOnly,
       onTap: onTap,
       keyboardType: keyboardType,
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+      ],
     )
     );
 }
@@ -201,11 +211,14 @@ required TextEditingController controller,
         return 'No spaces allowed';
       }
 
-  return null;
-},
+      return null;
+      },
       readOnly: readOnly,
       onTap: onTap,
       keyboardType: keyboardType,
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r'[a-z0-9_]')),
+      ],
     )
     );
   }
@@ -334,11 +347,7 @@ required TextEditingController controller,
               key: _secondVerificationFormKey,              
               child: Column(
                 children: [
-                  if (_selectedValue == 'STEM' || _selectedValue == 'University')
                   buildVerificationFeild(controller: eduMailCode, label: 'Email Verification Code')
-                    
-                else
-                Text("you're all Done")
 
                 ],
               ),
@@ -346,20 +355,61 @@ required TextEditingController controller,
           ),
           Step(
             isActive: currentStep >= 4,
-            title: Text('Complete'),
+            title: Text('Become a user'),
             content: Form(
               key: _userInfoFormKey,              
               child: Column(
                 children: [
                   Text('create your username and password', style: TextStyle(color: Colors.blue),),
                   buildUsernameField(controller: username, label: 'username', ),
-                  buildTextField(controller: password, label: 'password')
-                  
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FancyPasswordField (
+                      passwordController: password,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey)
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide( color: Colors.blue)
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.length < 6 ){
+                          return 'Password must be at least 6 characters';
+                        }
+                      },
+                    ),
+                  )
                 ],
               ),
             ),
           ),
+          Step(
+            title: Text('Complete'), 
+            content: Container(
+              child: Column(
+                children: [
+                  SizedBox(height: 30,),
+                  Text('Horry !\nNow you are a TF user\nyou access all TF-Unions serveces via this account', textAlign: TextAlign.center ,style: TextStyle(color: Colors.blue, height: 2 ),),
+                  SizedBox(height: 30,),
+                  ElevatedButton(onPressed: (){}, child: Text('Back to your Dashboard'))
+                ],
+              ),
+            )
+            )
         ],
+        controlsBuilder: (BuildContext context, ControlsDetails details){
+          return Row(
+            children: <Widget>[
+              if (currentStep <5)
+                ElevatedButton(onPressed: details.onStepContinue, child: const Text('Next')),
+              if (currentStep > 0 && currentStep < 5)
+                TextButton(onPressed: details.onStepCancel, child: const Text('Previous'))
+            ],
+          );
+        },
         currentStep: currentStep,
         onStepContinue: () {
           if (currentStep == 0) {
@@ -370,7 +420,10 @@ required TextEditingController controller,
               setState(() => currentStep += 1);}
           } else if (currentStep == 2){
             if (_academicFormKey.currentState?.validate() ?? false){
-              setState(() => currentStep += 1);}
+              if (!(_selectedValue == 'STEM' || _selectedValue == 'University')){
+                setState(() => currentStep +=2);
+              } else{
+              setState(() => currentStep += 1);}}
           } else if (currentStep == 3){
             if (_secondVerificationFormKey.currentState?.validate() ?? false){
               setState(() => currentStep += 1);}
@@ -381,7 +434,17 @@ required TextEditingController controller,
 
         },
         onStepCancel: (){
+          if (currentStep == 4){
+            if (!(_selectedValue == "STEM" || _selectedValue == 'University')){
+              setState(() => currentStep -= 2);}
+            else {
+              setState(() => currentStep -= 1);
+            }
+            
+          }
+          else{
           currentStep == 0 ? null : setState(() => currentStep -= 1);
+          }
         },
       ),
     ); 
