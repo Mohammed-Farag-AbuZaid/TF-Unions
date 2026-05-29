@@ -62,7 +62,15 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TFColors.bglight1,
+      backgroundColor: Colors.black,
+      appBar: AppBar( 
+        title: Center(
+          child: SizedBox(
+            width: 150,
+            child: Image.asset('assets/BlackLogo.png')),
+        ),
+          backgroundColor: Colors.black,
+      ),
       body: SafeArea(
           child: Center(
             child: ConstrainedBox(
@@ -75,12 +83,41 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               child: Stepper(
                 type: StepperType.vertical,
-              steps: [
-                Step(
-                  isActive: currentStep >= 0,
-                  title: Text('Account', style: TextStyle(fontWeight: FontWeight.bold),),
-                  content: Center(
+                steps: [
+                  Step(
+                    isActive: currentStep >= 0,
+                    title: Text('Welcome', style: TextStyle(fontWeight: FontWeight.bold),),
+                    content:Center(
                     child: Card(
+                      elevation: 30,
+                      margin: const EdgeInsets.only(top: 24, bottom: 24),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)
+                      ),
+                      child: Container(
+                        width: 430,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                  child: Column(
+                    children: [Text('A few seconds sparate you from .....\nWe are thrilled to see you here, we promise to do our best', textAlign: TextAlign.center, style: TextStyle(color: TFColors.textfieldbg, height: 1.5, fontSize: 16, fontWeight: FontWeight.w500),),
+                        Container(
+                          alignment: Alignment.topRight,
+                          child: InkWell(
+                            onTap: (){
+                              Navigator.of(context).pushReplacementNamed('login');
+                            },
+                            child: Text('Have an account ? Login', style: TextStyle(fontSize: 12, color: Colors.blue),)),
+                        ),
+                      ],
+                  ),
+                      )
+                    )
+                  )
+                  ),
+                  Step(
+                    isActive: currentStep >= 1,
+                    title: Text('Account', style: TextStyle(fontWeight: FontWeight.bold),),
+                    content: Center(
+                      child: Card(
 
                       elevation: 30,
                       margin: const EdgeInsets.only(top: 24, bottom: 24),
@@ -130,7 +167,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 Step(
-                  isActive: currentStep >= 1,
+                  isActive: currentStep >= 2,
                   title: Text('Verification' , style: TextStyle(fontWeight: FontWeight.bold),),
                   content: Center(
                     child: Card(
@@ -156,7 +193,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   )
                 ),
                 Step(
-                  isActive: currentStep >= 2,
+                  isActive: currentStep >= 3,
                   title: Text('Academic Info', style: TextStyle(fontWeight: FontWeight.bold),),
                   content: Center(
                     child: Card(
@@ -210,7 +247,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 
                 Step(
-                  isActive: currentStep >= 3,
+                  isActive: currentStep >= 4,
                   title: Text('verification' , style: TextStyle(fontWeight: FontWeight.bold),),
                   content: Center(
                     child: Card(
@@ -237,7 +274,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 Step(
-                  isActive: currentStep >= 4,
+                  isActive: currentStep >= 5,
                   title: Text('Become a user' , style: TextStyle(fontWeight: FontWeight.bold),),
                   content: Center(
                     child: Card(
@@ -284,7 +321,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 Step(
-                  isActive: currentStep >= 5,
+                  isActive: currentStep >= 6,
                   title: Text('Complete', style: TextStyle(fontWeight: FontWeight.bold),),
                   content: Container(
                     child: Column(
@@ -310,36 +347,41 @@ class _RegisterPageState extends State<RegisterPage> {
               controlsBuilder: (BuildContext context, ControlsDetails details){
                 return Row(
                   children: <Widget>[
-                    if (currentStep <4 && currentStep != 1)
+                    if (currentStep == 0)
+                      ElevatedButton(onPressed: details.onStepContinue, child: const Text('Start')),
+                    if (currentStep <5 && currentStep != 2 && currentStep != 0)
                       ElevatedButton(onPressed: details.onStepContinue, child: const Text('Next')),
-                    if(currentStep == 1)
+                    if(currentStep == 2)
                       ElevatedButton(onPressed: details.onStepContinue, child: const Text('Verify')),
                     
-                    if (currentStep == 4)
+                    if (currentStep == 5)
                       ElevatedButton(onPressed: details.onStepContinue, child: const Text('Register')),
-                    if (currentStep > 0 && currentStep < 5)
+                    if (currentStep > 0 && currentStep < 6)
                       TextButton(onPressed: details.onStepCancel, child: const Text('Previous'))
                   ],
                 );
               },
               currentStep: currentStep,
               onStepContinue: () {
-                if (currentStep == 0) {
+                if (currentStep == 0){
+                  setState(() => currentStep += 1);
+                }
+                if (currentStep == 1) {
                   if (_accountFormKey.currentState?.validate() ?? false) {
                     setState(() => currentStep += 1);}
-                } else if (currentStep == 1){
+                } else if (currentStep == 2){
                   if (_firstVerificationFormKey.currentState?.validate() ?? false){
                     setState(() => currentStep += 1);}
-                } else if (currentStep == 2){
+                } else if (currentStep == 3){
                   if (_academicFormKey.currentState?.validate() ?? false){
                     if (!(_selectedValue == 'STEM' || _selectedValue == 'University')){
                       setState(() => currentStep +=2);
                     } else{
                     setState(() => currentStep += 1);}}
-                } else if (currentStep == 3){
+                } else if (currentStep == 4){
                   if (_secondVerificationFormKey.currentState?.validate() ?? false){
                     setState(() => currentStep += 1);}
-                } else if (currentStep == 4){
+                } else if (currentStep == 5){
                   if (_userInfoFormKey.currentState?.validate() ?? false){
                     setState(() => currentStep += 1);}
                 }

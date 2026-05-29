@@ -35,7 +35,7 @@ class About extends StatelessWidget {
                               ..onTap = ()  {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => const Login()),
+                                  MaterialPageRoute(builder: (context) => const LoginPage()),
                                 );
                                             },
                                         ),

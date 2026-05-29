@@ -4,13 +4,13 @@ import 'package:tf_union/widgets/fields.dart';
 import 'package:flutter_social_button/flutter_social_button.dart';
 
 
-class Login extends StatefulWidget {
-  const Login ({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage ({super.key});
   @override
-  State<Login> createState() => _LoginState();
+  State<LoginPage> createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginState extends State<LoginPage> {
   final _loginFormKey = GlobalKey<FormState>();
   final username = TextEditingController();
   final password = TextEditingController();
@@ -18,6 +18,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      
       body: Container(
         child: Column(
         
@@ -76,7 +77,11 @@ class _LoginState extends State<Login> {
                   
                 ),
               ),
-              Text('Don\'t have an account ? Register', style: TextStyle(fontSize: 12, color: Colors.blue),),
+              InkWell(
+                onTap: (){
+                  Navigator.of(context).pushReplacementNamed('register');
+                },
+                child: Text('Don\'t have an account ? Register', style: TextStyle(fontSize: 12, color: Colors.blue),)),
             
               Spacer(),
               Spacer(),
