@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "879703010053",
+    "project_id": "tf-unions",
+    "storage_bucket": "tf-unions.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:879703010053:android:2e161551b93d143d67a56c",
+        "android_client_info": {
+          "package_name": "com.example.tf_union"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAZ8yqqEQxefJGjUXcWoRqELQ5gD6xMFI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
