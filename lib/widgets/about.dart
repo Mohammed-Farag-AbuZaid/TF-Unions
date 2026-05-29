@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
+import 'package:tf_union/pages/login.dart';
 import 'package:tf_union/pages/register_page.dart';
 
 class About extends StatelessWidget {
@@ -34,7 +35,7 @@ class About extends StatelessWidget {
                               ..onTap = ()  {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => const RegisterPage()),
+                                  MaterialPageRoute(builder: (context) => const Login()),
                                 );
                                             },
                                         ),
