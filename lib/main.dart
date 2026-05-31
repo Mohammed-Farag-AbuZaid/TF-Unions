@@ -45,7 +45,8 @@ class _MyAppState extends State<MyApp> {
       home: const HomePage(),
       routes: {
         'register' : (context) => RegisterPage(),
-        'login' : (context) => LoginPage()
+        'login' : (context) => LoginPage(),
+        'homePage' : (context) => HomePage()
       },
     );
   }

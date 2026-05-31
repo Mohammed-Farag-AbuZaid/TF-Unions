@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/widgets/fields.dart';
-import 'package:flutter_social_button/flutter_social_button.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -71,10 +70,9 @@ class _LoginState extends State<LoginPage> {
               Text("--------------- or login with ----------------", style: TextStyle(fontSize: 12, color: Colors.grey),),
               SizedBox(
                 width: 400,
-                child: FlutterSocialButton(
-                  onTap: (){},
-                  buttonType: ButtonType.google,
-                  
+                child: MaterialButton(
+                  onPressed: (){},
+                  child: Text('Login with Google'),
                 ),
               ),
               InkWell(

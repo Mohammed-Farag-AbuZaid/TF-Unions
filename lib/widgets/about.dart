@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/pages/login.dart';
-import 'package:tf_union/pages/register_page.dart';
 
 class About extends StatelessWidget {
   const About({super.key});

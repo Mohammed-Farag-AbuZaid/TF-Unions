@@ -7,15 +7,8 @@ import 'package:tf_union/widgets/header_mobile.dart';
 import 'package:tf_union/widgets/hero_desktop.dart';
 import 'package:tf_union/widgets/hero_mobile.dart';
 import 'package:tf_union/widgets/drawer_mobile.dart';
-<<<<<<< HEAD
-import 'package:flutter/gestures.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:tf_union/pages/docs_page.dart';
-import 'package:footer/footer.dart';
-import 'package:footer/footer_view.dart';
 import 'package:tf_union/pages/projects_page.dart';
-=======
->>>>>>> 744c7a57a54c4f1b0ef2a8b66dc410c21ebb72e7
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

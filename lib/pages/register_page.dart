@@ -1,8 +1,7 @@
-import 'package:ez_email_field/ez_email_field.dart';
 import 'package:fancy_password_field/fancy_password_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
-import 'package:flutter/services.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/widgets/fields.dart';
 
@@ -41,8 +40,23 @@ class _RegisterPageState extends State<RegisterPage> {
   String? _selectedGrade;
   String? _selectedYear;
 
-
-
+Future<void> _register() async {
+  try {
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: email.text,
+      password: username.text,
+    );
+    Navigator.of(context).pushReplacementNamed('homePage');
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'weak-password') {
+      debugPrint('The password provided is too weak.');
+    } else if (e.code == 'email-already-in-use') {
+      debugPrint('The account already exists for that email.');
+    }
+  } catch (e) {
+    debugPrint('$e');
+  }
+}
   @override
   void dispose(){
     firstName.dispose();
@@ -362,7 +376,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 );
               },
               currentStep: currentStep,
-              onStepContinue: () {
+              onStepContinue: () async {
                 if (currentStep == 0){
                   setState(() => currentStep += 1);
                 }
@@ -382,8 +396,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   if (_secondVerificationFormKey.currentState?.validate() ?? false){
                     setState(() => currentStep += 1);}
                 } else if (currentStep == 5){
-                  if (_userInfoFormKey.currentState?.validate() ?? false){
-                    setState(() => currentStep += 1);}
+  if (_userInfoFormKey.currentState?.validate() ?? false) {
+    await _register();
+  }
+
                 }
                             
               },
