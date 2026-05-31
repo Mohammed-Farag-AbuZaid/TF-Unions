@@ -39,6 +39,14 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_intl_phone_field: ^0.0.7
   ez_email_field: ^0.0.2
+  fancy_password_field: ^2.0.8
+  firebase_core: ^4.9.0
+  firebase_auth: ^6.5.1
+  cloud_firestore: ^6.4.1
+  firebase_storage: ^13.4.1
+  firebase_messaging: ^16.2.2
+  google_sign_in: ^7.2.0
+  flutter_social_button: ^1.1.6+1
 
 dev_dependencies:
   flutter_test:
