@@ -15,6 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:tf_union/pages/docs_page.dart';
 import 'package:footer/footer.dart';
 import 'package:footer/footer_view.dart';
+import 'package:tf_union/pages/projects_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -34,43 +35,45 @@ class _HomePageState extends State<HomePage> {
         return Scaffold(
           key: scaffoldKey,
           backgroundColor: TFColors.bglight1,
-          drawer: constraints.maxWidth > mobileWidth?null: const DrawerMobile(),
+          drawer: constraints.maxWidth > mobileWidth
+              ? null
+              : const DrawerMobile(),
           body: ListView(
             scrollDirection: Axis.vertical,
-            children: [ 
+            children: [
               // header
-              if (constraints.maxWidth > mobileWidth)
-                const HeaderDesktop(),
+              if (constraints.maxWidth > mobileWidth) const HeaderDesktop(),
               if (constraints.maxWidth <= mobileWidth)
                 HeaderMobile(
-                onLogoTap: () {},
-                onMenuTap: () {
-                  scaffoldKey.currentState?.openDrawer();
-                },
-              ),
+                  onLogoTap: () {},
+                  onMenuTap: () {
+                    scaffoldKey.currentState?.openDrawer();
+                  },
+                ),
 
               // Hero
-              if (constraints.maxWidth > mobileWidth)
-                const HeroDesktop(),
-              if (constraints.maxWidth <= mobileWidth)
-                HeroMobile(),
-              
+              if (constraints.maxWidth > mobileWidth) const HeroDesktop(),
+              if (constraints.maxWidth <= mobileWidth) HeroMobile(),
+
               // About
               About(),
+              ProjectsPage(),
               // Footer
               Container(
                 color: TFColors.bglight1,
-                
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: Text('Copyright © 2026 TF Unions. All rights reserved.\nPowerd by SalamTech', style: TextStyle(color: TFColors.whitePrimary, height: 1.5),textAlign: TextAlign.center,),
+                  child: Text(
+                    'Copyright © 2026 TF Unions. All rights reserved.\nPowerd by SalamTech',
+                    style: TextStyle(color: TFColors.whitePrimary, height: 1.5),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              )
-        
+              ),
             ],
-          )
+          ),
         );
-      }
+      },
     );
   }
 }
