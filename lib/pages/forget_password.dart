@@ -44,10 +44,7 @@ class _ForgetPasswordState extends State<ForgetPasswordPage> {
                     key: _forgetPasswordFormKey,
                     child: Column(
                       children: [
-                        buildMailField(
-                          controller: email,
-                          label: 'Email',
-                        ),
+                        buildMailField(controller: email, label: 'Email'),
                         Padding(
                           padding: const EdgeInsets.only(top: 20.0),
                           child: MaterialButton(
@@ -73,7 +70,6 @@ class _ForgetPasswordState extends State<ForgetPasswordPage> {
                 ),
               ),
             ),
-            
 
             Spacer(),
             Spacer(),

@@ -9,10 +9,8 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-  options: DefaultFirebaseOptions.currentPlatform,
-);
-runApp(const MyApp());
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -26,9 +24,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    FirebaseAuth.instance
-        .authStateChanges()
-        .listen((User? user) {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
         print('User is currently signed out!');
       } else {
@@ -45,10 +41,10 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       home: const HomePage(),
       routes: {
-        'register' : (context) => RegisterPage(),
-        'login' : (context) => LoginPage(),
-        'homePage' : (context) => HomePage(),
-        'forget_password' : (context) => ForgetPasswordPage()
+        'register': (context) => RegisterPage(),
+        'login': (context) => LoginPage(),
+        'homePage': (context) => HomePage(),
+        'forget_password': (context) => ForgetPasswordPage(),
       },
     );
   }

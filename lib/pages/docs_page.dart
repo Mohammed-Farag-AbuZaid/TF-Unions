@@ -5,8 +5,6 @@ class DocsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text('Docs Page'),
-    );
+    return Container(child: Text('Docs Page'));
   }
 }

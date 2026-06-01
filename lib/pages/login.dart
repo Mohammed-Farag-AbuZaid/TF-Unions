@@ -60,11 +60,16 @@ class _LoginState extends State<LoginPage> {
                           alignment: Alignment.topRight,
                           child: InkWell(
                             onTap: () {
-                              Navigator.of(context).pushReplacementNamed('forget_password');
+                              Navigator.of(
+                                context,
+                              ).pushReplacementNamed('forget_password');
                             },
                             child: Text(
                               'Forgot Password ?',
-                              style: TextStyle(fontSize: 12, color: Colors.blue),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.blue,
+                              ),
                             ),
                           ),
                         ),

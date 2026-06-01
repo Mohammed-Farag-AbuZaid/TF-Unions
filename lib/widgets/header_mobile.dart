@@ -9,34 +9,29 @@ class HeaderMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-            height: 50,
-            margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [TFColors.bglight1, TFColors.bglight2]),
-              borderRadius: BorderRadius.circular(20),
-
+      height: 50,
+      margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [TFColors.bglight1, TFColors.bglight2],
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: IconButton(
+              onPressed: onMenuTap,
+              icon: Icon(Icons.menu, color: TFColors.whitePrimary),
             ),
-            child: Row(
-              children: [
-                
-                
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: IconButton(onPressed: onMenuTap, icon: Icon(Icons.menu, color: TFColors.whitePrimary,)),
-                ),
-                const Spacer(),
-                Logo(
-                  onTap: onLogoTap,
-                ),
-                const Spacer(),
-                SizedBox(
-                  width: 20, 
-                )
-
-                
-
-              ],
-            ),
-          );
-  } 
+          ),
+          const Spacer(),
+          Logo(onTap: onLogoTap),
+          const Spacer(),
+          SizedBox(width: 20),
+        ],
+      ),
+    );
+  }
 }

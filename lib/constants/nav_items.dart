@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
 
-List<String> navItems = [
-  'Home',
-  'About',
-  'Projects',
-  'Docs',
-];
+List<String> navItems = ['Home', 'About', 'Projects', 'Docs'];
 
-List<String> log = [
-  'Login',
-  'Register',
-];
+List<String> log = ['Login', 'Register'];
 
 List<IconData> navIcons = [
   Icons.home,
@@ -19,7 +11,4 @@ List<IconData> navIcons = [
   Icons.description,
 ];
 
-List<IconData> logIcons = [
-  Icons.login,
-  Icons.app_registration,
-];
+List<IconData> logIcons = [Icons.login, Icons.app_registration];

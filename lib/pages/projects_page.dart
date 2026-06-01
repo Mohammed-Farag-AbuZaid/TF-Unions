@@ -24,7 +24,7 @@ class ProjectsPage extends StatelessWidget {
             child: Text(
               'Services',
               style: TextStyle(
-                fontSize: 42, 
+                fontSize: 42,
                 fontWeight: FontWeight.bold,
                 color: TFColors.whitePrimary,
                 letterSpacing: 1.5,
@@ -45,8 +45,8 @@ class ProjectsPage extends StatelessWidget {
           Text(
             'Organization :',
             style: TextStyle(
-              fontSize: 28, 
-              fontWeight: FontWeight.bold, 
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
               color: TFColors.whitePrimary,
               letterSpacing: 1.2,
             ),
@@ -59,14 +59,14 @@ class ProjectsPage extends StatelessWidget {
               children: [
                 _buildProjectCard(
                   title: 'Stem union',
-                  description: " هنا نهدف الى مساعدة طلاب مدارس STEM  ", 
-                  imagePath: 'assets/projects/stem.png', 
-                  onBtnTap: () => _launchURL('https://google.com'), 
+                  description: " هنا نهدف الى مساعدة طلاب مدارس STEM  ",
+                  imagePath: 'assets/projects/stem.png',
+                  onBtnTap: () => _launchURL('https://google.com'),
                 ),
                 _buildProjectCard(
                   title: 'Universal union',
-                  description: " منظمة تهدف الى مساعدة الطلاب الجامعيين", 
-                  imagePath: 'assets/projects/', 
+                  description: " منظمة تهدف الى مساعدة الطلاب الجامعيين",
+                  imagePath: 'assets/projects/',
                   onBtnTap: () => _launchURL('https://google.com'),
                 ),
               ],
@@ -76,8 +76,8 @@ class ProjectsPage extends StatelessWidget {
           Text(
             'Projects :',
             style: TextStyle(
-              fontSize: 28, 
-              fontWeight: FontWeight.bold, 
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
               color: TFColors.whitePrimary,
               letterSpacing: 1.2,
             ),
@@ -90,31 +90,31 @@ class ProjectsPage extends StatelessWidget {
               children: [
                 _buildProjectCard(
                   title: 'shop',
-                  description: " محمد فرج هيكتب الوصف ", 
+                  description: " محمد فرج هيكتب الوصف ",
                   imagePath: 'assets/projects/shop.png',
                   onBtnTap: () => _launchURL('https://google.com'),
                 ),
                 _buildProjectCard(
                   title: 'UNI Cap',
-                  description: "محمد فرج هيضيف ده", 
-                  imagePath: 'assets/projects/cap.png', 
-                  onBtnTap: () => _launchURL('https://google.com'), 
+                  description: "محمد فرج هيضيف ده",
+                  imagePath: 'assets/projects/cap.png',
+                  onBtnTap: () => _launchURL('https://google.com'),
                 ),
                 _buildProjectCard(
                   title: 'UV Journal',
-                  description: " محمد فرج هيكتب الوصف ده ", 
+                  description: " محمد فرج هيكتب الوصف ده ",
                   imagePath: 'assets/projects/journal.png',
-                  onBtnTap: () => _launchURL('https://google.com'), 
+                  onBtnTap: () => _launchURL('https://google.com'),
                 ),
                 _buildProjectCard(
                   title: 'English',
-                  description: "اكتب يا محمد هنا كمان الوصف", 
-                  imagePath: 'assets/projects/apc.png', 
-                  onBtnTap: () => _launchURL('https://google.com'), 
+                  description: "اكتب يا محمد هنا كمان الوصف",
+                  imagePath: 'assets/projects/apc.png',
+                  onBtnTap: () => _launchURL('https://google.com'),
                 ),
                 _buildProjectCard(
                   title: 'Guide',
-                  description: "اخر وصف بقا معلش هنتعبك", 
+                  description: "اخر وصف بقا معلش هنتعبك",
                   imagePath: 'assets/projects/guide.png',
                   onBtnTap: () => _launchURL('https://google.com'),
                 ),
@@ -127,8 +127,8 @@ class ProjectsPage extends StatelessWidget {
   }
 
   Widget _buildProjectCard({
-    required String title, 
-    required String description, 
+    required String title,
+    required String description,
     required String imagePath,
     required VoidCallback onBtnTap,
   }) {
@@ -153,19 +153,31 @@ class ProjectsPage extends StatelessWidget {
               errorBuilder: (context, error, stackTrace) => Container(
                 height: 130,
                 color: Colors.black26,
-                child: const Icon(Icons.code_rounded, color: Colors.blueGrey, size: 40),
+                child: const Icon(
+                  Icons.code_rounded,
+                  color: Colors.blueGrey,
+                  size: 40,
+                ),
               ),
             ),
           ),
           const SizedBox(height: 12),
           Text(
             title,
-            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             description,
-            style: const TextStyle(color: Colors.grey, fontSize: 13, height: 1.4),
+            style: const TextStyle(
+              color: Colors.grey,
+              fontSize: 13,
+              height: 1.4,
+            ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),

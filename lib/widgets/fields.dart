@@ -3,29 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 
-
- Widget buildTextField({
-    required TextEditingController controller,
-    required String label,
-    String? Function(String?)? validator,
-    VoidCallback? onTap,
-    TextInputType keyboardType = TextInputType.text,
-    bool readOnly = false,
-    bool obscureText =false,
-    Widget? suffixIcon,
-  }){
-    return Padding(padding: const EdgeInsets.all(8.0),
+Widget buildTextField({
+  required TextEditingController controller,
+  required String label,
+  String? Function(String?)? validator,
+  VoidCallback? onTap,
+  TextInputType keyboardType = TextInputType.text,
+  bool readOnly = false,
+  bool obscureText = false,
+  Widget? suffixIcon,
+}) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
     child: TextFormField(
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
         enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: TFColors.hintDark)
-            ),
-            focusedBorder: OutlineInputBorder(
-             borderSide: BorderSide( color: Colors.blue )
-            ),
-            suffixIcon: suffixIcon,
+          borderSide: BorderSide(color: TFColors.hintDark),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue),
+        ),
+        suffixIcon: suffixIcon,
       ),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
@@ -37,11 +37,11 @@ import 'package:tf_union/constants/tfcolors.dart';
       onTap: onTap,
       keyboardType: keyboardType,
       obscureText: obscureText,
-    )
-    );
-  }
+    ),
+  );
+}
 
- Widget buildDropdown<T>({
+Widget buildDropdown<T>({
   required String label,
   required T? value,
   required List<T> items,
@@ -62,82 +62,87 @@ import 'package:tf_union/constants/tfcolors.dart';
       ),
       initialValue: value,
       items: items
-          .map((option) => DropdownMenuItem<T>(
-                value: option,
-                child: Text(option.toString()),
-              ))
+          .map(
+            (option) => DropdownMenuItem<T>(
+              value: option,
+              child: Text(option.toString()),
+            ),
+          )
           .toList(),
       onChanged: onChanged,
       validator: validator,
     ),
   );
 }
+
 Widget buildVerificationFeild({
-    required TextEditingController controller,
-    required String label,
-    VoidCallback? onTap,
-    TextInputType keyboardType = TextInputType.number,
-    bool readOnly = false,
-}){
-  return Padding(padding: const EdgeInsets.only(left: 40.0, right: 40, top: 8.0, bottom: 8.0),
+  required TextEditingController controller,
+  required String label,
+  VoidCallback? onTap,
+  TextInputType keyboardType = TextInputType.number,
+  bool readOnly = false,
+}) {
+  return Padding(
+    padding: const EdgeInsets.only(
+      left: 40.0,
+      right: 40,
+      top: 8.0,
+      bottom: 8.0,
+    ),
     child: TextFormField(
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
         enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: TFColors.hintDark)
-            ),
-            focusedBorder: OutlineInputBorder(
-             borderSide: BorderSide( color: Colors.blue)
-            ),
+          borderSide: BorderSide(color: TFColors.hintDark),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue),
+        ),
       ),
-      validator: (value){
-  if (value == null || value.trim().isEmpty) {
-    return 'This field is required';
-  }
-  if (!RegExp(r"^\d{6}$").hasMatch(value.trim())) {
-    return 'Enter a valid 6-digit code';
-  }
-  return null;
-},
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'This field is required';
+        }
+        if (!RegExp(r"^\d{6}$").hasMatch(value.trim())) {
+          return 'Enter a valid 6-digit code';
+        }
+        return null;
+      },
       readOnly: readOnly,
       onTap: onTap,
       keyboardType: keyboardType,
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-      ],
-    )
-    );
+      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
+    ),
+  );
 }
 
 Widget buildMailField({
-    required TextEditingController controller,
-    required String label,
-    String? Function(String?)? validator,
-    TextInputType keyboardType = TextInputType.emailAddress,
-    bool readOnly = false,
-}){
+  required TextEditingController controller,
+  required String label,
+  String? Function(String?)? validator,
+  TextInputType keyboardType = TextInputType.emailAddress,
+  bool readOnly = false,
+}) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
-      child: EZEmailField(
-        controller: controller,
-        decoration: InputDecoration(
+    child: EZEmailField(
+      controller: controller,
+      decoration: InputDecoration(
         labelText: label,
-            enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: TFColors.hintDark)
-              ),
-            focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide( color: Colors.blue)
-              ),
-            ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: TFColors.hintDark),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue),
+        ),
+      ),
       customValidator: validator,
       readOnly: readOnly,
-      keyboardType: keyboardType,      
-     ),
-    );
+      keyboardType: keyboardType,
+    ),
+  );
 }
-
-
 
 Widget buildUsernameField({
   required TextEditingController controller,
@@ -187,10 +192,7 @@ Widget buildUsernameField({
   );
 }
 
-Widget buildTextArea({
-  required String content,
-  bool center = true,
-}) {
+Widget buildTextArea({required String content, bool center = true}) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
     child: Container(
@@ -204,7 +206,7 @@ Widget buildTextArea({
         ),
         boxShadow: [
           BoxShadow(
-            color: TFColors.yellowPrimary.withAlpha( 30),
+            color: TFColors.yellowPrimary.withAlpha(30),
             blurRadius: 16,
             offset: Offset(0, 6),
           ),
@@ -216,8 +218,9 @@ Widget buildTextArea({
       ),
       padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
       child: Column(
-        crossAxisAlignment:
-            center ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+        crossAxisAlignment: center
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
