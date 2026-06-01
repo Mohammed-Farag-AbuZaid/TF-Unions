@@ -12,56 +12,55 @@ class HeroDesktop extends StatelessWidget {
     final screenWidth = screenSize.width;
     return  Container(
                 
-                constraints: const BoxConstraints(minHeight:350),
+                height: MediaQuery.of(context).size.height * 0.93,
                 child:Column(
-                  
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: 50,),
 
-                    Image.asset('assets/DarkLogo.png', width:screenWidth * 0.3,),
-                    
-                    SizedBox(height: 10,),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 100.0),
+                      child: Image.asset('assets/BlackLogo.png', width:screenWidth * 0.3,),
+                    ),
+                        Text('A None-Profit Organization \nbuilt Specially for standout students of Egypt.', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500, height: 1.5, color: TFColors.whitePrimary),textAlign: TextAlign.center,),
                         Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Text('A None-Profit Organization \nbuilt Specially for standout students of Egypt.', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500, height: 1.5, color: TFColors.whitePrimary),textAlign: TextAlign.center,),
-                        ),
-                        SizedBox(height: 30,),
-                        SizedBox(
-                          width: 300,
-                          height: 50,
-                          
-                          child: ElevatedButton(onPressed: (){}, style: ElevatedButton.styleFrom(backgroundColor: Colors.orange, foregroundColor: TFColors.whitePrimary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))), child: const Text('Join if you are', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),),)
-                      ],
-                    ),
-                    SizedBox(height: 70,),
-                    Row(
-                      children: [
-                      
-                         Spacer(),
-                         Spacer(),
-                        SizedBox(
-                          width: 200,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          padding: const EdgeInsets.only(bottom: 100.0),
+                          child: SizedBox(
+                            width: 300,
+                            height: 50,
                             
-                            children: [
-                              for (int i = 0; i < socialItems.length; i++)
-                                Expanded(
-                                  child: IconButton(onPressed: (){}, icon: socialItems[i]),
-                                )
-                            ],
+                            child: ElevatedButton(onPressed: (){}, style: ElevatedButton.styleFrom(backgroundColor: Colors.orange, foregroundColor: TFColors.whitePrimary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))), child: const Text('Join if you are', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),),),
+                        ),
+
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 30.0),
+                      child: Row(
+                        children: [
+                        
+                           Spacer(),
+                           Spacer(),
+                          SizedBox(
+                            width: 200,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              
+                              children: [
+                                for (int i = 0; i < socialItems.length; i++)
+                                  Expanded(
+                                    child: IconButton(onPressed: (){}, icon: socialItems[i]),
+                                  )
+                              ],
+                            ),
                           ),
-                        ),
-                          
                             
-                      ],
+                              
+                        ],
+                      ),
                     ),
-                    SizedBox(height: 20,),
-                    
+
+
                   ],
+                
                 ),
 
               );

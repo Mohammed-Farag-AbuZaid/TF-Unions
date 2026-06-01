@@ -48,23 +48,25 @@ class ProjectsPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 25),
-          Wrap(
-            spacing: 25,
-            runSpacing: 25,
-            children: [
-              _buildProjectCard(
-                title: 'Stem union',
-                description: " هنا نهدف الى مساعدة طلاب مدارس STEM  ", 
-                imagePath: 'assets/projects/stem.png', 
-                onBtnTap: () => _launchURL('https://google.com'), 
-              ),
-              _buildProjectCard(
-                title: 'Universal union',
-                description: " منظمة تهدف الى مساعدة الطلاب الجامعيين", 
-                imagePath: 'assets/projects/', 
-                onBtnTap: () => _launchURL('https://google.com'),
-              ),
-            ],
+          Center(
+            child: Wrap(
+              spacing: 25,
+              runSpacing: 25,
+              children: [
+                _buildProjectCard(
+                  title: 'Stem union',
+                  description: " هنا نهدف الى مساعدة طلاب مدارس STEM  ", 
+                  imagePath: 'assets/projects/stem.png', 
+                  onBtnTap: () => _launchURL('https://google.com'), 
+                ),
+                _buildProjectCard(
+                  title: 'Universal union',
+                  description: " منظمة تهدف الى مساعدة الطلاب الجامعيين", 
+                  imagePath: 'assets/projects/', 
+                  onBtnTap: () => _launchURL('https://google.com'),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 55),
           Text(
@@ -77,41 +79,43 @@ class ProjectsPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 25),
-          Wrap(
-            spacing: 20,
-            runSpacing: 20,
-            children: [
-              _buildProjectCard(
-                title: 'shop',
-                description: " محمد فرج هيكتب الوصف ", 
-                imagePath: 'assets/projects/shop.png',
-                onBtnTap: () => _launchURL('https://google.com'),
-              ),
-              _buildProjectCard(
-                title: 'UNI Cap',
-                description: "محمد فرج هيضيف ده", 
-                imagePath: 'assets/projects/cap.png', 
-                onBtnTap: () => _launchURL('https://google.com'), 
-              ),
-              _buildProjectCard(
-                title: 'UV Journal',
-                description: " محمد فرج هيكتب الوصف ده ", 
-                imagePath: 'assets/projects/journal.png',
-                onBtnTap: () => _launchURL('https://google.com'), 
-              ),
-              _buildProjectCard(
-                title: 'English',
-                description: "اكتب يا محمد هنا كمان الوصف", 
-                imagePath: 'assets/projects/apc.png', 
-                onBtnTap: () => _launchURL('https://google.com'), 
-              ),
-              _buildProjectCard(
-                title: 'Guide',
-                description: "اخر وصف بقا معلش هنتعبك", 
-                imagePath: 'assets/projects/guide.png',
-                onBtnTap: () => _launchURL('https://google.com'),
-              ),
-            ],
+          Center(
+            child: Wrap(
+              spacing: 20,
+              runSpacing: 20,
+              children: [
+                _buildProjectCard(
+                  title: 'shop',
+                  description: " محمد فرج هيكتب الوصف ", 
+                  imagePath: 'assets/projects/shop.png',
+                  onBtnTap: () => _launchURL('https://google.com'),
+                ),
+                _buildProjectCard(
+                  title: 'UNI Cap',
+                  description: "محمد فرج هيضيف ده", 
+                  imagePath: 'assets/projects/cap.png', 
+                  onBtnTap: () => _launchURL('https://google.com'), 
+                ),
+                _buildProjectCard(
+                  title: 'UV Journal',
+                  description: " محمد فرج هيكتب الوصف ده ", 
+                  imagePath: 'assets/projects/journal.png',
+                  onBtnTap: () => _launchURL('https://google.com'), 
+                ),
+                _buildProjectCard(
+                  title: 'English',
+                  description: "اكتب يا محمد هنا كمان الوصف", 
+                  imagePath: 'assets/projects/apc.png', 
+                  onBtnTap: () => _launchURL('https://google.com'), 
+                ),
+                _buildProjectCard(
+                  title: 'Guide',
+                  description: "اخر وصف بقا معلش هنتعبك", 
+                  imagePath: 'assets/projects/guide.png',
+                  onBtnTap: () => _launchURL('https://google.com'),
+                ),
+              ],
+            ),
           ),
         ],
       ),

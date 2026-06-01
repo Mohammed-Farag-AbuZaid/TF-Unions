@@ -9,9 +9,9 @@ class About extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-                
-                width: double.maxFinite,
-                color: TFColors.bglight2,
+              height: MediaQuery.of(context).size.height * 1,
+              width: double.maxFinite,
+              color: TFColors.bglight1,
                 child: Center(
                   child: Column(
                     children: [

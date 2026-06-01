@@ -11,28 +11,25 @@ class HeroMobile extends StatelessWidget {
     return  SingleChildScrollView(
       child: Container(
                   
-                  constraints: const BoxConstraints(minHeight:570),
+                  height: MediaQuery.of(context).size.height * 0.95,
                   child:Column(
-                    
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                        Image.asset('assets/DarkLogo.png', width:screenWidth * 0.7,),
-                      
-                      SizedBox(height: 50,),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Text('A None-Profit Organization \nbuilt Specially for standout students of Egypt.', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, height: 1.5),textAlign: TextAlign.center,),
-                          ),
-                          SizedBox(height: 60,),
-                          SizedBox(
-                            width: 250,
-                            height: 50,
-                            
-                            child: ElevatedButton(onPressed: (){}, style: ElevatedButton.styleFrom(backgroundColor: TFColors.yellowPrimary, foregroundColor: TFColors.whitePrimary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))), child: const Text('Join if you are', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),),)
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.only(top: 100.0),
+                        child: Image.asset('assets/BlackLogo.png', width:screenWidth * 0.7,),
                       ),
+                      
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20.0, left: 50, right: 50),
+                        child: Text('A None-Profit Organization \nbuilt Specially for standout students of Egypt.', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, height: 1.5),textAlign: TextAlign.center,),
+                      ),
+                      SizedBox(
+                        width: 250,
+                        height: 50,
+                        
+                        child: ElevatedButton(onPressed: (){}, style: ElevatedButton.styleFrom(backgroundColor: TFColors.yellowPrimary, foregroundColor: TFColors.whitePrimary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))), child: const Text('Join if you are', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),),),
                       SizedBox(height: 150,),
                       
                     ],
