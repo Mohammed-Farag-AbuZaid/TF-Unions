@@ -79,13 +79,17 @@ Future<void> _register() async {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar( 
+      appBar: AppBar(
+        toolbarHeight: 90,
         title: Center(
           child: SizedBox(
-            width: 200,
-            child: Image.asset('assets/BlackLogo.png')),
+            width: 250,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20, right: 30,),
+              child: Image.asset('assets/BlackLogo.png'),
+            )),
         ),
-          backgroundColor: Colors.black,
+            backgroundColor: Colors.black,
       ),
       body: SafeArea(
           child: Center(

@@ -20,26 +20,30 @@ class ProjectsPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            'Services',
-            style: TextStyle(
-              fontSize: 42, 
-              fontWeight: FontWeight.bold,
-              color: TFColors.whitePrimary,
-              letterSpacing: 1.5,
+          Center(
+            child: Text(
+              'Services',
+              style: TextStyle(
+                fontSize: 42, 
+                fontWeight: FontWeight.bold,
+                color: TFColors.whitePrimary,
+                letterSpacing: 1.5,
+              ),
             ),
           ),
-          Container(
-            margin: const EdgeInsets.only(top: 8, bottom: 40),
-            height: 4,
-            width: 100,
-            decoration: BoxDecoration(
-              color: TFColors.yellowPrimary,
-              borderRadius: BorderRadius.circular(2),
+          Center(
+            child: Container(
+              margin: const EdgeInsets.only(top: 8, bottom: 40),
+              height: 4,
+              width: 200,
+              decoration: BoxDecoration(
+                color: TFColors.yellowPrimary,
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
           ),
           Text(
-            'Organization',
+            'Organization :',
             style: TextStyle(
               fontSize: 28, 
               fontWeight: FontWeight.bold, 
@@ -70,7 +74,7 @@ class ProjectsPage extends StatelessWidget {
           ),
           const SizedBox(height: 55),
           Text(
-            'Projects',
+            'Projects :',
             style: TextStyle(
               fontSize: 28, 
               fontWeight: FontWeight.bold, 

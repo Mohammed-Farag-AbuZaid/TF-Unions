@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tf_union/pages/forget_password.dart';
 import 'package:tf_union/pages/login.dart';
 import 'package:tf_union/pages/register_page.dart';
 import 'pages/home_page.dart';
@@ -46,7 +47,8 @@ class _MyAppState extends State<MyApp> {
       routes: {
         'register' : (context) => RegisterPage(),
         'login' : (context) => LoginPage(),
-        'homePage' : (context) => HomePage()
+        'homePage' : (context) => HomePage(),
+        'forget_password' : (context) => ForgetPasswordPage()
       },
     );
   }

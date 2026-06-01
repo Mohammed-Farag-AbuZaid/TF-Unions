@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/variables.dart';
 import 'package:tf_union/pages/docs_page.dart';
@@ -10,6 +11,7 @@ import 'package:tf_union/widgets/hero_desktop.dart';
 import 'package:tf_union/widgets/hero_mobile.dart';
 import 'package:tf_union/widgets/drawer_mobile.dart';
 import 'package:tf_union/pages/projects_page.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -18,9 +20,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final db = FirebaseFirestore.instance;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final scrollController = ScrollController();
   final List<GlobalKey> navbarKeys = List.generate(4, (index) => GlobalKey());
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    await db.collection("users").get().then((event) {
+      for (var doc in event.docs) {
+        print("${doc.id} => ${doc.data()}");
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,20 +50,24 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: Colors.black,
           drawer: constraints.maxWidth > mobileWidth
               ? null
-              :  DrawerMobile(onNavItemTap: (int navIndex) {
-                  scaffoldKey.currentState?.closeDrawer();
-                  scrollToSection(navIndex);
-                },),
+              : DrawerMobile(
+                  onNavItemTap: (int navIndex) {
+                    scaffoldKey.currentState?.closeDrawer();
+                    scrollToSection(navIndex);
+                  },
+                ),
           body: SingleChildScrollView(
             controller: scrollController,
             scrollDirection: Axis.vertical,
             child: Column(
               children: [
                 SizedBox(key: navbarKeys.first),
-                if (constraints.maxWidth > mobileWidth) 
-                  HeaderDesktop(onNavMenuTap: (int navIndex) {
-                    scrollToSection(navIndex);
-                  },),
+                if (constraints.maxWidth > mobileWidth)
+                  HeaderDesktop(
+                    onNavMenuTap: (int navIndex) {
+                      scrollToSection(navIndex);
+                    },
+                  ),
                 if (constraints.maxWidth <= mobileWidth)
                   HeaderMobile(
                     onLogoTap: () {},
@@ -54,18 +75,14 @@ class _HomePageState extends State<HomePage> {
                       scaffoldKey.currentState?.openDrawer();
                     },
                   ),
-            
+
                 // Hero
                 if (constraints.maxWidth > mobileWidth) const HeroDesktop(),
                 if (constraints.maxWidth <= mobileWidth) HeroMobile(),
-            
+
                 // About
-                About(
-                  key: navbarKeys[1],
-                ),
-                ProjectsPage(
-                  key: navbarKeys[2],
-                ),
+                About(key: navbarKeys[1]),
+                ProjectsPage(key: navbarKeys[2]),
                 // Footer
                 Container(
                   width: screenWidth,
@@ -74,7 +91,10 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.all(20.0),
                     child: Text(
                       'Copyright © 2026 TF Unions. All rights reserved.\nPowerd by SalamTech',
-                      style: TextStyle(color: TFColors.whitePrimary, height: 1.5),
+                      style: TextStyle(
+                        color: TFColors.whitePrimary,
+                        height: 1.5,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -85,13 +105,14 @@ class _HomePageState extends State<HomePage> {
         );
       },
     );
-  } 
+  }
 
   void scrollToSection(int navIndex) {
     if (navIndex == 3) {
-      Navigator.push(context,
+      Navigator.push(
+        context,
         MaterialPageRoute(builder: (context) => const DocsPage()),
-                        );
+      );
     }
     final key = navbarKeys[navIndex];
     Scrollable.ensureVisible(
