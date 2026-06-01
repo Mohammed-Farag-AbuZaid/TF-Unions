@@ -9,7 +9,7 @@ class HeroMobile extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     final screenWidth = screenSize.width;
     return  SingleChildScrollView(
-      child: Container(
+      child: SizedBox(
                   
                   height: MediaQuery.of(context).size.height * 0.95,
                   child:Column(

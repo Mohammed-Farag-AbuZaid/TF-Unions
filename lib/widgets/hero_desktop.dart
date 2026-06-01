@@ -10,7 +10,7 @@ class HeroDesktop extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final screenWidth = screenSize.width;
-    return  Container(
+    return  SizedBox(
                 
                 height: MediaQuery.of(context).size.height * 0.93,
                 child:Column(

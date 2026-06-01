@@ -186,3 +186,54 @@ Widget buildUsernameField({
     ),
   );
 }
+
+Widget buildTextArea({
+  required String content,
+  bool center = true,
+}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+    child: Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withAlpha(180),
+        borderRadius: const BorderRadius.only(
+          topRight: Radius.circular(30),
+          bottomLeft: Radius.circular(30),
+          topLeft: Radius.circular(10),
+          bottomRight: Radius.circular(10),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: TFColors.whitePrimary.withAlpha( 30),
+            blurRadius: 16,
+            offset: Offset(0, 6),
+          ),
+        ],
+        border: Border.all(
+          color: TFColors.yellowPrimary.withAlpha(50),
+          width: 1.3,
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
+      child: Column(
+        crossAxisAlignment:
+            center ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            content,
+            textAlign: center ? TextAlign.center : TextAlign.left,
+            style: TextStyle(
+              fontSize: 20,
+              letterSpacing: 0.2,
+              color: TFColors.yellowPrimary,
+              fontWeight: FontWeight.w500,
+              fontFamily: 'Montserrat',
+              height: 1.6,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
