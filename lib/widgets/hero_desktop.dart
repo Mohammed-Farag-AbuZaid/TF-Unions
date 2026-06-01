@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/social_items.dart';
+import 'package:tf_union/pages/register_page.dart';
+import 'dart:js' as js;
 
 
 class HeroDesktop extends StatelessWidget {
@@ -29,7 +31,9 @@ class HeroDesktop extends StatelessWidget {
                             width: 300,
                             height: 50,
                             
-                            child: ElevatedButton(onPressed: (){}, style: ElevatedButton.styleFrom(backgroundColor: Colors.orange, foregroundColor: TFColors.whitePrimary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))), child: const Text('Join if you are', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),),),
+                            child: ElevatedButton(onPressed: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterPage()));
+                            }, style: ElevatedButton.styleFrom(backgroundColor: Colors.orange, foregroundColor: TFColors.whitePrimary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))), child: const Text('Join if you are', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),),),
                         ),
 
                     Padding(
@@ -47,7 +51,17 @@ class HeroDesktop extends StatelessWidget {
                               children: [
                                 for (int i = 0; i < socialItems.length; i++)
                                   Expanded(
-                                    child: IconButton(onPressed: (){}, icon: socialItems[i]),
+                                    child: IconButton(onPressed: (){
+                                      if (i == 0) {
+                                        js.context.callMethod('open', ['https://www.youtube.com/']);
+                                      } else if (i == 1) {
+                                         js.context.callMethod('open', ['https://www.facebook.com/']);
+                                      } else if (i == 2) {
+                                        js.context.callMethod('open', ['https://chat.whatsapp.com/DSiidKAP0TP84vXA9Pand7']);
+                                      } else if (i == 3) {
+                                        js.context.callMethod('open', ['https://www.instagram.com/']);
+                                      }
+                                    }, icon: socialItems[i]),
                                   )
                               ],
                             ),

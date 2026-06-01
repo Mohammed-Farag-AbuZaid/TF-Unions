@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/nav_items.dart';
 import 'package:tf_union/constants/social_items.dart';
+import 'dart:js' as js;
 
+import 'package:tf_union/pages/login.dart';
+import 'package:tf_union/pages/register_page.dart';
 class DrawerMobile extends StatelessWidget {
-  const DrawerMobile({super.key});
+  const DrawerMobile({super.key, required this.onNavItemTap});
+  final Function(int)? onNavItemTap;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +37,7 @@ class DrawerMobile extends StatelessWidget {
       
                   ),),
                   onTap: () {
-                    
+                    onNavItemTap!(i);
                   },
                 ),
               const SizedBox(height: 30,),
@@ -46,7 +50,13 @@ class DrawerMobile extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                     fontSize: 16,
                   ),),
-                  onTap:(){},
+                  onTap:(){
+                    if (i == 0) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+                    } else if (i == 1) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterPage()));
+                    } 
+                  },
                 ),
       
                 const SizedBox(height: 150,),
@@ -54,7 +64,17 @@ class DrawerMobile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     for (int i = 0; i < socialItems.length; i++)         
-                       IconButton(onPressed: (){}, icon: SizedBox(width: 30, height: 30, child: socialItems[i]), ),
+                       IconButton(onPressed: (){
+                          if (i == 0) {
+                            js.context.callMethod('open', ['https://www.youtube.com/']);
+                          } else if (i == 1) {
+                             js.context.callMethod('open', ['https://www.facebook.com/']);
+                          } else if (i == 2) {
+                            js.context.callMethod('open', ['https://chat.whatsapp.com/DSiidKAP0TP84vXA9Pand7']);
+                          } else if (i == 3) {
+                            js.context.callMethod('open', ['https://www.instagram.com/']);
+                          }
+                       }, icon: SizedBox(width: 30, height: 30, child: socialItems[i]), ),
                        
                                     
                   ],

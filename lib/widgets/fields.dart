@@ -204,7 +204,7 @@ Widget buildTextArea({
         ),
         boxShadow: [
           BoxShadow(
-            color: TFColors.whitePrimary.withAlpha( 30),
+            color: TFColors.yellowPrimary.withAlpha( 30),
             blurRadius: 16,
             offset: Offset(0, 6),
           ),
@@ -226,7 +226,7 @@ Widget buildTextArea({
             style: TextStyle(
               fontSize: 20,
               letterSpacing: 0.2,
-              color: TFColors.yellowPrimary,
+              color: TFColors.whitePrimary,
               fontWeight: FontWeight.w500,
               fontFamily: 'Montserrat',
               height: 1.6,

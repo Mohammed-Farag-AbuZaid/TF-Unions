@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
+import 'package:tf_union/pages/register_page.dart';
 
 class HeroMobile extends StatelessWidget {
   const HeroMobile({super.key});
@@ -29,7 +30,10 @@ class HeroMobile extends StatelessWidget {
                         width: 250,
                         height: 50,
                         
-                        child: ElevatedButton(onPressed: (){}, style: ElevatedButton.styleFrom(backgroundColor: TFColors.yellowPrimary, foregroundColor: TFColors.whitePrimary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))), child: const Text('Join if you are', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),),),
+                        child: ElevatedButton(onPressed: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterPage()));
+
+                        }, style: ElevatedButton.styleFrom(backgroundColor: TFColors.yellowPrimary, foregroundColor: TFColors.whitePrimary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))), child: const Text('Join if you are', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),),),
                       SizedBox(height: 150,),
                       
                     ],

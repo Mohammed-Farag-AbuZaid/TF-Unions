@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
+import 'package:tf_union/pages/docs_page.dart';
 import 'package:tf_union/pages/login.dart';
 import 'package:tf_union/widgets/fields.dart';
 
@@ -11,7 +12,8 @@ class About extends StatelessWidget {
 Widget build(BuildContext context) {
   final size = MediaQuery.of(context).size;
   return Container(
-    height: size.height,          
+    height: size.height,   
+    width: size.width,       
     color: TFColors.bglight1,
     child: Expanded(
       child: Column(
@@ -43,7 +45,7 @@ Widget build(BuildContext context) {
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
                         Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => const LoginPage()),
+                          MaterialPageRoute(builder: (context) => const DocsPage()),
                         );
                       },
                   ),

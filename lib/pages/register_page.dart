@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/widgets/fields.dart';
+import 'package:tf_union/constants/variables.dart';
+
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -80,7 +82,7 @@ Future<void> _register() async {
       appBar: AppBar( 
         title: Center(
           child: SizedBox(
-            width: 150,
+            width: 200,
             child: Image.asset('assets/BlackLogo.png')),
         ),
           backgroundColor: Colors.black,
@@ -96,7 +98,9 @@ Future<void> _register() async {
                   )
                 ),
               child: Stepper(
-                type: StepperType.vertical,
+                type: MediaQuery.of(context).size.width <= minRegisterWidth
+                    ? StepperType.vertical
+                    : StepperType.horizontal,
                 steps: [
                   Step(
                     isActive: currentStep >= 0,

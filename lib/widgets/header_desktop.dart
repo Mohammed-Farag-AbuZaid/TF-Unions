@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/nav_items.dart';
+import 'package:tf_union/pages/login.dart';
+import 'package:tf_union/pages/register_page.dart';
 import 'package:tf_union/widgets/logo.dart';
 
 class HeaderDesktop extends StatelessWidget {
-  const HeaderDesktop({super.key});
+  const HeaderDesktop({super.key, required this.onNavMenuTap,});
+  final Function(int) onNavMenuTap;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,10 @@ class HeaderDesktop extends StatelessWidget {
                 for(int i = 0; i < navItems.length; i++)
                   Padding(
                     padding: const EdgeInsets.only(right: 20),
-                    child: TextButton(onPressed: (){}, child: Text(navItems[i], style: TextStyle(
+                    child: TextButton(onPressed: (){
+                    onNavMenuTap(i);
+
+                    }, child: Text(navItems[i], style: TextStyle(
                       color: TFColors.whitePrimary,
                       fontWeight: FontWeight.w400,
                       fontSize: 16,
@@ -39,7 +45,13 @@ class HeaderDesktop extends StatelessWidget {
                 for(int i = 0; i < log.length; i++)
                   Padding(
                     padding: const EdgeInsets.only(right: 5),
-                    child: TextButton(onPressed: (){}, child: Text(log[i], style: TextStyle(
+                    child: TextButton(onPressed: (){
+                      if (i == 0) {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+                      } else if (i == 1) {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterPage()));
+                      } 
+                    }, child: Text(log[i], style: TextStyle(
                       color: TFColors.whitePrimary,
                       fontWeight: FontWeight.w400,
                       fontSize: 16,
