@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const TFUnionApp());
+  runApp(const TFUnionDocsApp());
 }
 
-class TFUnionApp extends StatelessWidget {
-  const TFUnionApp({super.key});
+class TFUnionDocsApp extends StatelessWidget {
+  const TFUnionDocsApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: DocsPage(),
+      title: 'TF Union Docs',
+      theme: ThemeData(
+        useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFF000000),
+      ),
+      home: const DocsPage(),
     );
   }
 }
@@ -24,100 +29,309 @@ class DocsPage extends StatelessWidget {
     final faqs = [
       {
         "q": "What is TF Union?",
-        "a": "TF Union is an educational platform designed to help students and learners."
+        "a": """
+TF Union is an educational platform and community designed to help students and learners by providing organized tools, projects, and learning guides in one place.
+
+Our goal is to reduce confusion and make access to educational resources easier, clearer, and more structured.
+""",
       },
       {
         "q": "Why was TF Union created?",
-        "a": "To organize learning resources and reduce confusion for students."
+        "a": """
+TF Union was created to help students find everything they need for learning in one place instead of searching randomly across scattered resources.
+
+We focus on organizing knowledge and presenting it in a simple and practical way.
+""",
       },
       {
         "q": "Who is TF Union for?",
-        "a": "Students, learners, and anyone who wants to improve their skills."
+        "a": """
+The platform is designed for:
+
+• High school students  
+• University students  
+• Self-learners  
+• Students interested in programming, science, and math  
+• Anyone who wants to improve themselves  
+
+If you are ambitious and love learning, this platform is for you.
+""",
       },
       {
         "q": "What services does TF Union provide?",
-        "a": "Guides, projects, and educational tools (still in development)."
+        "a": """
+We provide several educational services such as:
+
+• Student projects  
+• Learning guides for different fields  
+• English learning tools  
+• Structured educational content  
+• Supportive learning communities  
+
+More services are being developed and added over time.
+""",
       },
       {
         "q": "Are all services available now?",
-        "a": "No, some parts are still under development."
+        "a": """
+No, the project is still under development.
+
+Some services are already available, while others are being built and will be released gradually.
+""",
       },
       {
         "q": "What are educational projects?",
-        "a": "Simple ideas that help students practice and build experience."
+        "a": """
+They are ideas and tools that help students build or understand projects, or use ready-made structured ideas that they can develop for learning purposes.
+""",
       },
       {
         "q": "What are Guides?",
-        "a": "Structured learning paths to help students learn step by step."
+        "a": """
+Guides are structured learning paths that help students understand a specific field step by step without confusion.
+
+They include curated resources and clear learning roadmaps.
+""",
       },
       {
         "q": "Is the platform free?",
-        "a": "Yes, it is designed to be free for students."
+        "a": """
+Most services are currently free.
+
+Our main goal is to provide real educational value without barriers for students.
+""",
       },
       {
         "q": "What is TF Union’s vision?",
-        "a": "To become a helpful educational hub for students in the future."
+        "a": """
+To become the leading platform for students and learners in the Arab world by providing organized educational tools, resources, and opportunities.
+""",
+      },
+      {
+        "q": "What makes TF Union different?",
+        "a": """
+We don’t provide random content.
+
+We focus on organization, quality, and delivering the right resource to the right student at the right time.
+""",
       },
       {
         "q": "What are the future plans?",
-        "a": "To develop tools, improve content, and expand gradually."
+        "a": """
+• Developing more educational tools  
+• Expanding student communities  
+• Supporting more academic fields  
+• Improving user experience  
+• Reaching more students in Egypt and the Arab world  
+
+We are just getting started.
+""",
       },
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("TF Union Docs"),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(12),
-        children: [
-          const SizedBox(height: 10),
-
-          // TITLE
-          const Text(
-            "TF Union Docs",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          // INTRO (Docs description)
-          const Text(
-            "TF Union is an educational platform focused on helping students and learners by organizing resources, guides, and projects in one place. "
-            "This documentation is a simple starting version that explains the main idea behind the platform.",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey,
-              height: 1.4,
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          const Divider(),
-
-          const SizedBox(height: 10),
-
-          // FAQ LIST
-          ...faqs.map(
-            (faq) => Card(
-              child: ExpansionTile(
-                title: Text(faq["q"]!),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 60),
+              decoration: BoxDecoration(
+                color: const Color(0xFF0A2D91),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blue.withValues(alpha: .3),
+                    blurRadius: 30,
+                  ),
+                ],
+              ),
+              child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Text(faq["a"]!),
-                  )
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Image.asset(
+                      'assets/BlackLogo.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    "TF UNION",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 42,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    "Educational Hub For Ambitious Students",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white70, fontSize: 18),
+                  ),
                 ],
               ),
             ),
-          ),
-        ],
+
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  Container(
+                    constraints: const BoxConstraints(maxWidth: 900),
+                    padding: const EdgeInsets.all(28),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF111111),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: const Color(0xFF0A2D91)),
+                    ),
+                    child: const Text(
+                      "TF Union is an educational platform that connects students with tools, resources, projects, and learning communities to help them grow faster and learn in a more structured way.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 17,
+                        height: 1.9,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 35),
+
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFB800),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Text(
+                      "${faqs.length} Frequently Asked Questions",
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 35),
+
+                  ...faqs.map(
+                    (faq) => Container(
+                      margin: const EdgeInsets.only(bottom: 24),
+                      constraints: const BoxConstraints(maxWidth: 900),
+                      child: Card(
+                        color: const Color(0xFF111111),
+                        elevation: 12,
+                        shadowColor: const Color(0xFF0A2D91),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: const BorderSide(color: Color(0xFF0A2D91)),
+                        ),
+                        child: Theme(
+                          data: Theme.of(
+                            context,
+                          ).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            collapsedIconColor: const Color(0xFFFFB800),
+                            iconColor: const Color(0xFFFFB800),
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF0A2D91),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.help_outline,
+                                color: Color(0xFFFFB800),
+                              ),
+                            ),
+                            title: Text(
+                              faq["q"]!,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  28,
+                                  8,
+                                  28,
+                                  28,
+                                ),
+                                child: Text(
+                                  faq["a"]!,
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 16,
+                                    height: 2.0,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  Container(
+                    constraints: const BoxConstraints(maxWidth: 900),
+                    padding: const EdgeInsets.all(28),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF111111),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: const Color(0xFFFFB800)),
+                    ),
+                    child: const Column(
+                      children: [
+                        Icon(
+                          Icons.emoji_objects,
+                          color: Color(0xFFFFB800),
+                          size: 40,
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          "Our Mission",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          "To empower students by providing access to knowledge, tools, resources, and communities that help them achieve their goals and unlock their full potential.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 16,
+                            height: 1.9,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 50),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
