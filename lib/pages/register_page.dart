@@ -1,4 +1,4 @@
-import 'package:fancy_password_field/fancy_password_field.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
@@ -16,46 +16,90 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   int currentStep = 0;
   final _accountFormKey = GlobalKey<FormState>();
-  final _firstVerificationFormKey = GlobalKey<FormState>();
   final _academicFormKey = GlobalKey<FormState>();
-  final _secondVerificationFormKey = GlobalKey<FormState>();
   final _userInfoFormKey = GlobalKey<FormState>();
   final firstName = TextEditingController();
   final lastName = TextEditingController();
   final email = TextEditingController();
   final TextEditingController _birthDate = TextEditingController();
   final phone = TextEditingController();
-  final personalEmail = TextEditingController();
-  final mobileCode = TextEditingController();
-  final mailCode = TextEditingController();
   final prepSchool = TextEditingController();
   final thanawySchool = TextEditingController();
   final university = TextEditingController();
-  final eduEmail = TextEditingController();
-  final eduMailCode = TextEditingController();
   final username = TextEditingController();
-  final FancyPasswordController password = FancyPasswordController();
-  final passwordVerify = TextEditingController();
+  final password = TextEditingController();
+  final faculty = TextEditingController();
   String? stemSchool;
   String? _selectedValue;
   String? _selectedGrade;
   String? _selectedYear;
 
-  Future<void> _register() async {
+  Future<void> _verifyEmail() async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email.text,
-        password: username.text,
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: email.text,
+            password: password.text,
+          );
+
+      await userCredential.user!.sendEmailVerification();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Verification link sent. Please check your email and come back.',
+          ),
+        ),
       );
-      Navigator.of(context).pushReplacementNamed('homePage');
+
+      setState(() => currentStep += 1); // move to next step
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        debugPrint('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        debugPrint('The account already exists for that email.');
-      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message ?? 'Error')));
+    }
+  }
+
+  Future<bool> isEmailVerified() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    await user?.reload();
+    user = FirebaseAuth.instance.currentUser;
+
+    return user?.emailVerified ?? false;
+  }
+
+  Future<void> registerUser() async {
+    final isVerified = await isEmailVerified();
+
+    if (!isVerified) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Please verify your email first')));
+      return;
+    }
+
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
+        'firstName': firstName.text,
+        'lastName': lastName.text,
+        'email': email.text,
+        'phone': phone.text,
+        'birthDate': _birthDate.text,
+        'academicLevel': _selectedValue,
+        'username': username.text,
+        'createdAt': Timestamp.now(),
+      });
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Account created successfully!')));
+
+      setState(() => currentStep += 1);
     } catch (e) {
-      debugPrint('$e');
+      debugPrint(e.toString());
     }
   }
 
@@ -66,13 +110,11 @@ class _RegisterPageState extends State<RegisterPage> {
     email.dispose();
     _birthDate.dispose();
     phone.dispose();
-    personalEmail.dispose();
-    mobileCode.dispose();
-    mailCode.dispose();
     prepSchool.dispose();
     thanawySchool.dispose();
     university.dispose();
     password.dispose();
+    username.dispose();
     super.dispose();
   }
 
@@ -183,6 +225,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           child: Form(
                             key: _accountFormKey,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteractionIfError,
                             child: Column(
                               children: [
                                 buildTextField(
@@ -201,7 +245,21 @@ class _RegisterPageState extends State<RegisterPage> {
                                     _selectDate();
                                   },
                                 ),
-
+                                buildDropdown(
+                                  label: 'Academic Level',
+                                  value: _selectedValue,
+                                  items: [
+                                    'Prep School',
+                                    'Thanawy',
+                                    'STEM',
+                                    'University',
+                                  ],
+                                  onChanged: (value) =>
+                                      setState(() => _selectedValue = value),
+                                  validator: (value) => value == null
+                                      ? 'please select an option'
+                                      : null,
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: IntlPhoneField(
@@ -222,26 +280,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                     initialCountryCode: 'EG',
                                   ),
                                 ),
-                                buildMailField(
-                                  controller: personalEmail,
-                                  label: 'personal Email',
-                                ),
-
-                                buildDropdown(
-                                  label: 'Academic Level',
-                                  value: _selectedValue,
-                                  items: [
-                                    'Prep School',
-                                    'Thanawy',
-                                    'STEM',
-                                    'University',
-                                  ],
-                                  onChanged: (value) =>
-                                      setState(() => _selectedValue = value),
-                                  validator: (value) => value == null
-                                      ? 'please select an option'
-                                      : null,
-                                ),
                               ],
                             ),
                           ),
@@ -249,46 +287,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ),
+
                   Step(
                     isActive: currentStep >= 2,
-                    title: Text(
-                      'Verification',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    content: Center(
-                      child: Card(
-                        elevation: 30,
-                        margin: const EdgeInsets.only(top: 24, bottom: 24),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Container(
-                          width: 430,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 24,
-                          ),
-                          child: Form(
-                            key: _firstVerificationFormKey,
-                            child: Column(
-                              children: [
-                                buildVerificationFeild(
-                                  controller: mobileCode,
-                                  label: 'Mobile Verification Code',
-                                ),
-                                buildVerificationFeild(
-                                  controller: mailCode,
-                                  label: 'Email Verification Code',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Step(
-                    isActive: currentStep >= 3,
                     title: Text(
                       'Academic Info',
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -308,6 +309,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           child: Form(
                             key: _academicFormKey,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteractionIfError,
+
                             child: Column(
                               children: [
                                 if (_selectedValue == 'Prep School')
@@ -396,13 +400,15 @@ class _RegisterPageState extends State<RegisterPage> {
                                     ],
                                     onChanged: (value) =>
                                         setState(() => _selectedYear = value),
+                                    validator: (value) => value == null
+                                        ? 'please select an option'
+                                        : null,
                                   ),
 
-                                if (_selectedValue == 'STEM' ||
-                                    _selectedValue == 'University')
-                                  buildMailField(
-                                    controller: eduEmail,
-                                    label: 'Education Email',
+                                if (_selectedValue == 'University')
+                                  buildTextField(
+                                    controller: faculty,
+                                    label: 'Faculty',
                                   ),
                               ],
                             ),
@@ -413,41 +419,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
 
                   Step(
-                    isActive: currentStep >= 4,
-                    title: Text(
-                      'verification',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    content: Center(
-                      child: Card(
-                        elevation: 30,
-                        margin: const EdgeInsets.only(top: 24, bottom: 24),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Container(
-                          width: 430,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 24,
-                          ),
-                          child: Form(
-                            key: _secondVerificationFormKey,
-                            child: Column(
-                              children: [
-                                buildVerificationFeild(
-                                  controller: eduMailCode,
-                                  label: 'Email Verification Code',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Step(
-                    isActive: currentStep >= 5,
+                    isActive: currentStep >= 3,
                     title: Text(
                       'Become a user',
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -467,16 +439,23 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           child: Form(
                             key: _userInfoFormKey,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteractionIfError,
+
                             child: Column(
                               children: [
+                                buildMailField(
+                                  controller: email,
+                                  label: 'personal Email',
+                                ),
                                 buildUsernameField(
                                   controller: username,
                                   label: 'username',
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: FancyPasswordField(
-                                    passwordController: password,
+                                  child: TextFormField(
+                                    controller: password,
                                     decoration: InputDecoration(
                                       labelText: 'Password',
                                       enabledBorder: OutlineInputBorder(
@@ -506,7 +485,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                   Step(
-                    isActive: currentStep >= 6,
+                    isActive: currentStep >= 5,
                     title: Text(
                       'Complete',
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -514,29 +493,33 @@ class _RegisterPageState extends State<RegisterPage> {
                     content: Container(
                       child: Column(
                         children: [
-                          SizedBox(height: 30),
                           Text(
-                            'Welcome!\nNow you are a TF user\nyou can access all TF-Unions serveces via this account',
+                            'We sent you a verification email.\nPlease check your inbox and click the link.',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: TFColors.textfieldbg,
-                              height: 1.5,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
                           ),
-                          SizedBox(height: 30),
-                          SizedBox(
-                            height: 50,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              onPressed: () {},
-                              child: Text('Back to your Dashboard'),
-                            ),
+                          SizedBox(height: 20),
+
+                          ElevatedButton(
+                            onPressed: () async {
+                              bool verified = await isEmailVerified();
+
+                              if (verified) {
+                                await registerUser();
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Still not verified')),
+                                );
+                              }
+                            },
+                            child: Text("I verified my email"),
+                          ),
+
+                          TextButton(
+                            onPressed: () async {
+                              User? user = FirebaseAuth.instance.currentUser;
+                              await user?.sendEmailVerification();
+                            },
+                            child: Text("Resend Email"),
                           ),
                         ],
                       ),
@@ -552,25 +535,25 @@ class _RegisterPageState extends State<RegisterPage> {
                               onPressed: details.onStepContinue,
                               child: const Text('Start'),
                             ),
-                          if (currentStep < 5 &&
-                              currentStep != 2 &&
+                          if (currentStep < 4 &&
+                              currentStep != 3 &&
                               currentStep != 0)
                             ElevatedButton(
                               onPressed: details.onStepContinue,
                               child: const Text('Next'),
                             ),
-                          if (currentStep == 2)
+                          if (currentStep == 3)
                             ElevatedButton(
                               onPressed: details.onStepContinue,
-                              child: const Text('Verify'),
+                              child: const Text('send verification link'),
                             ),
 
-                          if (currentStep == 5)
+                          if (currentStep == 4)
                             ElevatedButton(
                               onPressed: details.onStepContinue,
                               child: const Text('Register'),
                             ),
-                          if (currentStep > 0 && currentStep < 6)
+                          if (currentStep > 0 && currentStep < 5)
                             TextButton(
                               onPressed: details.onStepCancel,
                               child: const Text('Previous'),
@@ -582,44 +565,25 @@ class _RegisterPageState extends State<RegisterPage> {
                 onStepContinue: () async {
                   if (currentStep == 0) {
                     setState(() => currentStep += 1);
-                  }
-                  if (currentStep == 1) {
+                  } else if (currentStep == 1) {
                     if (_accountFormKey.currentState?.validate() ?? false) {
                       setState(() => currentStep += 1);
                     }
                   } else if (currentStep == 2) {
-                    if (_firstVerificationFormKey.currentState?.validate() ??
-                        false) {
+                    if (_academicFormKey.currentState?.validate() ?? false) {
                       setState(() => currentStep += 1);
                     }
                   } else if (currentStep == 3) {
-                    if (_academicFormKey.currentState?.validate() ?? false) {
-                      if (!(_selectedValue == 'STEM' ||
-                          _selectedValue == 'University')) {
-                        setState(() => currentStep += 2);
-                      } else {
-                        setState(() => currentStep += 1);
-                      }
+                    if (_userInfoFormKey.currentState?.validate() ?? false) {
+                      await _verifyEmail();
                     }
                   } else if (currentStep == 4) {
-                    if (_secondVerificationFormKey.currentState?.validate() ??
-                        false) {
-                      setState(() => currentStep += 1);
-                    }
-                  } else if (currentStep == 5) {
-                    if (_userInfoFormKey.currentState?.validate() ?? false) {
-                      await _register();
-                    }
+                    await registerUser();
                   }
                 },
                 onStepCancel: () {
-                  if (currentStep == 4) {
-                    if (!(_selectedValue == "STEM" ||
-                        _selectedValue == 'University')) {
-                      setState(() => currentStep -= 2);
-                    } else {
-                      setState(() => currentStep -= 1);
-                    }
+                  if (currentStep != 0) {
+                    setState(() => currentStep -= 1);
                   } else {
                     currentStep == 0 ? null : setState(() => currentStep -= 1);
                   }

@@ -65,5 +65,4 @@ class DefaultFirebaseOptions {
     projectId: 'tf-unions',
     storageBucket: 'tf-unions.firebasestorage.app',
   );
-
 }
