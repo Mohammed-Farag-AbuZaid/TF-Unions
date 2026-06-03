@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
     getData();
   }
 
-  Future<void> getData() async {
+  getData() async {
     await db.collection("users").get().then((event) {
       for (var doc in event.docs) {
         print("${doc.id} => ${doc.data()}");
