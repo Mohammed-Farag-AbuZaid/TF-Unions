@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fancy_password_field/fancy_password_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/widgets/fields.dart';
 import 'package:tf_union/constants/variables.dart';
+import 'package:tf_union/widgets/costum_dialog.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -45,19 +45,25 @@ class _RegisterPageState extends State<RegisterPage> {
 
       await userCredential.user!.sendEmailVerification();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Verification link sent. Please check your email and come back.',
-          ),
-        ),
+      showCostumDialog(
+        context: context,
+        title: 'Verification Email Sent',
+        content:
+            'A verification email has been sent to ${email.text}. Please check your inbox and click the link to verify your email.',
+        onConfirm: () {
+          Navigator.of(context).pop();
+        },
       );
-
       setState(() => currentStep += 1); // move to next step
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.message ?? 'Error')));
+      showCostumDialog(
+        context: context,
+        title: 'Error',
+        content: e.message ?? 'Error',
+        onConfirm: () {
+          Navigator.of(context).pop();
+        },
+      );
     }
   }
 
@@ -74,33 +80,55 @@ class _RegisterPageState extends State<RegisterPage> {
     final isVerified = await isEmailVerified();
 
     if (!isVerified) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Please verify your email first')));
+      showCostumDialog(
+        context: context,
+        title: 'Email Not Verified',
+        content: 'Please verify your email first.',
+        onConfirm: () {
+          Navigator.of(context).pop();
+        },
+      );
       return;
     }
 
     try {
       User? user = FirebaseAuth.instance.currentUser;
+      String level = _selectedValue!;
 
+      // Create comprehensive user document
       await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
+        if (level == 'STEM') 'stemSchool': stemSchool,
+        if (level == 'Thanawy') 'thanawySchool': thanawySchool.text,
+        if (level == 'Prep School') 'prepSchool': prepSchool.text,
+        if (level == 'University') 'university': university.text,
+        if (level == 'University') 'faculty': faculty.text,
+        if (level != 'University') 'grade': _selectedGrade,
+        if (level == 'University') 'year': _selectedYear,
         'firstName': firstName.text,
         'lastName': lastName.text,
-        'email': email.text,
+        'email': user.email,
         'phone': phone.text,
         'birthDate': _birthDate.text,
-        'academicLevel': _selectedValue,
         'username': username.text,
-        'createdAt': Timestamp.now(),
+        'academicLevel': level,
+        'registrationDate': Timestamp.now(),
       });
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Account created successfully!')));
+      showCostumDialog(
+        context: context,
+        title: 'Account Created',
+        content: 'Your account has been created successfully!',
+        onConfirm: () {
+          Navigator.of(context).pop();
+        },
+      );
 
       setState(() => currentStep += 1);
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint('Registration error: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Registration failed: $e')));
     }
   }
 
@@ -486,7 +514,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                   Step(
-                    isActive: currentStep >= 5,
+                    isActive: currentStep >= 4,
                     title: Text(
                       'Complete',
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -499,21 +527,6 @@ class _RegisterPageState extends State<RegisterPage> {
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 20),
-
-                          ElevatedButton(
-                            onPressed: () async {
-                              bool verified = await isEmailVerified();
-
-                              if (verified) {
-                                await registerUser();
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Still not verified')),
-                                );
-                              }
-                            },
-                            child: Text("I verified my email"),
-                          ),
 
                           TextButton(
                             onPressed: () async {
@@ -579,7 +592,22 @@ class _RegisterPageState extends State<RegisterPage> {
                       await _verifyEmail();
                     }
                   } else if (currentStep == 4) {
-                    await registerUser();
+                    bool verified = await isEmailVerified();
+
+                    if (verified) {
+                      await registerUser();
+                      Navigator.of(context).pushReplacementNamed('homePage');
+                    } else {
+                      showCostumDialog(
+                        context: context,
+                        title: 'Email Not Verified',
+                        content: 'Please verify your email first.',
+                        onConfirm: () {
+                          Navigator.of(context).pop();
+                        },
+                      );
+                      return;
+                    }
                   }
                 },
                 onStepCancel: () {
