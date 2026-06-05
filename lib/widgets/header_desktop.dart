@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/nav_items.dart';
 import 'package:tf_union/pages/login.dart';
 import 'package:tf_union/pages/register_page.dart';
 import 'package:tf_union/widgets/logo.dart';
+import 'package:tf_union/constants/variables.dart';
 
 class HeaderDesktop extends StatelessWidget {
   const HeaderDesktop({super.key, required this.onNavMenuTap});
@@ -43,6 +45,7 @@ class HeaderDesktop extends StatelessWidget {
               ),
             ),
           const Spacer(),
+          if (loggedIn == false)
           for (int i = 0; i < log.length; i++)
             Padding(
               padding: const EdgeInsets.only(right: 5),
@@ -74,6 +77,29 @@ class HeaderDesktop extends StatelessWidget {
                 ),
               ),
             ),
+          if (loggedIn == true)
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: MaterialButton(
+              height: 50,
+              minWidth: 50,
+              color: TFColors.yellowPrimary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(500),
+              ),
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+              },
+              child: const Text(
+                'M',
+                style: TextStyle(
+                  color: TFColors.whitePrimary,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/nav_items.dart';
 import 'package:tf_union/constants/social_items.dart';
+import 'package:tf_union/constants/variables.dart';
 import 'dart:js' as js;
 
 import 'package:tf_union/pages/login.dart';
@@ -47,6 +48,7 @@ class DrawerMobile extends StatelessWidget {
                 },
               ),
             const SizedBox(height: 30),
+            if (loggedIn == false)
             for (int i = 0; i < log.length; i++)
               ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 20),

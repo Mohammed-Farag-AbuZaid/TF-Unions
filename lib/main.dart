@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tf_union/constants/variables.dart';
 import 'package:tf_union/pages/forget_password.dart';
 import 'package:tf_union/pages/login.dart';
 import 'package:tf_union/pages/register_page.dart';
@@ -26,9 +27,10 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
-        print('User is currently signed out!');
+        loggedIn = false;
       } else {
-        print('User is signed in!');
+        loggedIn = true;
+        
       }
     });
   }

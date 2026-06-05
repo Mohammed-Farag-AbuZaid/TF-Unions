@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
+import 'package:tf_union/constants/variables.dart';
 import 'package:tf_union/pages/register_page.dart';
-
+import 'dart:js' as js;
 class HeroMobile extends StatelessWidget {
   const HeroMobile({super.key});
 
@@ -23,11 +24,12 @@ class HeroMobile extends StatelessWidget {
                 width: screenWidth * 0.7,
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.only(bottom: 20.0, left: 50, right: 50),
               child: Text(
-                'A None-Profit Organization \nbuilt Specially for standout students of Egypt.',
+                loggedIn
+                    ? 'Take a look at our Latest services and projects :'
+                    : 'A None-Profit Organization \nbuilt Specially for standout students of Egypt.',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w500,
@@ -36,32 +38,32 @@ class HeroMobile extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(
-              width: 250,
-              height: 50,
+              SizedBox(
+                
 
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RegisterPage(),
+                child: ElevatedButton(
+                  onPressed: () {
+                    loggedIn ?
+                    js.context.callMethod('open', ['https://www.example.com']) :
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RegisterPage(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: TFColors.yellowPrimary,
+                    foregroundColor: TFColors.whitePrimary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TFColors.yellowPrimary,
-                  foregroundColor: TFColors.whitePrimary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Text( loggedIn ? 'Explore A.P.C Now' : 'Join us',
+                    style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   ),
                 ),
-                child: const Text(
-                  'Join if you are',
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                ),
               ),
-            ),
             SizedBox(height: 150),
           ],
         ),

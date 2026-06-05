@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
+import 'package:tf_union/constants/variables.dart';
 import 'package:tf_union/widgets/logo.dart';
 
 class HeaderMobile extends StatelessWidget {
@@ -30,6 +32,29 @@ class HeaderMobile extends StatelessWidget {
           Logo(onTap: onLogoTap),
           const Spacer(),
           SizedBox(width: 20),
+          if (loggedIn == true)
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: MaterialButton(
+              height: 40,
+              minWidth: 40,
+              color: TFColors.yellowPrimary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(500),
+              ),
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+              },
+              child: const Text(
+                'M',
+                style: TextStyle(
+                  color: TFColors.whitePrimary,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/social_items.dart';
+import 'package:tf_union/constants/variables.dart';
 import 'package:tf_union/pages/register_page.dart';
 import 'dart:js' as js;
 
@@ -25,7 +26,9 @@ class HeroDesktop extends StatelessWidget {
             ),
           ),
           Text(
-            'A None-Profit Organization \nbuilt Specially for standout students of Egypt.',
+            loggedIn
+                ? 'Take a look at our Latest services and projects :'
+                : 'A None-Profit Organization \nbuilt Specially for standout students of Egypt.',
             style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.w500,
@@ -42,12 +45,16 @@ class HeroDesktop extends StatelessWidget {
 
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RegisterPage(),
-                    ),
-                  );
+                  loggedIn
+                      ? js.context.callMethod('open', [
+                          'https://www.example.com',
+                        ])
+                      : Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const RegisterPage(),
+                          ),
+                        );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
@@ -56,9 +63,13 @@ class HeroDesktop extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-                child: const Text(
-                  'Join if you are',
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                child: Text(
+                  loggedIn ? 'Explore A.P.C Now' : 'Join us',
+
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),

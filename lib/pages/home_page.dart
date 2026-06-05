@@ -66,7 +66,6 @@ class _HomePageState extends State<HomePage> {
                 // Hero
                 if (constraints.maxWidth > mobileWidth) const HeroDesktop(),
                 if (constraints.maxWidth <= mobileWidth) HeroMobile(),
-
                 // About
                 About(key: navbarKeys[1]),
                 ProjectsPage(key: navbarKeys[2]),
