@@ -147,16 +147,21 @@ Widget buildMailField({
 Widget buildUsernameField({
   required TextEditingController controller,
   required String label,
+  String? errorText,
+  Widget? suffixIcon,
+  ValueChanged<String>? onChanged,
   String? Function(String?)? validator,
   VoidCallback? onTap,
-  TextInputType keyboardType = TextInputType.text,
   bool readOnly = false,
 }) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: TextFormField(
+      onChanged: onChanged,
       controller: controller,
       decoration: InputDecoration(
+        errorText: errorText,
+        suffixIcon: suffixIcon,
         labelText: label,
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: TFColors.hintDark),
@@ -184,7 +189,6 @@ Widget buildUsernameField({
       },
       readOnly: readOnly,
       onTap: onTap,
-      keyboardType: keyboardType,
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r'[a-z0-9_]')),
       ],

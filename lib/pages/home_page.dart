@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/variables.dart';
 import 'package:tf_union/pages/docs_page.dart';
-import 'package:tf_union/pages/login.dart';
 import 'package:tf_union/widgets/about.dart';
 import 'package:tf_union/widgets/header_desktop.dart';
 import 'package:tf_union/widgets/header_mobile.dart';
@@ -25,19 +24,7 @@ class _HomePageState extends State<HomePage> {
   final scrollController = ScrollController();
   final List<GlobalKey> navbarKeys = List.generate(4, (index) => GlobalKey());
 
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
-
-  Future<void> getData() async {
-    await db.collection("users").get().then((event) {
-      for (var doc in event.docs) {
-        print("${doc.id} => ${doc.data()}");
-      }
-    });
-  }
+ 
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/widgets/fields.dart';
+import 'dart:js' as js;
 
 class ForgetPasswordPage extends StatefulWidget {
   const ForgetPasswordPage({super.key});
@@ -15,6 +17,7 @@ class _ForgetPasswordState extends State<ForgetPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: AppBar(backgroundColor: Colors.black),
 
       body: Container(
         child: Column(
@@ -54,7 +57,15 @@ class _ForgetPasswordState extends State<ForgetPasswordPage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            onPressed: () {},
+                            onPressed: () async {
+                              await FirebaseAuth.instance
+                                  .sendPasswordResetEmail(
+                                    email: email.text,
+                                  );
+                              js.context.callMethod('alert', [
+                                'A password reset link has been sent to your email.'
+                              ]);
+                            },
                             child: Text(
                               'Send Reset Link',
                               style: TextStyle(
