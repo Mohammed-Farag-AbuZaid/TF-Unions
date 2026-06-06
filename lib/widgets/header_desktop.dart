@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/nav_items.dart';
@@ -47,29 +46,52 @@ class HeaderDesktop extends StatelessWidget {
             ),
           const Spacer(),
           if (loggedIn == false)
-          for (int i = 0; i < log.length; i++)
+            for (int i = 0; i < log.length; i++)
+              Padding(
+                padding: const EdgeInsets.only(right: 5),
+                child: TextButton(
+                  onPressed: () {
+                    if (i == 0) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                      );
+                    } else if (i == 1) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RegisterPage(),
+                        ),
+                      );
+                    }
+                  },
+                  child: Text(
+                    log[i],
+                    style: TextStyle(
+                      color: TFColors.whitePrimary,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+          if (loggedIn == true)
             Padding(
-              padding: const EdgeInsets.only(right: 5),
-              child: TextButton(
+              padding: const EdgeInsets.only(right: 10),
+              child: MaterialButton(
+                height: 50,
+                minWidth: 50,
+                color: TFColors.yellowPrimary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(500),
+                ),
                 onPressed: () {
-                  if (i == 0) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginPage(),
-                      ),
-                    );
-                  } else if (i == 1) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterPage(),
-                      ),
-                    );
-                  }
+                  showProfileDialog(context: context);
                 },
-                child: Text(
-                  log[i],
+                child: const Text(
+                  'M',
                   style: TextStyle(
                     color: TFColors.whitePrimary,
                     fontWeight: FontWeight.w400,
@@ -78,29 +100,6 @@ class HeaderDesktop extends StatelessWidget {
                 ),
               ),
             ),
-          if (loggedIn == true)
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: MaterialButton(
-              height: 50,
-              minWidth: 50,
-              color: TFColors.yellowPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(500),
-              ),
-              onPressed: () {
-                showProfileDialog(context: context);
-              },
-              child: const Text(
-                'M',
-                style: TextStyle(
-                  color: TFColors.whitePrimary,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );

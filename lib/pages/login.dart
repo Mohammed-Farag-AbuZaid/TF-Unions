@@ -89,8 +89,9 @@ class _LoginState extends State<LoginPage> {
                               ),
                               onPressed: () async {
                                 if (!(_loginFormKey.currentState?.validate() ??
-                                    false))
+                                    false)) {
                                   return;
+                                }
 
                                 setState(() => isLoading = true);
 

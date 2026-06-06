@@ -9,7 +9,7 @@ import 'dart:js' as js;
 import 'package:tf_union/widgets/project_card.dart';
 
 class HeroMobile extends StatefulWidget {
-  HeroMobile({super.key});
+  const HeroMobile({super.key});
 
   @override
   State<HeroMobile> createState() => _HeroMobileState();
