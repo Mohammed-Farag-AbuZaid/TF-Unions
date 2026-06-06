@@ -61,6 +61,7 @@ class _LoginState extends State<LoginPage> {
                             buildTextField(
                               controller: password,
                               label: 'Password',
+                              obscureText: true,
                             ),
                             Container(
                               alignment: Alignment.topRight,
@@ -87,14 +88,11 @@ class _LoginState extends State<LoginPage> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               onPressed: () async {
-                                if (!mounted) return;
-                                setState(() {
-                                  isLoading = true;
-                                });
                                 if (!(_loginFormKey.currentState?.validate() ??
-                                    false)) {
+                                    false))
                                   return;
-                                }
+
+                                setState(() => isLoading = true);
 
                                 try {
                                   await FirebaseAuth.instance
@@ -103,38 +101,20 @@ class _LoginState extends State<LoginPage> {
                                         password: password.text,
                                       );
 
-                                  if (!mounted) return;
                                   Navigator.of(
                                     context,
                                   ).pushReplacementNamed('homePage');
                                 } on FirebaseAuthException catch (e) {
-                                  String msg;
-                                  switch (e.code) {
-                                    case 'wrong-password':
-                                    case 'invalid-credential':
-                                      msg = 'Wrong email or password.';
-                                      break;
-                                    case 'user-disabled':
-                                      msg = 'This account has been disabled.';
-                                      break;
-                                    default:
-                                      msg = e.message ?? 'Login failed.';
-                                  }
-
-                                  if (!mounted) return;
                                   showCostumDialog(
                                     context: context,
                                     title: 'Error',
-                                    content: msg,
-                                    onConfirm: () {
-                                      Navigator.of(context).pop();
-                                    },
+                                    content: e.message ?? 'Login failed',
+                                    onConfirm: () => Navigator.pop(context),
                                   );
-                                } catch (e) {
-                                  if (!mounted) return;
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Login failed: $e')),
-                                  );
+                                } finally {
+                                  if (mounted) {
+                                    setState(() => isLoading = false);
+                                  }
                                 }
                               },
                               child: const Text(
@@ -166,7 +146,7 @@ class _LoginState extends State<LoginPage> {
                       await FirebaseAuth.instance.signInWithPopup(
                         GoogleAuthProvider(),
                       );
-                      Navigator.of(context).pushReplacementNamed('home');
+                      Navigator.of(context).pushReplacementNamed('homePage');
                     },
                     child: const Text('Login with Google'),
                   ),

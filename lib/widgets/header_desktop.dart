@@ -4,6 +4,7 @@ import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/nav_items.dart';
 import 'package:tf_union/pages/login.dart';
 import 'package:tf_union/pages/register_page.dart';
+import 'package:tf_union/widgets/costum_dialog.dart';
 import 'package:tf_union/widgets/logo.dart';
 import 'package:tf_union/constants/variables.dart';
 
@@ -87,8 +88,8 @@ class HeaderDesktop extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(500),
               ),
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
+              onPressed: () {
+                showProfileDialog(context: context);
               },
               child: const Text(
                 'M',

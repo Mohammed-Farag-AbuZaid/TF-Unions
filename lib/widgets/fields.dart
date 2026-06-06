@@ -75,47 +75,6 @@ Widget buildDropdown<T>({
   );
 }
 
-Widget buildVerificationFeild({
-  required TextEditingController controller,
-  required String label,
-  VoidCallback? onTap,
-  TextInputType keyboardType = TextInputType.number,
-  bool readOnly = false,
-}) {
-  return Padding(
-    padding: const EdgeInsets.only(
-      left: 40.0,
-      right: 40,
-      top: 8.0,
-      bottom: 8.0,
-    ),
-    child: TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: TFColors.hintDark),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
-        ),
-      ),
-      validator: (value) {
-        if (value == null || value.trim().isEmpty) {
-          return 'This field is required';
-        }
-        if (!RegExp(r"^\d{6}$").hasMatch(value.trim())) {
-          return 'Enter a valid 6-digit code';
-        }
-        return null;
-      },
-      readOnly: readOnly,
-      onTap: onTap,
-      keyboardType: keyboardType,
-      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
-    ),
-  );
-}
 
 Widget buildMailField({
   required TextEditingController controller,

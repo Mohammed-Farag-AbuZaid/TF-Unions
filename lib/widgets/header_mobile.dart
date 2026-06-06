@@ -1,7 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/variables.dart';
+import 'package:tf_union/widgets/costum_dialog.dart';
 import 'package:tf_union/widgets/logo.dart';
 
 class HeaderMobile extends StatelessWidget {
@@ -43,7 +43,7 @@ class HeaderMobile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(500),
               ),
               onPressed: () async {
-                await FirebaseAuth.instance.signOut();
+                showProfileDialog(context: context);
               },
               child: const Text(
                 'M',
