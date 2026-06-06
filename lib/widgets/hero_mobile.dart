@@ -1,18 +1,58 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/variables.dart';
 import 'package:tf_union/pages/register_page.dart';
 import 'dart:js' as js;
-class HeroMobile extends StatelessWidget {
-  const HeroMobile({super.key});
+
+import 'package:tf_union/widgets/project_card.dart';
+
+class HeroMobile extends StatefulWidget {
+  HeroMobile({super.key});
+
+  @override
+  State<HeroMobile> createState() => _HeroMobileState();
+}
+
+class _HeroMobileState extends State<HeroMobile> {
+  final db = FirebaseFirestore.instance;
+  List<Widget> projectCards = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  Future<void> getData() async {
+    final snapshot = await db.collection('inProgressProjects').get();
+    print("Documents found: ${snapshot.docs.length}");
+    projectCards.clear();
+
+    for (var doc in snapshot.docs) {
+      projectCards.add(
+        buildProjectCard(
+          title: doc['name'],
+          description: doc['description'],
+          imagePath: doc['imgURL'],
+          projectUrl: doc['projectURL'],
+          published: doc['published'],
+        ),
+      );
+    }
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final screenWidth = screenSize.width;
     return SingleChildScrollView(
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.95,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height * 0.95,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -28,7 +68,7 @@ class HeroMobile extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 20.0, left: 50, right: 50),
               child: Text(
                 loggedIn
-                    ? 'Take a look at our Latest services and projects :'
+                    ? 'we are cooking something special for you, stay tuned!'
                     : 'A None-Profit Organization \nbuilt Specially for standout students of Egypt.',
                 style: TextStyle(
                   fontSize: 22,
@@ -38,33 +78,44 @@ class HeroMobile extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-              SizedBox(
-                
-
-                child: ElevatedButton(
-                  onPressed: () {
-                    loggedIn ?
-                    js.context.callMethod('open', ['https://www.example.com']) :
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterPage(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: TFColors.yellowPrimary,
-                    foregroundColor: TFColors.whitePrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+            if (!loggedIn)
+            SizedBox(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RegisterPage(),
                     ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: TFColors.yellowPrimary,
+                  foregroundColor: TFColors.whitePrimary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  child: Text( loggedIn ? 'Explore A.P.C Now' : 'Join us',
-                    style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                ),
+                child: Text(
+                  'Join us',
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
+            ),
+            if (!loggedIn)
             SizedBox(height: 150),
+            if (loggedIn)
+            Wrap(
+            spacing: 25,
+            runSpacing: 25,
+            alignment: WrapAlignment.center,
+            children: projectCards,
+          ),
+          SizedBox(height: 40),
+
           ],
         ),
       ),
