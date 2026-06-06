@@ -33,15 +33,15 @@ class About extends StatelessWidget {
             ),
             buildTextArea(
               content:
-                  'Our mission is to provide you with the needed knowledge if you even don\'t have any questions.',
+                  'Our mission is to provide students with the knowledge they need — even before they realize the questions they should be asking.',
             ),
             buildTextArea(
               content:
-                  'Our vision is to be the biggest community for the smartest students in Egypt. We aim to build services that help them to achieve their goals',
+                  'Our vision is to become the largest and most influential community for ambitious students in Egypt, building services that empower them to achieve their goals.',
             ),
             buildTextArea(
               content:
-                  'Our values are to be a family for all the students. We believe that "زكاة العلم نشره"',
+                  'Our values center around building a supportive family for all students. We believe that "زكاة العلم نشره" — sharing knowledge is a responsibility.',
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 50.0, top: 30.0),

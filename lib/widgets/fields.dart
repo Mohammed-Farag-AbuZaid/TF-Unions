@@ -1,6 +1,7 @@
 import 'package:ez_email_field/ez_email_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 
 Widget buildTextField({
@@ -74,7 +75,6 @@ Widget buildDropdown<T>({
     ),
   );
 }
-
 
 Widget buildMailField({
   required TextEditingController controller,
@@ -189,12 +189,11 @@ Widget buildTextArea({required String content, bool center = true}) {
           Text(
             content,
             textAlign: center ? TextAlign.center : TextAlign.left,
-            style: TextStyle(
+            style: GoogleFonts.exo2(
               fontSize: 20,
               letterSpacing: 0.2,
               color: TFColors.whitePrimary,
               fontWeight: FontWeight.w500,
-              fontFamily: 'Montserrat',
               height: 1.6,
             ),
           ),

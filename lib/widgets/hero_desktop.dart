@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/social_items.dart';
 import 'package:tf_union/constants/variables.dart';
@@ -67,7 +68,7 @@ class _HeroDesktopState extends State<HeroDesktop> {
               loggedIn
                   ? 'We are cooking something special for you, stay tuned!'
                   : 'A None-Profit Platform \nBuilt Specially for standout students of Egypt.',
-              style: TextStyle(
+              style: GoogleFonts.robotoSlab(
                 fontSize: 30,
                 fontWeight: FontWeight.w500,
                 height: 1.5,

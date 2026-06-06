@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Text(
-                      'Copyright © 2026 TF Unions. All rights reserved.\nPowerd by SalamTech',
+                      'Copyright © 2026 TF Unions. All rights reserved.\nPowerd by TF-Union.',
                       style: TextStyle(
                         color: TFColors.whitePrimary,
                         height: 1.5,

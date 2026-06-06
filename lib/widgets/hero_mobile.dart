@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/variables.dart';
 import 'package:tf_union/pages/register_page.dart';
@@ -70,7 +71,7 @@ class _HeroMobileState extends State<HeroMobile> {
                 loggedIn
                     ? 'we are cooking something special for you, stay tuned!'
                     : 'A None-Profit Organization \nbuilt Specially for standout students of Egypt.',
-                style: TextStyle(
+                style: GoogleFonts.robotoSlab(
                   fontSize: 22,
                   fontWeight: FontWeight.w500,
                   height: 1.5,
@@ -79,43 +80,41 @@ class _HeroMobileState extends State<HeroMobile> {
               ),
             ),
             if (!loggedIn)
-            SizedBox(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RegisterPage(),
+              SizedBox(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RegisterPage(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: TFColors.yellowPrimary,
+                    foregroundColor: TFColors.whitePrimary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TFColors.yellowPrimary,
-                  foregroundColor: TFColors.whitePrimary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
                   ),
-                ),
-                child: Text(
-                  'Join us',
-                  style: const TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
+                  child: Text(
+                    'Join us',
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
-            if (!loggedIn)
-            SizedBox(height: 150),
+            if (!loggedIn) SizedBox(height: 150),
             if (loggedIn)
-            Wrap(
-            spacing: 25,
-            runSpacing: 25,
-            alignment: WrapAlignment.center,
-            children: projectCards,
-          ),
-          SizedBox(height: 40),
-
+              Wrap(
+                spacing: 25,
+                runSpacing: 25,
+                alignment: WrapAlignment.center,
+                children: projectCards,
+              ),
+            SizedBox(height: 40),
           ],
         ),
       ),

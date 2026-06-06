@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/widgets/fields.dart';
 import 'package:tf_union/constants/variables.dart';
@@ -229,30 +230,28 @@ class _RegisterPageState extends State<RegisterPage> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         content: Center(
-                          child: Card(
-                            elevation: 30,
-                            margin: const EdgeInsets.only(top: 24, bottom: 24),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Container(
-                              width: 430,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 24,
-                              ),
+                          
                               child: Column(
                                 children: [
-                                  Text(
-                                    'A few seconds sparate you from .....\nWe are thrilled to see you here, we promise to do our best',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: TFColors.textfieldbg,
-                                      height: 1.5,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Text(
+                                        'A few seconds sparate you from being a part of our Family!\nWe are thrilled to see you here, we promise to do our best',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.roadRage(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.w500,
+                                          
+                                          
+                                        ),
+                                      ),
                                     ),
                                   ),
+                                  SizedBox(height: 20),
                                   Container(
                                     alignment: Alignment.topRight,
                                     child: InkWell(
@@ -272,8 +271,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                   ),
                                 ],
                               ),
-                            ),
-                          ),
                         ),
                       ),
                       Step(
