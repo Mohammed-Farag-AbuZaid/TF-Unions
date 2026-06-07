@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/variables.dart';
 import 'package:tf_union/pages/register_page.dart';
-import 'dart:js' as js;
 
 import 'package:tf_union/widgets/project_card.dart';
 
@@ -27,7 +26,6 @@ class _HeroMobileState extends State<HeroMobile> {
 
   Future<void> getData() async {
     final snapshot = await db.collection('inProgressProjects').get();
-    print("Documents found: ${snapshot.docs.length}");
     projectCards.clear();
 
     for (var doc in snapshot.docs) {

@@ -3,6 +3,7 @@ import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/nav_items.dart';
 import 'package:tf_union/constants/social_items.dart';
 import 'package:tf_union/constants/variables.dart';
+// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'dart:js' as js;
 
 import 'package:tf_union/pages/login.dart';

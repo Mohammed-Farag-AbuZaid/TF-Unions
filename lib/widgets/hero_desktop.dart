@@ -5,6 +5,7 @@ import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/social_items.dart';
 import 'package:tf_union/constants/variables.dart';
 import 'package:tf_union/pages/register_page.dart';
+// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'dart:js' as js;
 
 import 'package:tf_union/widgets/project_card.dart';
@@ -49,8 +50,10 @@ class _HeroDesktopState extends State<HeroDesktop> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final screenWidth = screenSize.width;
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.93,
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: MediaQuery.of(context).size.height * 0.93,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
