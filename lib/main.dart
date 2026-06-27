@@ -11,29 +11,16 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  FirebaseAuth.instance.authStateChanges().listen((user) {
+    currentUser.value = user;
+  });
+
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    super.initState();
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user == null) {
-        loggedIn = false;
-      } else {
-        loggedIn = true;
-        
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +30,10 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       home: const HomePage(),
       routes: {
-        'register': (context) => RegisterPage(),
-        'login': (context) => LoginPage(),
-        'homePage': (context) => HomePage(),
-        'forget_password': (context) => ForgetPasswordPage(),
+        'register': (context) => const RegisterPage(),
+        'login': (context) => const LoginPage(),
+        'homePage': (context) => const HomePage(),
+        'forget_password': (context) => const ForgetPasswordPage(),
       },
     );
   }

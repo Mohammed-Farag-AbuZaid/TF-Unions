@@ -17,16 +17,23 @@ class _LoginState extends State<LoginPage> {
   bool isLoading = false;
 
   @override
+  void dispose() {
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(backgroundColor: Colors.black),
-      body: Container(
-        child: Stack(
-          children: [
-            Column(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
               children: [
-                const Spacer(),
+                const SizedBox(height: 40),
                 Center(
                   child: Image.asset(
                     'assets/BlackLogo.png',
@@ -36,8 +43,11 @@ class _LoginState extends State<LoginPage> {
                 ),
                 const Center(
                   child: Text(
-                    'Welcome Back !',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    'Welcome Back!',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Center(
@@ -57,22 +67,22 @@ class _LoginState extends State<LoginPage> {
                         key: _loginFormKey,
                         child: Column(
                           children: [
-                            buildMailField(controller: email, label: 'Email'),
+                            buildMailField(
+                              controller: email,
+                              label: 'Email',
+                            ),
                             buildTextField(
                               controller: password,
                               label: 'Password',
                               obscureText: true,
                             ),
-                            Container(
-                              alignment: Alignment.topRight,
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.of(
-                                    context,
-                                  ).pushReplacementNamed('forget_password');
-                                },
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () => Navigator.of(context)
+                                    .pushReplacementNamed('forget_password'),
                                 child: const Text(
-                                  'Forgot Password ?',
+                                  'Forgot Password?',
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Colors.blue,
@@ -82,42 +92,45 @@ class _LoginState extends State<LoginPage> {
                             ),
                             MaterialButton(
                               height: 50,
-                              minWidth: 100,
+                              minWidth: 150,
                               color: TFColors.yellowPrimary,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              onPressed: () async {
-                                if (!(_loginFormKey.currentState?.validate() ??
-                                    false)) {
-                                  return;
-                                }
-
-                                setState(() => isLoading = true);
-
-                                try {
-                                  await FirebaseAuth.instance
-                                      .signInWithEmailAndPassword(
-                                        email: email.text.trim(),
-                                        password: password.text,
-                                      );
-
-                                  Navigator.of(
-                                    context,
-                                  ).pushReplacementNamed('homePage');
-                                } on FirebaseAuthException catch (e) {
-                                  showCostumDialog(
-                                    context: context,
-                                    title: 'Error',
-                                    content: e.message ?? 'Login failed',
-                                    onConfirm: () => Navigator.pop(context),
-                                  );
-                                } finally {
-                                  if (mounted) {
-                                    setState(() => isLoading = false);
-                                  }
-                                }
-                              },
+                              onPressed: isLoading
+                                  ? null
+                                  : () async {
+                                      if (!(_loginFormKey.currentState
+                                              ?.validate() ??
+                                          false)) {
+                                        return;
+                                      }
+                                      setState(() => isLoading = true);
+                                      try {
+                                        await FirebaseAuth.instance
+                                            .signInWithEmailAndPassword(
+                                          email: email.text.trim(),
+                                          password: password.text,
+                                        );
+                                        if (!mounted) return;
+                                        Navigator.of(context)
+                                            .pushReplacementNamed('homePage');
+                                      } on FirebaseAuthException catch (e) {
+                                        if (!mounted) return;
+                                        showCostumDialog(
+                                          context: context,
+                                          title: 'Error',
+                                          content:
+                                              e.message ?? 'Login failed',
+                                          onConfirm: () =>
+                                              Navigator.pop(context),
+                                        );
+                                      } finally {
+                                        if (mounted) {
+                                          setState(() => isLoading = false);
+                                        }
+                                      }
+                                    },
                               child: const Text(
                                 'Login',
                                 style: TextStyle(
@@ -133,51 +146,58 @@ class _LoginState extends State<LoginPage> {
                   ),
                 ),
                 const Text(
-                  '--------------- or login with ----------------',
+                  '─────── or login with ───────',
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
                 const SizedBox(height: 16),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: MaterialButton(
-                    onPressed: () async {
-                      await FirebaseAuth.instance.signInWithPopup(
-                        GoogleAuthProvider(),
-                      );
-                      Navigator.of(context).pushReplacementNamed('homePage');
-                    },
-                    child: const Text('Login with Google'),
-                  ),
+                OutlinedButton.icon(
+                  onPressed: isLoading
+                      ? null
+                      : () async {
+                          try {
+                            await FirebaseAuth.instance
+                                .signInWithPopup(GoogleAuthProvider());
+                            if (!mounted) return;
+                            Navigator.of(context)
+                                .pushReplacementNamed('homePage');
+                          } on FirebaseAuthException catch (e) {
+                            if (!mounted) return;
+                            showCostumDialog(
+                              context: context,
+                              title: 'Error',
+                              content: e.message ?? 'Google sign-in failed',
+                              onConfirm: () => Navigator.pop(context),
+                            );
+                          }
+                        },
+                  icon: const Icon(Icons.login),
+                  label: const Text('Login with Google'),
                 ),
                 const SizedBox(height: 16),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pushReplacementNamed('register');
-                  },
+                TextButton(
+                  onPressed: () =>
+                      Navigator.of(context).pushReplacementNamed('register'),
                   child: const Text(
-                    'Don\'t have an account ? Register',
+                    "Don't have an account? Register",
                     style: TextStyle(fontSize: 12, color: Colors.blue),
                   ),
                 ),
-                const Spacer(),
-                const Spacer(),
-                const Spacer(),
+                const SizedBox(height: 40),
               ],
             ),
-            if (isLoading)
-              Dialog(
-                backgroundColor: Colors.black.withAlpha(10),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: TFColors.yellowPrimary,
-                  ),
+          ),
+
+          // Loading overlay
+          if (isLoading)
+            Container(
+              color: Colors.black54,
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: TFColors.yellowPrimary,
                 ),
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }

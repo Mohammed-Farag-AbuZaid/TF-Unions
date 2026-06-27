@@ -5,8 +5,8 @@ import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/widgets/fields.dart';
-import 'package:tf_union/constants/variables.dart';
 import 'package:tf_union/widgets/costum_dialog.dart';
+// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'dart:js' as js;
 
 class RegisterPage extends StatefulWidget {
@@ -17,14 +17,13 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  int currentStep = 0;
-  final _accountFormKey = GlobalKey<FormState>();
-  final _academicFormKey = GlobalKey<FormState>();
-  final _userInfoFormKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+
+  // Controllers
   final firstName = TextEditingController();
   final lastName = TextEditingController();
   final email = TextEditingController();
-  final TextEditingController _birthDate = TextEditingController();
+  final _birthDate = TextEditingController();
   final phone = TextEditingController();
   final prepSchool = TextEditingController();
   final thanawySchool = TextEditingController();
@@ -32,146 +31,22 @@ class _RegisterPageState extends State<RegisterPage> {
   final username = TextEditingController();
   final password = TextEditingController();
   final faculty = TextEditingController();
+
+  // Dropdowns
   String? stemSchool;
   String? _selectedValue;
   String? _selectedGrade;
   String? _selectedYear;
   String? _selectedGender;
+
+  // Username state
   String? usernameError;
   bool checkingUsername = false;
   bool usernameAvailable = false;
+
+  // Flow state
   bool isLoading = false;
-
-  Future<void> _verifyEmail() async {
-    setState(() {
-      isLoading = true;
-    });
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-            email: email.text,
-            password: password.text,
-          );
-      await userCredential.user!.sendEmailVerification();
-      setState(() {
-        isLoading = false;
-      });
-      showCostumDialog(
-        context: context,
-        title: 'Verification Email Sent',
-        content:
-            'Please check your inbox and click the link to verify your email \nand come back to Register.',
-        confirmText: 'Check Email',
-        onConfirm: () {
-          js.context.callMethod('open', ['https://mail.google.com']);
-        },
-      );
-      setState(() => currentStep += 1); // move to next step
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      showCostumDialog(
-        context: context,
-        title: 'Error',
-        content: e.message ?? 'Error',
-        onConfirm: () {
-          Navigator.of(context).pop();
-        },
-      );
-    }
-  }
-
-  Future<void> checkUsername(String value) async {
-    if (value.isEmpty) return;
-
-    setState(() {
-      checkingUsername = true;
-      usernameAvailable = false;
-    });
-
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .where('username', isEqualTo: value)
-        .get();
-
-    setState(() {
-      checkingUsername = false;
-
-      if (querySnapshot.docs.isNotEmpty) {
-        usernameError = 'Username already taken';
-        usernameAvailable = false;
-      } else {
-        usernameError = null;
-        usernameAvailable = true;
-      }
-    });
-  }
-
-  Future<bool> isEmailVerified() async {
-    User? user = FirebaseAuth.instance.currentUser;
-
-    await user?.reload();
-    user = FirebaseAuth.instance.currentUser;
-
-    return user?.emailVerified ?? false;
-  }
-
-  Future<void> registerUser() async {
-    setState(() {
-      isLoading = true;
-    });
-    final isVerified = await isEmailVerified();
-
-    if (!isVerified) {
-      showCostumDialog(
-        context: context,
-        title: 'Email Not Verified',
-        content: 'Please verify your email first.',
-        confirmText: 'Verify',
-        onConfirm: () {
-          Navigator.of(context).pop();
-        },
-      );
-      return;
-    }
-
-    try {
-      User? user = FirebaseAuth.instance.currentUser;
-      String level = _selectedValue!;
-
-      // Create comprehensive user document
-      await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
-        if (level == 'STEM') 'stemSchool': stemSchool,
-        if (level == 'Thanawy') 'thanawySchool': thanawySchool.text,
-        if (level == 'Prep School') 'prepSchool': prepSchool.text,
-        if (level == 'University') 'university': university.text,
-        if (level == 'University') 'faculty': faculty.text,
-        if (level != 'University') 'grade': _selectedGrade,
-        if (level == 'University') 'year': _selectedYear,
-        'firstName': firstName.text,
-        'lastName': lastName.text,
-        'email': user.email,
-        'phone': phone.text,
-        'gender': _selectedGender,
-        'birthDate': _birthDate.text,
-        'username': username.text,
-        'academicLevel': level,
-        'registrationDate': Timestamp.now(),
-      });
-
-      setState(() {
-        isLoading = false;
-      });
-      if (!mounted) return;
-      setState(() => currentStep += 1);
-    } catch (e) {
-      debugPrint('Registration error: $e');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Registration failed: $e')));
-    }
-  }
+  bool _emailVerificationSent = false;
 
   @override
   void dispose() {
@@ -189,533 +64,184 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        toolbarHeight: 90,
-        title: Center(
-          child: SizedBox(
-            width: 250,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20, right: 30),
-              child: Image.asset('assets/BlackLogo.png'),
-            ),
-          ),
-        ),
-        backgroundColor: Colors.black,
-      ),
-      body: Stack(
-        children: [
-          SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1800),
-                child: Theme(
-                  data: Theme.of(context).copyWith(
-                    colorScheme: Theme.of(
-                      context,
-                    ).colorScheme.copyWith(primary: TFColors.yellowPrimary),
-                  ),
-                  child: Stepper(
-                    type: MediaQuery.of(context).size.width <= minRegisterWidth
-                        ? StepperType.vertical
-                        : StepperType.horizontal,
-                    steps: [
-                      Step(
-                        isActive: currentStep >= 0,
-                        title: Text(
-                          'Welcome',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        content: Center(
-                          
-                              child: Column(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Text(
-                                        'A few seconds sparate you from being a part of our Family!\nWe are thrilled to see you here, we promise to do our best',
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.roadRage(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.w500,
-                                          
-                                          
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 20),
-                                  Container(
-                                    alignment: Alignment.topRight,
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.of(
-                                          context,
-                                        ).pushReplacementNamed('login');
-                                      },
-                                      child: Text(
-                                        'Have an account ? Login',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.blue,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                        ),
-                      ),
-                      Step(
-                        isActive: currentStep >= 1,
-                        title: Text(
-                          'Account',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        content: Center(
-                          child: Card(
-                            elevation: 30,
-                            margin: const EdgeInsets.only(top: 24, bottom: 24),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Container(
-                              width: 430,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 24,
-                              ),
-                              child: Form(
-                                key: _accountFormKey,
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteractionIfError,
-                                child: Column(
-                                  children: [
-                                    buildTextField(
-                                      controller: firstName,
-                                      label: 'First Name',
-                                    ),
-                                    buildTextField(
-                                      controller: lastName,
-                                      label: "Last Name",
-                                    ),
-                                    buildTextField(
-                                      controller: _birthDate,
-                                      label: "Birth Date",
-                                      readOnly: true,
-                                      onTap: () {
-                                        _selectDate();
-                                      },
-                                    ),
-                                    buildDropdown(
-                                      label: 'Gender',
-                                      value: _selectedGender,
-                                      items: ['Male', 'Female'],
-                                      onChanged: (value) => setState(
-                                        () => _selectedGender = value,
-                                      ),
-                                      validator: (value) => value == null
-                                          ? 'please select an option'
-                                          : null,
-                                    ),
-                                    buildDropdown(
-                                      label: 'Academic Level',
-                                      value: _selectedValue,
-                                      items: [
-                                        'Prep School',
-                                        'Thanawy',
-                                        'STEM',
-                                        'University',
-                                      ],
-                                      onChanged: (value) => setState(
-                                        () => _selectedValue = value,
-                                      ),
-                                      validator: (value) => value == null
-                                          ? 'please select an option'
-                                          : null,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: IntlPhoneField(
-                                        controller: phone,
-                                        decoration: InputDecoration(
-                                          labelText: 'Phone Number',
-                                          enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Colors.blue,
-                                            ),
-                                          ),
-                                        ),
-                                        initialCountryCode: 'EG',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      Step(
-                        isActive: currentStep >= 2,
-                        title: Text(
-                          'Academic Info',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        content: Center(
-                          child: Card(
-                            elevation: 30,
-                            margin: const EdgeInsets.only(top: 24, bottom: 24),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Container(
-                              width: 430,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 24,
-                              ),
-                              child: Form(
-                                key: _academicFormKey,
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteractionIfError,
-
-                                child: Column(
-                                  children: [
-                                    if (_selectedValue == 'Prep School')
-                                      buildTextField(
-                                        controller: prepSchool,
-                                        label: 'Official School Name',
-                                      ),
-
-                                    if (_selectedValue == 'Thanawy')
-                                      buildTextField(
-                                        controller: thanawySchool,
-                                        label: 'Official School Name',
-                                      ),
-
-                                    if (_selectedValue == 'STEM')
-                                      buildDropdown(
-                                        label: 'School',
-                                        value: stemSchool,
-                                        items: [
-                                          '6th of October STEM School for Boys',
-                                          'October STEM School',
-                                          'Maadi STEM School for Girls',
-                                          'New Cairo STEM School',
-                                          'Alexandria STEM School',
-                                          'Dakahlia STEM School',
-                                          'Ismailia STEM High School',
-                                          'Red Sea STEM School',
-                                          'Assiut STEM School',
-                                          'Luxor STEM School',
-                                          'Sers El-Lyan STEM School for Girls',
-                                          'El-Sadat STEM School for Boys',
-                                          'Gharbia STEM School',
-                                          'Obour STEM School',
-                                          'Sharqia STEM School',
-                                          'Qena STEM School',
-                                          'Fayoum STEM School for Boys',
-                                          'Beni Suef STEM School',
-                                          'Minya STEM School for Boys',
-                                          'Sohag STEM School for Girls',
-                                          'Arish STEM School',
-                                        ],
-                                        onChanged: (value) =>
-                                            setState(() => stemSchool = value),
-                                        validator: (value) => value == null
-                                            ? 'please select an option'
-                                            : null,
-                                      ),
-
-                                    if (_selectedValue != 'University')
-                                      buildDropdown(
-                                        label: 'Grade',
-                                        value: _selectedGrade,
-                                        items: [
-                                          'Grade 7',
-                                          'Grade 8',
-                                          'Grade 9',
-                                          'Grade 10',
-                                          'Grade 11',
-                                          'Grade 12',
-                                        ],
-                                        onChanged: (value) => setState(
-                                          () => _selectedGrade = value,
-                                        ),
-                                        validator: (value) => value == null
-                                            ? 'please select an option'
-                                            : null,
-                                      ),
-
-                                    if (_selectedValue == 'University')
-                                      buildTextField(
-                                        controller: university,
-                                        label: 'Official University Name',
-                                      ),
-
-                                    if (_selectedValue == 'University')
-                                      buildDropdown(
-                                        label: 'year',
-                                        value: _selectedYear,
-                                        items: [
-                                          '1st year',
-                                          '2nd year',
-                                          '3rd year',
-                                          '4th year',
-                                          '5th year',
-                                          'Master',
-                                          'PhD',
-                                        ],
-                                        onChanged: (value) => setState(
-                                          () => _selectedYear = value,
-                                        ),
-                                        validator: (value) => value == null
-                                            ? 'please select an option'
-                                            : null,
-                                      ),
-
-                                    if (_selectedValue == 'University')
-                                      buildTextField(
-                                        controller: faculty,
-                                        label: 'Faculty',
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      Step(
-                        isActive: currentStep >= 3,
-                        title: Text(
-                          'Become a user',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        content: Center(
-                          child: Card(
-                            elevation: 30,
-                            margin: const EdgeInsets.only(top: 24, bottom: 24),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Container(
-                              width: 430,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 24,
-                              ),
-                              child: Form(
-                                key: _userInfoFormKey,
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteractionIfError,
-
-                                child: Column(
-                                  children: [
-                                    buildMailField(
-                                      controller: email,
-                                      label: 'personal Email',
-                                    ),
-                                    buildUsernameField(
-                                      controller: username,
-                                      label: 'username',
-                                      errorText: usernameError,
-                                      onChanged: checkUsername,
-                                      suffixIcon: checkingUsername
-                                          ? const Padding(
-                                              padding: EdgeInsets.all(12),
-                                              child: SizedBox(
-                                                width: 20,
-                                                height: 20,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                      strokeWidth: 2,
-                                                    ),
-                                              ),
-                                            )
-                                          : usernameAvailable
-                                          ? const Icon(
-                                              Icons.check,
-                                              color: Colors.green,
-                                            )
-                                          : null,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: TextFormField(
-                                        obscureText: true,
-                                        controller: password,
-                                        decoration: InputDecoration(
-                                          labelText: 'Password',
-                                          enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Colors.blue,
-                                            ),
-                                          ),
-                                        ),
-                                        validator: (value) {
-                                          if (value == null ||
-                                              value.length < 6) {
-                                            return 'Password must be at least 6 characters';
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Step(
-                        isActive: currentStep >= 4,
-                        title: Text(
-                          'Complete',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        content: Container(
-                          child: Column(
-                            children: [
-                              Text(
-                                'We sent you a verification email.\nPlease check your inbox and click the link brfore clicking the Register button.',
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(height: 20),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                    controlsBuilder:
-                        (BuildContext context, ControlsDetails details) {
-                          return Row(
-                            children: <Widget>[
-                              if (currentStep == 0)
-                                ElevatedButton(
-                                  onPressed: details.onStepContinue,
-                                  child: const Text('Start'),
-                                ),
-                              if (currentStep < 4 &&
-                                  currentStep != 3 &&
-                                  currentStep != 0)
-                                ElevatedButton(
-                                  onPressed: details.onStepContinue,
-                                  child: const Text('Next'),
-                                ),
-                              if (currentStep == 3)
-                                ElevatedButton(
-                                  onPressed: details.onStepContinue,
-                                  child: const Text('send verification link'),
-                                ),
-
-                              if (currentStep == 4)
-                                ElevatedButton(
-                                  onPressed: details.onStepContinue,
-                                  child: const Text('Register'),
-                                ),
-                              if (currentStep > 0 && currentStep < 5)
-                                TextButton(
-                                  onPressed: details.onStepCancel,
-                                  child: const Text('Previous'),
-                                ),
-                            ],
-                          );
-                        },
-                    currentStep: currentStep,
-                    onStepContinue: () async {
-                      if (currentStep == 0) {
-                        setState(() => currentStep += 1);
-                      } else if (currentStep == 1) {
-                        if (_accountFormKey.currentState?.validate() ?? false) {
-                          setState(() => currentStep += 1);
-                        }
-                      } else if (currentStep == 2) {
-                        if (_academicFormKey.currentState?.validate() ??
-                            false) {
-                          setState(() => currentStep += 1);
-                        }
-                      } else if (currentStep == 3) {
-                        if (usernameError != null || !usernameAvailable) {
-                          return;
-                        }
-                        if (_userInfoFormKey.currentState?.validate() ??
-                            false) {
-                          await _verifyEmail();
-                        }
-                      } else if (currentStep == 4) {
-                        bool verified = await isEmailVerified();
-
-                        if (verified) {
-                          await registerUser();
-                          Navigator.of(
-                            context,
-                          ).pushReplacementNamed('homePage');
-                        } else {
-                          showCostumDialog(
-                            context: context,
-                            title: 'Email Not Verified',
-                            content: 'Please verify your email first.',
-                            confirmText: 'Verify',
-                            onConfirm: () {
-                              js.context.callMethod('open', [
-                                'https://mail.google.com',
-                              ]);
-                            },
-                          );
-                          return;
-                        }
-                      }
-                    },
-                    onStepCancel: () {
-                      if (currentStep != 0) {
-                        setState(() => currentStep -= 1);
-                      } else {
-                        currentStep == 0
-                            ? null
-                            : setState(() => currentStep -= 1);
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ),
-          if (isLoading)
-            Dialog(
-              backgroundColor: Colors.black.withAlpha(10),
-              child: Center(
-                child: CircularProgressIndicator(color: TFColors.yellowPrimary),
-              ),
-            ),
-        ],
-      ),
-    );
+  Future<void> checkUsername(String value) async {
+    if (value.isEmpty) return;
+    setState(() {
+      checkingUsername = true;
+      usernameAvailable = false;
+    });
+    final snap = await FirebaseFirestore.instance
+        .collection('users')
+        .where('username', isEqualTo: value)
+        .get();
+    setState(() {
+      checkingUsername = false;
+      if (snap.docs.isNotEmpty) {
+        usernameError = 'Username already taken';
+        usernameAvailable = false;
+      } else {
+        usernameError = null;
+        usernameAvailable = true;
+      }
+    });
   }
 
+  Future<bool> isEmailVerified() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    await user?.reload();
+    user = FirebaseAuth.instance.currentUser;
+    return user?.emailVerified ?? false;
+  }
+
+  Future<void> _submit() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    if (usernameError != null || !usernameAvailable) {
+      showCostumDialog(
+        context: context,
+        title: 'Username',
+        content: 'Please choose a valid, available username.',
+        onConfirm: () => Navigator.pop(context),
+      );
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      if (!_emailVerificationSent) {
+        final existingDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .where('email', isEqualTo: email.text.trim())
+            .limit(1)
+            .get();
+
+        if (existingDoc.docs.isNotEmpty) {
+          // Fully registered — send them to login
+          setState(() => isLoading = false);
+          showCostumDialog(
+            context: context,
+            title: 'Account exists',
+            content:
+                'This email is already registered. Head to the login page instead.',
+            confirmText: 'Go to Login',
+            onConfirm: () {
+              Navigator.of(context).pushReplacementNamed('login');
+            },
+          );
+          return;
+        }
+        try {
+          final cred = await FirebaseAuth.instance
+              .createUserWithEmailAndPassword(
+                email: email.text.trim(),
+                password: password.text,
+              );
+          await cred.user!.sendEmailVerification();
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'email-already-in-use') {
+
+            final cred = await FirebaseAuth.instance.signInWithEmailAndPassword(
+              email: email.text.trim(),
+              password: password.text,
+            );
+            if (cred.user?.emailVerified ?? false) {
+              setState(() => isLoading = false);
+              await _saveUserData();
+              if (!mounted) return;
+              Navigator.of(context).pushReplacementNamed('homePage');
+              return;
+            }
+
+            await cred.user!.sendEmailVerification();
+          } else {
+            rethrow;
+          }
+        }
+
+        setState(() {
+          isLoading = false;
+          _emailVerificationSent = true;
+        });
+
+        showCostumDialog(
+          // ignore: use_build_context_synchronously
+          context: context,
+          title: 'Verify your email',
+          content:
+              'A verification link was sent to ${email.text.trim()}.\nOpen it, then tap "Complete Registration".',
+          confirmText: 'Open Gmail',
+          onConfirm: () {
+            js.context.callMethod('open', ['https://mail.google.com']);
+          },
+        );
+        return;
+      }
+
+      final verified = await isEmailVerified();
+      if (!verified) {
+        setState(() => isLoading = false);
+        showCostumDialog(
+          // ignore: use_build_context_synchronously
+          context: context,
+          title: 'Not verified yet',
+          content: 'Please click the link in your email first.',
+          confirmText: 'Open Gmail',
+          onConfirm: () {
+            js.context.callMethod('open', ['https://mail.google.com']);
+          },
+        );
+        return;
+      }
+
+      await _saveUserData();
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed('homePage');
+    } on FirebaseAuthException catch (e) {
+      setState(() => isLoading = false);
+      final message = e.code == 'wrong-password'
+          ? 'This email is linked to an existing account but the password is wrong. '
+                'Try "Forgot Password" on the login page if needed.'
+          : (e.message ?? 'Something went wrong.');
+      showCostumDialog(
+        context: context,
+        title: 'Error',
+        content: message,
+        onConfirm: () => Navigator.pop(context),
+      );
+    } catch (e) {
+      setState(() => isLoading = false);
+      debugPrint('Registration error: $e');
+    }
+  }
+
+  Future<void> _saveUserData() async {
+  final user = FirebaseAuth.instance.currentUser!;
+  final level = _selectedValue!;
+
+  await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+    if (level == 'STEM') 'stemSchool': stemSchool,
+    if (level == 'Thanawy') 'thanawySchool': thanawySchool.text,
+    if (level == 'Prep School') 'prepSchool': prepSchool.text,
+    if (level == 'University') 'university': university.text,
+    if (level == 'University') 'faculty': faculty.text,
+    if (level != 'University') 'grade': _selectedGrade,
+    if (level == 'University') 'year': _selectedYear,
+    'firstName': firstName.text.trim(),
+    'lastName': lastName.text.trim(),
+    'email': user.email,
+    'phone': phone.text,
+    'gender': _selectedGender,
+    'birthDate': _birthDate.text,
+    'username': username.text,
+    'academicLevel': level,
+    'registrationDate': Timestamp.now(),
+    if (user.photoURL != null && user.photoURL!.isNotEmpty)
+      'profilePicture': user.photoURL,
+  }, SetOptions(merge: true)); // ← merge so existing fields aren't wiped
+}
+
   Future<void> _selectDate() async {
-    DateTime? picked = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
       firstDate: DateTime(2000),
       lastDate: DateTime(2014),
@@ -723,8 +249,360 @@ class _RegisterPageState extends State<RegisterPage> {
     );
     if (picked != null) {
       setState(() {
-        _birthDate.text = picked.toString().split(" ")[0];
+        _birthDate.text = picked.toString().split(' ')[0];
       });
     }
+  }
+
+  // ─── Section header helper ───────────────────────────────────────────────
+  Widget _sectionHeader(String title, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 32, bottom: 8),
+      child: Row(
+        children: [
+          Icon(icon, color: TFColors.yellowPrimary, size: 20),
+          const SizedBox(width: 10),
+          Text(
+            title,
+            style: GoogleFonts.robotoSlab(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: TFColors.yellowPrimary,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Container(
+              height: 1,
+              color: TFColors.yellowPrimary.withAlpha(60),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        toolbarHeight: 70,
+        backgroundColor: Colors.black,
+        title: Center(
+          child: SizedBox(
+            width: 200,
+            child: Image.asset('assets/BlackLogo.png'),
+          ),
+        ),
+      ),
+      body: Stack(
+        children: [
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 520),
+                child: Form(
+                  key: _formKey,
+                  autovalidateMode: AutovalidateMode.onUserInteractionIfError,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // ── Title ──────────────────────────────────────────
+                      Text(
+                        'Join TF Union',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.roadRage(
+                          fontSize: 38,
+                          color: TFColors.whitePrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'A few seconds separate you from being part of our family.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.exo2(
+                          fontSize: 13,
+                          color: Colors.grey,
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Center(
+                        child: TextButton(
+                          onPressed: () => Navigator.of(
+                            context,
+                          ).pushReplacementNamed('login'),
+                          child: const Text(
+                            'Already have an account? Login',
+                            style: TextStyle(fontSize: 12, color: Colors.blue),
+                          ),
+                        ),
+                      ),
+
+                      // ── Personal Info ──────────────────────────────────
+                      _sectionHeader('Personal Info', Icons.person_outline),
+                      buildTextField(
+                        controller: firstName,
+                        label: 'First Name',
+                      ),
+                      buildTextField(controller: lastName, label: 'Last Name'),
+                      buildTextField(
+                        controller: _birthDate,
+                        label: 'Birth Date',
+                        readOnly: true,
+                        onTap: _selectDate,
+                      ),
+                      buildDropdown<String>(
+                        label: 'Gender',
+                        value: _selectedGender,
+                        items: const ['Male', 'Female'],
+                        onChanged: (v) => setState(() => _selectedGender = v),
+                        validator: (v) =>
+                            v == null ? 'Please select a gender' : null,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: IntlPhoneField(
+                          controller: phone,
+                          initialCountryCode: 'EG',
+                          decoration: InputDecoration(
+                            labelText: 'Phone Number',
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: TFColors.hintDark),
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // ── Academic Info ──────────────────────────────────
+                      _sectionHeader('Academic Info', Icons.school_outlined),
+                      buildDropdown<String>(
+                        label: 'Academic Level',
+                        value: _selectedValue,
+                        items: const [
+                          'Prep School',
+                          'Thanawy',
+                          'STEM',
+                          'University',
+                        ],
+                        onChanged: (v) => setState(() => _selectedValue = v),
+                        validator: (v) =>
+                            v == null ? 'Please select your level' : null,
+                      ),
+                      if (_selectedValue == 'Prep School')
+                        buildTextField(
+                          controller: prepSchool,
+                          label: 'Official School Name',
+                        ),
+                      if (_selectedValue == 'Thanawy')
+                        buildTextField(
+                          controller: thanawySchool,
+                          label: 'Official School Name',
+                        ),
+                      if (_selectedValue == 'STEM')
+                        buildDropdown<String>(
+                          label: 'STEM School',
+                          value: stemSchool,
+                          items: const [
+                            '6th of October STEM School for Boys',
+                            'October STEM School',
+                            'Maadi STEM School for Girls',
+                            'New Cairo STEM School',
+                            'Alexandria STEM School',
+                            'Dakahlia STEM School',
+                            'Ismailia STEM High School',
+                            'Red Sea STEM School',
+                            'Assiut STEM School',
+                            'Luxor STEM School',
+                            'Sers El-Lyan STEM School for Girls',
+                            'El-Sadat STEM School for Boys',
+                            'Gharbia STEM School',
+                            'Obour STEM School',
+                            'Sharqia STEM School',
+                            'Qena STEM School',
+                            'Fayoum STEM School for Boys',
+                            'Beni Suef STEM School',
+                            'Minya STEM School for Boys',
+                            'Sohag STEM School for Girls',
+                            'Arish STEM School',
+                          ],
+                          onChanged: (v) => setState(() => stemSchool = v),
+                          validator: (v) =>
+                              v == null ? 'Please select your school' : null,
+                        ),
+                      if (_selectedValue != null &&
+                          _selectedValue != 'University')
+                        buildDropdown<String>(
+                          label: 'Grade',
+                          value: _selectedGrade,
+                          items: const [
+                            'Grade 7',
+                            'Grade 8',
+                            'Grade 9',
+                            'Grade 10',
+                            'Grade 11',
+                            'Grade 12',
+                          ],
+                          onChanged: (v) => setState(() => _selectedGrade = v),
+                          validator: (v) =>
+                              v == null ? 'Please select your grade' : null,
+                        ),
+                      if (_selectedValue == 'University') ...[
+                        buildTextField(
+                          controller: university,
+                          label: 'Official University Name',
+                        ),
+                        buildDropdown<String>(
+                          label: 'Year',
+                          value: _selectedYear,
+                          items: const [
+                            '1st year',
+                            '2nd year',
+                            '3rd year',
+                            '4th year',
+                            '5th year',
+                            'Master',
+                            'PhD',
+                          ],
+                          onChanged: (v) => setState(() => _selectedYear = v),
+                          validator: (v) =>
+                              v == null ? 'Please select your year' : null,
+                        ),
+                        buildTextField(controller: faculty, label: 'Faculty'),
+                      ],
+
+                      // ── Account Credentials ────────────────────────────
+                      _sectionHeader('Account Credentials', Icons.lock_outline),
+                      buildMailField(
+                        controller: email,
+                        label: 'Personal Email',
+                      ),
+                      buildUsernameField(
+                        controller: username,
+                        label: 'Username',
+                        errorText: usernameError,
+                        onChanged: checkUsername,
+                        suffixIcon: checkingUsername
+                            ? const Padding(
+                                padding: EdgeInsets.all(12),
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              )
+                            : usernameAvailable
+                            ? const Icon(Icons.check, color: Colors.green)
+                            : null,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: TextFormField(
+                          obscureText: true,
+                          controller: password,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: TFColors.hintDark),
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.length < 6) {
+                              return 'Password must be at least 6 characters';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+
+                      // ── Email verification status banner ───────────────
+                      if (_emailVerificationSent)
+                        Container(
+                          margin: const EdgeInsets.only(top: 16),
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withAlpha(30),
+                            border: Border.all(
+                              color: Colors.green.withAlpha(100),
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.mark_email_read_outlined,
+                                color: Colors.green,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  'Verification email sent. Click the link in your inbox, then tap "Complete Registration".',
+                                  style: GoogleFonts.exo2(
+                                    fontSize: 12,
+                                    color: Colors.green,
+                                    height: 1.5,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      // ── Submit button ──────────────────────────────────
+                      const SizedBox(height: 28),
+                      SizedBox(
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed: isLoading ? null : _submit,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: TFColors.yellowPrimary,
+                            foregroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            elevation: 4,
+                          ),
+                          child: Text(
+                            _emailVerificationSent
+                                ? 'Complete Registration'
+                                : 'Send Verification Link',
+                            style: GoogleFonts.robotoSlab(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // ── Loading overlay ──────────────────────────────────────────────
+          if (isLoading)
+            Container(
+              color: Colors.black54,
+              child: Center(
+                child: CircularProgressIndicator(color: TFColors.yellowPrimary),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }

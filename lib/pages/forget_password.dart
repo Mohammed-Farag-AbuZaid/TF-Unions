@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/widgets/fields.dart';
+// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'dart:js' as js;
 
 class ForgetPasswordPage extends StatefulWidget {
@@ -19,74 +20,72 @@ class _ForgetPasswordState extends State<ForgetPasswordPage> {
       backgroundColor: Colors.black,
       appBar: AppBar(backgroundColor: Colors.black),
 
-      body: Container(
-        child: Column(
-          children: [
-            Spacer(),
-            Center(
-              child: Image.asset(
-                'assets/BlackLogo.png',
-                width: 200,
-                height: 200,
-              ),
+      body: Column(
+        children: [
+          Spacer(),
+          Center(
+            child: Image.asset(
+              'assets/BlackLogo.png',
+              width: 200,
+              height: 200,
             ),
-            Center(
-              child: Card(
-                elevation: 30,
-                margin: const EdgeInsets.only(top: 24, bottom: 24),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+          ),
+          Center(
+            child: Card(
+              elevation: 30,
+              margin: const EdgeInsets.only(top: 24, bottom: 24),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Container(
+                width: 430,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 24,
                 ),
-                child: Container(
-                  width: 430,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 24,
-                  ),
-                  child: Form(
-                    key: _forgetPasswordFormKey,
-                    child: Column(
-                      children: [
-                        buildMailField(controller: email, label: 'Email'),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20.0),
-                          child: MaterialButton(
-                            height: 50,
-                            minWidth: 150,
-                            color: TFColors.bglight1,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            onPressed: () async {
-                              await FirebaseAuth.instance
-                                  .sendPasswordResetEmail(
-                                    email: email.text,
-                                  );
-                              js.context.callMethod('alert', [
-                                'A password reset link has been sent to your email.'
-                              ]);
-                            },
-                            child: Text(
-                              'Send Reset Link',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                child: Form(
+                  key: _forgetPasswordFormKey,
+                  child: Column(
+                    children: [
+                      buildMailField(controller: email, label: 'Email'),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: MaterialButton(
+                          height: 50,
+                          minWidth: 150,
+                          color: TFColors.bglight1,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          onPressed: () async {
+                            await FirebaseAuth.instance
+                                .sendPasswordResetEmail(
+                                  email: email.text,
+                                );
+                            js.context.callMethod('alert', [
+                              'A password reset link has been sent to your email.'
+                            ]);
+                          },
+                          child: Text(
+                            'Send Reset Link',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-
-            Spacer(),
-            Spacer(),
-            Spacer(),
-          ],
-        ),
+          ),
+      
+          Spacer(),
+          Spacer(),
+          Spacer(),
+        ],
       ),
     );
   }
