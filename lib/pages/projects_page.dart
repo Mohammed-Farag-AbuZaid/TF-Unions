@@ -35,6 +35,7 @@ class _ProjectsPageState extends State<ProjectsPage>
   List<Widget> _doneCards = [];
   List<Widget> _inProgressCards = [];
   List<Widget> _upcomingCards = [];
+  List<Widget> _allCards = [];
 
   bool _loading = true;
 
@@ -86,7 +87,7 @@ class _ProjectsPageState extends State<ProjectsPage>
         .where('published', isEqualTo: false)
         .get();
 
-    Widget _card(DocumentSnapshot doc) => buildProjectCard(
+    Widget card(DocumentSnapshot doc) => buildProjectCard(
           title: doc['name'],
           description: doc['description'],
           imagePath: doc['imgURL'],
@@ -94,11 +95,50 @@ class _ProjectsPageState extends State<ProjectsPage>
           published: doc['published'],
         );
 
+    // ── Dedupe guard ──────────────────────────────────────────────────────
+    // The SAME project can exist as *separate Firestore documents* in more
+    // than one collection — e.g. someone adds it to `inProgressProjects`
+    // when work starts, but never removes/updates its old entry in
+    // `allProjects`, so it also still matches the "upcoming" query. Because
+    // these are different documents, deduping by `doc.id` doesn't catch it —
+    // we have to dedupe by a content key that identifies "the same project"
+    // regardless of which collection it's sitting in.
+    //
+    // Using the normalized project name here. If two genuinely different
+    // projects could share a name, swap this for a more unique field (e.g.
+    // `projectURL`, or a shared `projectId` you add to every document).
+    String keyOf(DocumentSnapshot doc) =>
+        (doc['name'] as String).trim().toLowerCase();
+
+    // Claim keys in priority order: inProgress > done > upcoming.
+    // Change the order if you want a different collection to "win" when a
+    // project is mis-filed in two places.
+    final claimedKeys = <String>{};
+
+    final inProgressCards = <Widget>[];
+    for (final doc in inProgressSnap.docs) {
+      if (!claimedKeys.add(keyOf(doc))) continue;
+      inProgressCards.add(card(doc));
+    }
+
+    final doneCards = <Widget>[];
+    for (final doc in doneSnap.docs) {
+      if (!claimedKeys.add(keyOf(doc))) continue; // already claimed elsewhere
+      doneCards.add(card(doc));
+    }
+
+    final upcomingCards = <Widget>[];
+    for (final doc in upcomingSnap.docs) {
+      if (!claimedKeys.add(keyOf(doc))) continue; // already claimed elsewhere
+      upcomingCards.add(card(doc));
+    }
+
     setState(() {
-      _orgCards = orgsSnap.docs.map(_card).toList();
-      _doneCards = doneSnap.docs.map(_card).toList();
-      _inProgressCards = inProgressSnap.docs.map(_card).toList();
-      _upcomingCards = upcomingSnap.docs.map(_card).toList();
+      _orgCards = orgsSnap.docs.map(card).toList();
+      _doneCards = doneCards;
+      _inProgressCards = inProgressCards;
+      _upcomingCards = upcomingCards;
+      _allCards = [...doneCards, ...inProgressCards, ...upcomingCards];
       _loading = false;
     });
   }
@@ -114,7 +154,7 @@ class _ProjectsPageState extends State<ProjectsPage>
       case ProjectFilter.upcoming:
         return _upcomingCards;
       case ProjectFilter.all:
-        return [..._doneCards, ..._inProgressCards, ..._upcomingCards];
+        return _allCards;
     }
   }
 

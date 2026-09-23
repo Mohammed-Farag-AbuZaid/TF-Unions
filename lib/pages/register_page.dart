@@ -28,7 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final prepSchool = TextEditingController();
   final thanawySchool = TextEditingController();
   final university = TextEditingController();
-  final username = TextEditingController();
+  final username = TextEditingController(); // holds chosen username, checked live against Firestore
   final password = TextEditingController();
   final faculty = TextEditingController();
 
@@ -40,9 +40,9 @@ class _RegisterPageState extends State<RegisterPage> {
   String? _selectedGender;
 
   // Username state
-  String? usernameError;
-  bool checkingUsername = false;
-  bool usernameAvailable = false;
+  String? usernameError; // error message shown under the username field (null = no error)
+  bool checkingUsername = false; // true while the Firestore lookup for the typed username is in flight
+  bool usernameAvailable = false; // true only after a lookup confirms the username is free
 
   // Flow state
   bool isLoading = false;
@@ -59,24 +59,27 @@ class _RegisterPageState extends State<RegisterPage> {
     thanawySchool.dispose();
     university.dispose();
     password.dispose();
-    username.dispose();
+    username.dispose(); // dispose username controller
     faculty.dispose();
     super.dispose();
   }
 
+  // Looks up `usernames/{value}` in Firestore to see if the typed username is taken.
+  // Updates checkingUsername / usernameAvailable / usernameError accordingly.
   Future<void> checkUsername(String value) async {
-    if (value.isEmpty) return;
-    setState(() {
-      checkingUsername = true;
-      usernameAvailable = false;
-    });
-    final snap = await FirebaseFirestore.instance
-        .collection('users')
-        .where('username', isEqualTo: value)
+  if (value.isEmpty) return;
+  setState(() {
+    checkingUsername = true;
+    usernameAvailable = false;
+  });
+  try {
+    final doc = await FirebaseFirestore.instance
+        .collection('usernames')
+        .doc(value)
         .get();
     setState(() {
       checkingUsername = false;
-      if (snap.docs.isNotEmpty) {
+      if (doc.exists) {
         usernameError = 'Username already taken';
         usernameAvailable = false;
       } else {
@@ -84,8 +87,14 @@ class _RegisterPageState extends State<RegisterPage> {
         usernameAvailable = true;
       }
     });
+  } catch (e) {
+    setState(() {
+      checkingUsername = false;
+      usernameError = 'Could not check username, try again';
+      usernameAvailable = false;
+    });
   }
-
+}
   Future<bool> isEmailVerified() async {
     User? user = FirebaseAuth.instance.currentUser;
     await user?.reload();
@@ -95,15 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    if (usernameError != null || !usernameAvailable) {
-      showCostumDialog(
-        context: context,
-        title: 'Username',
-        content: 'Please choose a valid, available username.',
-        onConfirm: () => Navigator.pop(context),
-      );
-      return;
-    }
+    // Username field is disabled for now, so no username check here.
 
     setState(() => isLoading = true);
 
@@ -219,25 +220,16 @@ class _RegisterPageState extends State<RegisterPage> {
   final level = _selectedValue!;
 
   await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-    if (level == 'STEM') 'stemSchool': stemSchool,
-    if (level == 'Thanawy') 'thanawySchool': thanawySchool.text,
-    if (level == 'Prep School') 'prepSchool': prepSchool.text,
-    if (level == 'University') 'university': university.text,
-    if (level == 'University') 'faculty': faculty.text,
-    if (level != 'University') 'grade': _selectedGrade,
-    if (level == 'University') 'year': _selectedYear,
-    'firstName': firstName.text.trim(),
-    'lastName': lastName.text.trim(),
-    'email': user.email,
-    'phone': phone.text,
-    'gender': _selectedGender,
-    'birthDate': _birthDate.text,
-    'username': username.text,
-    'academicLevel': level,
-    'registrationDate': Timestamp.now(),
-    if (user.photoURL != null && user.photoURL!.isNotEmpty)
-      'profilePicture': user.photoURL,
-  }, SetOptions(merge: true)); // ← merge so existing fields aren't wiped
+    // ...existing fields...
+  }, SetOptions(merge: true));
+
+  // Username field is disabled for now, so skip reserving a username doc.
+  if (username.text.trim().isNotEmpty) {
+    await FirebaseFirestore.instance
+        .collection('usernames')
+        .doc(username.text)
+        .set({'uid': user.uid});
+  }
 }
 
   Future<void> _selectDate() async {
@@ -483,7 +475,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         controller: email,
                         label: 'Personal Email',
                       ),
-                      buildUsernameField(
+                      // Username field is currently disabled/commented out.
+                      // If re-enabled, it wires up to checkUsername() (live availability check),
+                      // usernameError (validation message), and usernameAvailable (green check icon).
+                    /*   buildUsernameField(
                         controller: username,
                         label: 'Username',
                         errorText: usernameError,
@@ -502,7 +497,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             : usernameAvailable
                             ? const Icon(Icons.check, color: Colors.green)
                             : null,
-                      ),
+                      ), */
                       Padding(
                         padding: const EdgeInsets.all(8),
                         child: TextFormField(
