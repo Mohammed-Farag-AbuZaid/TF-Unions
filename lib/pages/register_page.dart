@@ -44,6 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // Flow state
   bool isLoading = false;
+  bool _obscurePassword = true; // toggled by the eye icon
 
   @override
   void dispose() {
@@ -447,10 +448,20 @@ class _RegisterPageState extends State<RegisterPage> {
                       Padding(
                         padding: const EdgeInsets.all(8),
                         child: TextFormField(
-                          obscureText: true,
+                          obscureText: _obscurePassword,
                           controller: password,
                           decoration: InputDecoration(
                             labelText: 'Password',
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                              ),
+                              onPressed: () => setState(
+                                () => _obscurePassword = !_obscurePassword,
+                              ),
+                            ),
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: TFColors.hintDark),
                             ),

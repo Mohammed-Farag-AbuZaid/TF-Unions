@@ -145,7 +145,7 @@ class _LoginState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                const Text(
+                /* const Text(
                   '─────── or login with ───────',
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
@@ -172,7 +172,7 @@ class _LoginState extends State<LoginPage> {
                         },
                   icon: const Icon(Icons.login),
                   label: const Text('Login with Google'),
-                ),
+                ), */
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () =>

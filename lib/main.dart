@@ -12,6 +12,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  // Wait for Firebase to restore the saved session (user or null)
+  // before the app starts, so a refresh doesn't look "logged out".
+  currentUser.value = await FirebaseAuth.instance.authStateChanges().first;
+
+  // Keep it updated afterwards (login / logout)
   FirebaseAuth.instance.authStateChanges().listen((user) {
     currentUser.value = user;
   });
