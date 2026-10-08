@@ -6,8 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/widgets/fields.dart';
 import 'package:tf_union/widgets/costum_dialog.dart';
-// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
-import 'dart:js' as js;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -28,7 +26,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final prepSchool = TextEditingController();
   final thanawySchool = TextEditingController();
   final university = TextEditingController();
-  final username = TextEditingController(); // holds chosen username, checked live against Firestore
+  final username = TextEditingController(); // currently unused (field disabled)
   final password = TextEditingController();
   final faculty = TextEditingController();
 
@@ -39,14 +37,13 @@ class _RegisterPageState extends State<RegisterPage> {
   String? _selectedYear;
   String? _selectedGender;
 
-  // Username state
-  String? usernameError; // error message shown under the username field (null = no error)
-  bool checkingUsername = false; // true while the Firestore lookup for the typed username is in flight
-  bool usernameAvailable = false; // true only after a lookup confirms the username is free
+  // Username state (only used if the username field is re-enabled)
+  String? usernameError;
+  bool checkingUsername = false;
+  bool usernameAvailable = false;
 
   // Flow state
   bool isLoading = false;
-  bool _emailVerificationSent = false;
 
   @override
   void dispose() {
@@ -59,65 +56,56 @@ class _RegisterPageState extends State<RegisterPage> {
     thanawySchool.dispose();
     university.dispose();
     password.dispose();
-    username.dispose(); // dispose username controller
+    username.dispose();
     faculty.dispose();
     super.dispose();
   }
 
-  // Looks up `usernames/{value}` in Firestore to see if the typed username is taken.
-  // Updates checkingUsername / usernameAvailable / usernameError accordingly.
+  // Looks up `usernames/{value}` in Firestore to see if the username is taken.
   Future<void> checkUsername(String value) async {
-  if (value.isEmpty) return;
-  setState(() {
-    checkingUsername = true;
-    usernameAvailable = false;
-  });
-  try {
-    final doc = await FirebaseFirestore.instance
-        .collection('usernames')
-        .doc(value)
-        .get();
+    if (value.isEmpty) return;
     setState(() {
-      checkingUsername = false;
-      if (doc.exists) {
-        usernameError = 'Username already taken';
-        usernameAvailable = false;
-      } else {
-        usernameError = null;
-        usernameAvailable = true;
-      }
-    });
-  } catch (e) {
-    setState(() {
-      checkingUsername = false;
-      usernameError = 'Could not check username, try again';
+      checkingUsername = true;
       usernameAvailable = false;
     });
-  }
-}
-  Future<bool> isEmailVerified() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    await user?.reload();
-    user = FirebaseAuth.instance.currentUser;
-    return user?.emailVerified ?? false;
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('usernames')
+          .doc(value)
+          .get();
+      setState(() {
+        checkingUsername = false;
+        if (doc.exists) {
+          usernameError = 'Username already taken';
+          usernameAvailable = false;
+        } else {
+          usernameError = null;
+          usernameAvailable = true;
+        }
+      });
+    } catch (e) {
+      setState(() {
+        checkingUsername = false;
+        usernameError = 'Could not check username, try again';
+        usernameAvailable = false;
+      });
+    }
   }
 
+  // Creates the account directly (no email verification) and saves the profile.
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    // Username field is disabled for now, so no username check here.
 
     setState(() => isLoading = true);
 
     try {
-      if (!_emailVerificationSent) {
-        final existingDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .where('email', isEqualTo: email.text.trim())
-            .limit(1)
-            .get();
-
-        if (existingDoc.docs.isNotEmpty) {
-          // Fully registered — send them to login
+      try {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email.text.trim(),
+          password: password.text,
+        );
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'email-already-in-use') {
           setState(() => isLoading = false);
           showCostumDialog(
             context: context,
@@ -131,82 +119,19 @@ class _RegisterPageState extends State<RegisterPage> {
           );
           return;
         }
-        try {
-          final cred = await FirebaseAuth.instance
-              .createUserWithEmailAndPassword(
-                email: email.text.trim(),
-                password: password.text,
-              );
-          await cred.user!.sendEmailVerification();
-        } on FirebaseAuthException catch (e) {
-          if (e.code == 'email-already-in-use') {
-
-            final cred = await FirebaseAuth.instance.signInWithEmailAndPassword(
-              email: email.text.trim(),
-              password: password.text,
-            );
-            if (cred.user?.emailVerified ?? false) {
-              setState(() => isLoading = false);
-              await _saveUserData();
-              if (!mounted) return;
-              Navigator.of(context).pushReplacementNamed('homePage');
-              return;
-            }
-
-            await cred.user!.sendEmailVerification();
-          } else {
-            rethrow;
-          }
-        }
-
-        setState(() {
-          isLoading = false;
-          _emailVerificationSent = true;
-        });
-
-        showCostumDialog(
-          // ignore: use_build_context_synchronously
-          context: context,
-          title: 'Verify your email',
-          content:
-              'A verification link was sent to ${email.text.trim()}.\nOpen it, then tap "Complete Registration".',
-          confirmText: 'Open Gmail',
-          onConfirm: () {
-            js.context.callMethod('open', ['https://mail.google.com']);
-          },
-        );
-        return;
-      }
-
-      final verified = await isEmailVerified();
-      if (!verified) {
-        setState(() => isLoading = false);
-        showCostumDialog(
-          // ignore: use_build_context_synchronously
-          context: context,
-          title: 'Not verified yet',
-          content: 'Please click the link in your email first.',
-          confirmText: 'Open Gmail',
-          onConfirm: () {
-            js.context.callMethod('open', ['https://mail.google.com']);
-          },
-        );
-        return;
+        rethrow;
       }
 
       await _saveUserData();
       if (!mounted) return;
+      setState(() => isLoading = false);
       Navigator.of(context).pushReplacementNamed('homePage');
     } on FirebaseAuthException catch (e) {
       setState(() => isLoading = false);
-      final message = e.code == 'wrong-password'
-          ? 'This email is linked to an existing account but the password is wrong. '
-                'Try "Forgot Password" on the login page if needed.'
-          : (e.message ?? 'Something went wrong.');
       showCostumDialog(
         context: context,
         title: 'Error',
-        content: message,
+        content: e.message ?? 'Something went wrong.',
         onConfirm: () => Navigator.pop(context),
       );
     } catch (e) {
@@ -215,22 +140,43 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  // NOTE: the field names below are my best guess from the form controllers.
+  // Replace them with your original fields if they differ.
   Future<void> _saveUserData() async {
-  final user = FirebaseAuth.instance.currentUser!;
-  final level = _selectedValue!;
+    final user = FirebaseAuth.instance.currentUser!;
+    final level = _selectedValue!;
 
-  await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-    // ...existing fields...
-  }, SetOptions(merge: true));
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+      'uid': user.uid,
+      'firstName': firstName.text.trim(),
+      'lastName': lastName.text.trim(),
+      'email': email.text.trim(),
+      'birthDate': _birthDate.text,
+      'gender': _selectedGender,
+      'phone': phone.text.trim(),
+      'level': level,
+      'school': level == 'Prep School'
+          ? prepSchool.text.trim()
+          : level == 'Thanawy'
+              ? thanawySchool.text.trim()
+              : level == 'STEM'
+                  ? stemSchool
+                  : null,
+      'grade': level == 'University' ? null : _selectedGrade,
+      'university': level == 'University' ? university.text.trim() : null,
+      'year': level == 'University' ? _selectedYear : null,
+      'faculty': level == 'University' ? faculty.text.trim() : null,
+      'createdAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
 
-  // Username field is disabled for now, so skip reserving a username doc.
-  if (username.text.trim().isNotEmpty) {
-    await FirebaseFirestore.instance
-        .collection('usernames')
-        .doc(username.text)
-        .set({'uid': user.uid});
+    // Username field is disabled for now, so skip reserving a username doc.
+    if (username.text.trim().isNotEmpty) {
+      await FirebaseFirestore.instance
+          .collection('usernames')
+          .doc(username.text)
+          .set({'uid': user.uid});
+    }
   }
-}
 
   Future<void> _selectDate() async {
     final picked = await showDatePicker(
@@ -475,10 +421,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         controller: email,
                         label: 'Personal Email',
                       ),
-                      // Username field is currently disabled/commented out.
-                      // If re-enabled, it wires up to checkUsername() (live availability check),
-                      // usernameError (validation message), and usernameAvailable (green check icon).
-                    /*   buildUsernameField(
+                      // Username field is currently disabled. If re-enabled it
+                      // wires up to checkUsername(), usernameError and
+                      // usernameAvailable.
+                      /* buildUsernameField(
                         controller: username,
                         label: 'Username',
                         errorText: usernameError,
@@ -521,40 +467,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
 
-                      // ── Email verification status banner ───────────────
-                      if (_emailVerificationSent)
-                        Container(
-                          margin: const EdgeInsets.only(top: 16),
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: Colors.green.withAlpha(30),
-                            border: Border.all(
-                              color: Colors.green.withAlpha(100),
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.mark_email_read_outlined,
-                                color: Colors.green,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  'Verification email sent. Click the link in your inbox, then tap "Complete Registration".',
-                                  style: GoogleFonts.exo2(
-                                    fontSize: 12,
-                                    color: Colors.green,
-                                    height: 1.5,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
                       // ── Submit button ──────────────────────────────────
                       const SizedBox(height: 28),
                       SizedBox(
@@ -570,9 +482,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             elevation: 4,
                           ),
                           child: Text(
-                            _emailVerificationSent
-                                ? 'Complete Registration'
-                                : 'Send Verification Link',
+                            'Create Account',
                             style: GoogleFonts.robotoSlab(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
