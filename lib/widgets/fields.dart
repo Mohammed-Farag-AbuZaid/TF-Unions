@@ -1,8 +1,29 @@
 import 'package:ez_email_field/ez_email_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:tf_union/constants/tfcolors.dart';
+
+InputDecoration _minimalDecoration(String label, {Widget? suffixIcon, String? errorText}) {
+  return InputDecoration(
+    labelText: label,
+    errorText: errorText,
+    suffixIcon: suffixIcon,
+    filled: true,
+    fillColor: TFColors.tile,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide.none,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide.none,
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: TFColors.accent, width: 1.5),
+    ),
+  );
+}
 
 Widget buildTextField({
   required TextEditingController controller,
@@ -18,16 +39,7 @@ Widget buildTextField({
     padding: const EdgeInsets.all(8.0),
     child: TextFormField(
       controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: TFColors.hintDark),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
-        ),
-        suffixIcon: suffixIcon,
-      ),
+      decoration: _minimalDecoration(label, suffixIcon: suffixIcon),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
           return 'Please enter your $label';
@@ -52,15 +64,7 @@ Widget buildDropdown<T>({
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: DropdownButtonFormField<T>(
-      decoration: InputDecoration(
-        labelText: label,
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: TFColors.hintDark),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
-        ),
-      ),
+      decoration: _minimalDecoration(label),
       initialValue: value,
       items: items
           .map(
@@ -87,15 +91,7 @@ Widget buildMailField({
     padding: const EdgeInsets.all(8.0),
     child: EZEmailField(
       controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: TFColors.hintDark),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
-        ),
-      ),
+      decoration: _minimalDecoration(label),
       customValidator: validator,
       readOnly: readOnly,
       keyboardType: keyboardType,
@@ -118,32 +114,22 @@ Widget buildUsernameField({
     child: TextFormField(
       onChanged: onChanged,
       controller: controller,
-      decoration: InputDecoration(
-        errorText: errorText,
+      decoration: _minimalDecoration(
+        label,
         suffixIcon: suffixIcon,
-        labelText: label,
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: TFColors.hintDark),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
-        ),
+        errorText: errorText,
       ),
       validator: (String? value) {
         if (value == null || value.trim().isEmpty) {
           return 'Please enter a username';
         }
-
         final validUsername = RegExp(r'^[a-z0-9_]+$');
-
         if (!validUsername.hasMatch(value)) {
           return 'Use lowercase letters, numbers, and underscores only';
         }
-
         if (value.contains(' ')) {
           return 'No spaces allowed';
         }
-
         return null;
       },
       readOnly: readOnly,
@@ -157,47 +143,21 @@ Widget buildUsernameField({
 
 Widget buildTextArea({required String content, bool center = true}) {
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
     child: Container(
       decoration: BoxDecoration(
-        color: Colors.black.withAlpha(180),
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(30),
-          bottomLeft: Radius.circular(30),
-          topLeft: Radius.circular(10),
-          bottomRight: Radius.circular(10),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: TFColors.yellowPrimary.withAlpha(30),
-            blurRadius: 16,
-            offset: Offset(0, 6),
-          ),
-        ],
-        border: Border.all(
-          color: TFColors.yellowPrimary.withAlpha(50),
-          width: 1.3,
-        ),
+        color: TFColors.tile,
+        borderRadius: BorderRadius.circular(20),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
-      child: Column(
-        crossAxisAlignment: center
-            ? CrossAxisAlignment.center
-            : CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            content,
-            textAlign: center ? TextAlign.center : TextAlign.left,
-            style: GoogleFonts.exo2(
-              fontSize: 20,
-              letterSpacing: 0.2,
-              color: TFColors.whitePrimary,
-              fontWeight: FontWeight.w500,
-              height: 1.6,
-            ),
-          ),
-        ],
+      padding: const EdgeInsets.all(24),
+      child: Text(
+        content,
+        textAlign: center ? TextAlign.center : TextAlign.left,
+        style: const TextStyle(
+          fontSize: 16,
+          color: TFColors.ink,
+          height: 1.6,
+        ),
       ),
     ),
   );

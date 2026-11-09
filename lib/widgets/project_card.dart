@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -18,74 +17,84 @@ Widget buildProjectCard({
   required bool published,
 }) {
   return Container(
-    width: 260,
-    padding: const EdgeInsets.all(16),
+    width: 280,
+    padding: const EdgeInsets.all(22),
     decoration: BoxDecoration(
-      color: const Color(0xFF1E1E24),
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: Colors.white10, width: 1.5),
+      color: TFColors.tile,
+      borderRadius: BorderRadius.circular(20),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Image.network(
-            imagePath,
-            height: 130,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => Container(
-              height: 130,
-              color: Colors.black26,
-              child: const Icon(
-                Icons.code_rounded,
-                color: Colors.blueGrey,
-                size: 40,
+        if (imagePath.isNotEmpty) ...[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(
+              imagePath,
+              height: 120,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                height: 120,
+                color: Colors.white,
+                child: const Icon(
+                  Icons.code_rounded,
+                  color: TFColors.muted,
+                  size: 32,
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 12),
+          const SizedBox(height: 14),
+        ],
         Text(
           title,
-          style: GoogleFonts.robotoSlab(
+          style: const TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w700,
+            color: TFColors.ink,
+            letterSpacing: -0.3,
           ),
         ),
         const SizedBox(height: 6),
         Text(
           description,
-          style: GoogleFonts.exo2(
-            fontWeight: FontWeight.w200,
-            color: Colors.grey,
-            fontSize: 13,
-            height: 1.4,
+          style: const TextStyle(
+            color: TFColors.muted,
+            fontSize: 14,
+            height: 1.45,
           ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 16),
-
-        ElevatedButton(
-          onPressed: !published
+        const SizedBox(height: 18),
+        InkWell(
+          onTap: !published
               ? null
               : () async {
                   await _launchURL(projectUrl);
                 },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: TFColors.yellowPrimary,
-            foregroundColor: Colors.black,
-            minimumSize: const Size(double.infinity, 38),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            elevation: 2,
-          ),
-          child: Text(
-            !published ? 'Coming Soon' : 'Take a look',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+          borderRadius: BorderRadius.circular(8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                !published ? 'Opening soon' : 'Explore',
+                style: TextStyle(
+                  color: !published ? TFColors.muted : TFColors.accent,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+              if (published) ...[
+                const SizedBox(width: 4),
+                const Icon(
+                  Icons.chevron_right,
+                  color: TFColors.accent,
+                  size: 18,
+                ),
+              ],
+            ],
           ),
         ),
       ],

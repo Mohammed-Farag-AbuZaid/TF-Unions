@@ -17,75 +17,72 @@ class _ForgetPasswordState extends State<ForgetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(backgroundColor: Colors.black),
-
-      body: Column(
-        children: [
-          Spacer(),
-          Center(
-            child: Image.asset(
-              'assets/BlackLogo.png',
-              width: 200,
-              height: 200,
-            ),
-          ),
-          Center(
-            child: Card(
-              elevation: 30,
-              margin: const EdgeInsets.only(top: 24, bottom: 24),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Container(
-                width: 430,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 24,
-                ),
-                child: Form(
-                  key: _forgetPasswordFormKey,
-                  child: Column(
-                    children: [
-                      buildMailField(controller: email, label: 'Email'),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
-                        child: MaterialButton(
-                          height: 50,
-                          minWidth: 150,
-                          color: TFColors.bglight1,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          onPressed: () async {
-                            await FirebaseAuth.instance
-                                .sendPasswordResetEmail(
-                                  email: email.text,
-                                );
-                            js.context.callMethod('alert', [
-                              'A password reset link has been sent to your email.'
-                            ]);
-                          },
-                          child: Text(
-                            'Send Reset Link',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: TFColors.ink),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Form(
+              key: _forgetPasswordFormKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text(
+                    'Reset your password',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
+                      color: TFColors.ink,
+                      letterSpacing: -0.6,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Enter your email to receive a password reset link.',
+                    style: TextStyle(fontSize: 14, color: TFColors.muted),
+                  ),
+                  const SizedBox(height: 20),
+                  buildMailField(controller: email, label: 'Email'),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    height: 48,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: TFColors.accent,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                    ],
+                      onPressed: () async {
+                        await FirebaseAuth.instance.sendPasswordResetEmail(
+                          email: email.text.trim(),
+                        );
+                        js.context.callMethod('alert', [
+                          'A password reset link has been sent to your email.',
+                        ]);
+                      },
+                      child: const Text(
+                        'Send Reset Link',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ),
-      
-          Spacer(),
-          Spacer(),
-          Spacer(),
-        ],
+        ),
       ),
     );
   }

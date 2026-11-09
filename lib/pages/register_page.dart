@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:tf_union/constants/tfcolors.dart';
+import 'package:tf_union/utils/tf_api.dart';
 import 'package:tf_union/widgets/fields.dart';
 import 'package:tf_union/widgets/costum_dialog.dart';
 
@@ -17,7 +19,6 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers
   final firstName = TextEditingController();
   final lastName = TextEditingController();
   final email = TextEditingController();
@@ -26,25 +27,18 @@ class _RegisterPageState extends State<RegisterPage> {
   final prepSchool = TextEditingController();
   final thanawySchool = TextEditingController();
   final university = TextEditingController();
-  final username = TextEditingController(); // currently unused (field disabled)
+  final username = TextEditingController();
   final password = TextEditingController();
   final faculty = TextEditingController();
 
-  // Dropdowns
   String? stemSchool;
   String? _selectedValue;
   String? _selectedGrade;
   String? _selectedYear;
   String? _selectedGender;
 
-  // Username state (only used if the username field is re-enabled)
-  String? usernameError;
-  bool checkingUsername = false;
-  bool usernameAvailable = false;
-
-  // Flow state
   bool isLoading = false;
-  bool _obscurePassword = true; // toggled by the eye icon
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -62,44 +56,40 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-  // Looks up `usernames/{value}` in Firestore to see if the username is taken.
-  Future<void> checkUsername(String value) async {
-    if (value.isEmpty) return;
-    setState(() {
-      checkingUsername = true;
-      usernameAvailable = false;
-    });
-    try {
-      final doc = await FirebaseFirestore.instance
-          .collection('usernames')
-          .doc(value)
-          .get();
-      setState(() {
-        checkingUsername = false;
-        if (doc.exists) {
-          usernameError = 'Username already taken';
-          usernameAvailable = false;
-        } else {
-          usernameError = null;
-          usernameAvailable = true;
-        }
-      });
-    } catch (e) {
-      setState(() {
-        checkingUsername = false;
-        usernameError = 'Could not check username, try again';
-        usernameAvailable = false;
-      });
-    }
-  }
-
-  // Creates the account directly (no email verification) and saves the profile.
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     setState(() => isLoading = true);
 
     try {
+      final selectedSchool = _selectedValue == 'Prep School'
+          ? prepSchool.text.trim()
+          : _selectedValue == 'Thanawy'
+              ? thanawySchool.text.trim()
+              : _selectedValue == 'STEM'
+                  ? (stemSchool ?? 'General / Alumni')
+                  : (university.text.trim().isNotEmpty
+                      ? university.text.trim()
+                      : 'General / Alumni');
+
+      // 1. Register on VPS SSO API
+      try {
+        await http
+            .post(
+              Uri.parse('$kTfApiBaseUrl/auth/register'),
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode({
+                'email': email.text.trim(),
+                'password': password.text,
+                'full_name':
+                    '${firstName.text.trim()} ${lastName.text.trim()}'.trim(),
+                'school_chapter': selectedSchool,
+              }),
+            )
+            .timeout(const Duration(seconds: 8));
+      } catch (_) {}
+
+      // 2. Also create in Firebase Auth for dual compatibility
       try {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email.text.trim(),
@@ -108,6 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
       } on FirebaseAuthException catch (e) {
         if (e.code == 'email-already-in-use') {
           setState(() => isLoading = false);
+          if (!mounted) return;
           showCostumDialog(
             context: context,
             title: 'Account exists',
@@ -129,6 +120,7 @@ class _RegisterPageState extends State<RegisterPage> {
       Navigator.of(context).pushReplacementNamed('homePage');
     } on FirebaseAuthException catch (e) {
       setState(() => isLoading = false);
+      if (!mounted) return;
       showCostumDialog(
         context: context,
         title: 'Error',
@@ -141,13 +133,12 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  // NOTE: the field names below are my best guess from the form controllers.
-  // Replace them with your original fields if they differ.
   Future<void> _saveUserData() async {
-    final user = FirebaseAuth.instance.currentUser!;
-    final level = _selectedValue!;
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final level = _selectedValue ?? 'STEM';
 
-    await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+    final payload = {
       'uid': user.uid,
       'firstName': firstName.text.trim(),
       'lastName': lastName.text.trim(),
@@ -155,7 +146,9 @@ class _RegisterPageState extends State<RegisterPage> {
       'birthDate': _birthDate.text,
       'gender': _selectedGender,
       'phone': phone.text.trim(),
+      'academicLevel': level,
       'level': level,
+      'stemSchool': level == 'STEM' ? stemSchool : '',
       'school': level == 'Prep School'
           ? prepSchool.text.trim()
           : level == 'Thanawy'
@@ -167,16 +160,12 @@ class _RegisterPageState extends State<RegisterPage> {
       'university': level == 'University' ? university.text.trim() : null,
       'year': level == 'University' ? _selectedYear : null,
       'faculty': level == 'University' ? faculty.text.trim() : null,
-      'createdAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
+    };
 
-    // Username field is disabled for now, so skip reserving a username doc.
-    if (username.text.trim().isNotEmpty) {
-      await FirebaseFirestore.instance
-          .collection('usernames')
-          .doc(username.text)
-          .set({'uid': user.uid});
-    }
+    await TfApiService.saveDoc('users', user.uid, {
+      ...payload,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
   }
 
   Future<void> _selectDate() async {
@@ -193,31 +182,17 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  // ─── Section header helper ───────────────────────────────────────────────
-  Widget _sectionHeader(String title, IconData icon) {
+  Widget _sectionHeader(String title) {
     return Padding(
-      padding: const EdgeInsets.only(top: 32, bottom: 8),
-      child: Row(
-        children: [
-          Icon(icon, color: TFColors.yellowPrimary, size: 20),
-          const SizedBox(width: 10),
-          Text(
-            title,
-            style: GoogleFonts.robotoSlab(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: TFColors.yellowPrimary,
-              letterSpacing: 0.5,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Container(
-              height: 1,
-              color: TFColors.yellowPrimary.withAlpha(60),
-            ),
-          ),
-        ],
+      padding: const EdgeInsets.only(top: 28, bottom: 8),
+      child: Text(
+        title.toUpperCase(),
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: TFColors.accent,
+          letterSpacing: 1.0,
+        ),
       ),
     );
   }
@@ -225,22 +200,17 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        toolbarHeight: 70,
-        backgroundColor: Colors.black,
-        title: Center(
-          child: SizedBox(
-            width: 200,
-            child: Image.asset('assets/BlackLogo.png'),
-          ),
-        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: TFColors.ink),
       ),
       body: Stack(
         children: [
           Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 520),
                 child: Form(
@@ -249,40 +219,42 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // ── Title ──────────────────────────────────────────
-                      Text(
-                        'Join TF Union',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.roadRage(
-                          fontSize: 38,
-                          color: TFColors.whitePrimary,
+                      const Text(
+                        'Create your TF Passport',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                          color: TFColors.ink,
+                          letterSpacing: -0.8,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'A few seconds separate you from being part of our family.',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.exo2(
-                          fontSize: 13,
-                          color: Colors.grey,
-                          height: 1.5,
+                      const SizedBox(height: 6),
+                      const Text(
+                        'One unified identity across TF Unions, TF News, STEM Union, and STEM Shop.',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: TFColors.muted,
+                          height: 1.45,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Center(
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.centerLeft,
                         child: TextButton(
                           onPressed: () => Navigator.of(
                             context,
                           ).pushReplacementNamed('login'),
                           child: const Text(
-                            'Already have an account? Login',
-                            style: TextStyle(fontSize: 12, color: Colors.blue),
+                            'Already have an account? Sign in',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: TFColors.accent,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
-
-                      // ── Personal Info ──────────────────────────────────
-                      _sectionHeader('Personal Info', Icons.person_outline),
+                      _sectionHeader('Personal Info'),
                       buildTextField(
                         controller: firstName,
                         label: 'First Name',
@@ -309,18 +281,16 @@ class _RegisterPageState extends State<RegisterPage> {
                           initialCountryCode: 'EG',
                           decoration: InputDecoration(
                             labelText: 'Phone Number',
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: TFColors.hintDark),
-                            ),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.blue),
+                            filled: true,
+                            fillColor: TFColors.tile,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
                             ),
                           ),
                         ),
                       ),
-
-                      // ── Academic Info ──────────────────────────────────
-                      _sectionHeader('Academic Info', Icons.school_outlined),
+                      _sectionHeader('Academic Info'),
                       buildDropdown<String>(
                         label: 'Academic Level',
                         value: _selectedValue,
@@ -415,36 +385,11 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         buildTextField(controller: faculty, label: 'Faculty'),
                       ],
-
-                      // ── Account Credentials ────────────────────────────
-                      _sectionHeader('Account Credentials', Icons.lock_outline),
+                      _sectionHeader('Account Credentials'),
                       buildMailField(
                         controller: email,
                         label: 'Personal Email',
                       ),
-                      // Username field is currently disabled. If re-enabled it
-                      // wires up to checkUsername(), usernameError and
-                      // usernameAvailable.
-                      /* buildUsernameField(
-                        controller: username,
-                        label: 'Username',
-                        errorText: usernameError,
-                        onChanged: checkUsername,
-                        suffixIcon: checkingUsername
-                            ? const Padding(
-                                padding: EdgeInsets.all(12),
-                                child: SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                ),
-                              )
-                            : usernameAvailable
-                            ? const Icon(Icons.check, color: Colors.green)
-                            : null,
-                      ), */
                       Padding(
                         padding: const EdgeInsets.all(8),
                         child: TextFormField(
@@ -452,6 +397,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           controller: password,
                           decoration: InputDecoration(
                             labelText: 'Password',
+                            filled: true,
+                            fillColor: TFColors.tile,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscurePassword
@@ -462,12 +413,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                 () => _obscurePassword = !_obscurePassword,
                               ),
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: TFColors.hintDark),
-                            ),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
                           ),
                           validator: (v) {
                             if (v == null || v.length < 6) {
@@ -477,26 +422,24 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                         ),
                       ),
-
-                      // ── Submit button ──────────────────────────────────
-                      const SizedBox(height: 28),
+                      const SizedBox(height: 24),
                       SizedBox(
-                        height: 52,
+                        height: 48,
                         child: ElevatedButton(
                           onPressed: isLoading ? null : _submit,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: TFColors.yellowPrimary,
-                            foregroundColor: Colors.black,
+                            backgroundColor: TFColors.accent,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            elevation: 4,
                           ),
-                          child: Text(
+                          child: const Text(
                             'Create Account',
-                            style: GoogleFonts.robotoSlab(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -508,13 +451,11 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ),
           ),
-
-          // ── Loading overlay ──────────────────────────────────────────────
           if (isLoading)
             Container(
-              color: Colors.black54,
-              child: Center(
-                child: CircularProgressIndicator(color: TFColors.yellowPrimary),
+              color: Colors.white70,
+              child: const Center(
+                child: CircularProgressIndicator(color: TFColors.accent),
               ),
             ),
         ],

@@ -24,8 +24,6 @@ class _HomePageState extends State<HomePage> {
   final scrollController = ScrollController();
   final List<GlobalKey> navbarKeys = List.generate(4, (index) => GlobalKey());
 
- 
-
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -34,7 +32,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context, constraints) {
         return Scaffold(
           key: scaffoldKey,
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.white,
           drawer: constraints.maxWidth > mobileWidth
               ? null
               : DrawerMobile(
@@ -62,23 +60,25 @@ class _HomePageState extends State<HomePage> {
                       scaffoldKey.currentState?.openDrawer();
                     },
                   ),
-
-                // Hero
                 if (constraints.maxWidth > mobileWidth) const HeroDesktop(),
-                if (constraints.maxWidth <= mobileWidth) HeroMobile(),
-                // About
+                if (constraints.maxWidth <= mobileWidth) const HeroMobile(),
                 About(key: navbarKeys[1]),
                 ProjectsPage(key: navbarKeys[2]),
-                // Footer
                 Container(
                   width: screenWidth,
-                  color: TFColors.bglight1,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                      top: BorderSide(color: TFColors.hair, width: 0.5),
+                    ),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 28, horizontal: 24),
                     child: Text(
-                      'Copyright © 2026 TF Unions. All rights reserved.\nPowerd by TF-Union.',
+                      'Copyright © 2026 TF Unions. All rights reserved.',
                       style: TextStyle(
-                        color: TFColors.whitePrimary,
+                        color: TFColors.muted,
+                        fontSize: 12,
                         height: 1.5,
                       ),
                       textAlign: TextAlign.center,
@@ -99,12 +99,15 @@ class _HomePageState extends State<HomePage> {
         context,
         MaterialPageRoute(builder: (context) => const DocsPage()),
       );
+      return;
     }
     final key = navbarKeys[navIndex];
-    Scrollable.ensureVisible(
-      key.currentContext!,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-    );
+    if (key.currentContext != null) {
+      Scrollable.ensureVisible(
+        key.currentContext!,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 }
