@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/variables.dart';
 import 'package:tf_union/pages/docs_page.dart';
+import 'package:tf_union/pages/projects_page.dart';
 import 'package:tf_union/widgets/about.dart';
-import 'package:tf_union/widgets/header_desktop.dart';
+import 'package:tf_union/widgets/drawer_mobile.dart';
 import 'package:tf_union/widgets/hero_desktop.dart';
 import 'package:tf_union/widgets/hero_mobile.dart';
-import 'package:tf_union/widgets/drawer_mobile.dart';
-import 'package:tf_union/pages/projects_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,15 +16,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final db = FirebaseFirestore.instance;
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final scrollController = ScrollController();
-  final List<GlobalKey> navbarKeys = List.generate(4, (index) => GlobalKey());
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final screenWidth = screenSize.width;
+    final screenWidth = MediaQuery.of(context).size.width;
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
@@ -37,25 +31,16 @@ class _HomePageState extends State<HomePage> {
               : DrawerMobile(
                   onNavItemTap: (int navIndex) {
                     scaffoldKey.currentState?.closeDrawer();
-                    scrollToSection(navIndex);
+                    _openNavPage(navIndex);
                   },
                 ),
           body: SingleChildScrollView(
-            controller: scrollController,
-            scrollDirection: Axis.vertical,
             child: Column(
               children: [
-                SizedBox(key: navbarKeys.first),
                 if (constraints.maxWidth > mobileWidth)
-                  HeaderDesktop(
-                    onNavMenuTap: (int navIndex) {
-                      scrollToSection(navIndex);
-                    },
-                  ),
-                if (constraints.maxWidth > mobileWidth) const HeroDesktop(),
-                if (constraints.maxWidth <= mobileWidth) const HeroMobile(),
-                About(key: navbarKeys[1]),
-                ProjectsPage(key: navbarKeys[2]),
+                  const HeroDesktop()
+                else
+                  const HeroMobile(),
                 Container(
                   width: screenWidth,
                   decoration: const BoxDecoration(
@@ -85,21 +70,116 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void scrollToSection(int navIndex) {
-    if (navIndex == 3) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const DocsPage()),
-      );
-      return;
+  void _openNavPage(int navIndex) {
+    if (navIndex == 0) return;
+    Widget page;
+    switch (navIndex) {
+      case 1:
+        page = const AboutScreen();
+        break;
+      case 2:
+        page = const ProjectsScreen();
+        break;
+      case 3:
+      default:
+        page = const DocsPage();
+        break;
     }
-    final key = navbarKeys[navIndex];
-    if (key.currentContext != null) {
-      Scrollable.ensureVisible(
-        key.currentContext!,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      );
-    }
+    Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+  }
+}
+
+class _InlineBackHeader extends StatelessWidget {
+  const _InlineBackHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1120),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: InkWell(
+              onTap: () => Navigator.of(context).pop(),
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: TFColors.surface,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: TFColors.border),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.arrow_back_rounded, size: 16, color: TFColors.ink),
+                    SizedBox(width: 6),
+                    Text(
+                      'Home',
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
+                        color: TFColors.ink,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AboutScreen extends StatelessWidget {
+  const AboutScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: TFColors.canvas,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _InlineBackHeader(),
+              About(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ProjectsScreen extends StatelessWidget {
+  final ProjectFilter initialFilter;
+
+  const ProjectsScreen({
+    super.key,
+    this.initialFilter = ProjectFilter.all,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: TFColors.canvas,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const _InlineBackHeader(),
+              ProjectsPage(initialFilter: initialFilter),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

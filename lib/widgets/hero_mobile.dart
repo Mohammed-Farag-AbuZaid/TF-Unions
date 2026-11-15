@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/variables.dart';
+import 'package:tf_union/pages/docs_page.dart';
+import 'package:tf_union/pages/home_page.dart';
 import 'package:tf_union/pages/login.dart';
+import 'package:tf_union/pages/projects_page.dart';
 import 'package:tf_union/pages/register_page.dart';
 import 'package:tf_union/utils/tf_api.dart';
 import 'package:tf_union/widgets/__family_banner.dart';
@@ -301,6 +304,55 @@ class _HeroMobileState extends State<HeroMobile> {
                     ),
                   ],
                 ),
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  OutlinedButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const AboutScreen()),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: TFColors.surface,
+                      foregroundColor: TFColors.ink,
+                      side: const BorderSide(color: TFColors.border),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: const Text('About', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                  ),
+                  OutlinedButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProjectsScreen(initialFilter: ProjectFilter.all)),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: TFColors.surface,
+                      foregroundColor: TFColors.ink,
+                      side: const BorderSide(color: TFColors.border),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: const Text('Projects', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                  ),
+                  OutlinedButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const DocsPage()),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: TFColors.surface,
+                      foregroundColor: TFColors.ink,
+                      side: const BorderSide(color: TFColors.border),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: const Text('Docs', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                  ),
+                ],
+              ),
               const SizedBox(height: 22),
               FamilyBanner(memberCount: _memberCount),
               const SizedBox(height: 12),

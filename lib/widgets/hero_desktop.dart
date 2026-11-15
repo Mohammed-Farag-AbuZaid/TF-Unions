@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/variables.dart';
-import 'package:tf_union/pages/register_page.dart';
+import 'package:tf_union/pages/docs_page.dart';
+import 'package:tf_union/pages/home_page.dart';
+import 'package:tf_union/pages/login.dart';
 import 'package:tf_union/pages/projects_page.dart';
+import 'package:tf_union/pages/register_page.dart';
 import 'package:tf_union/utils/tf_api.dart';
 import 'package:tf_union/widgets/__family_banner.dart';
-import 'package:tf_union/widgets/project_card.dart';
+import 'package:tf_union/widgets/costum_dialog.dart';
+import 'package:tf_union/widgets/tf_logo_mark.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HeroDesktop extends StatefulWidget {
   const HeroDesktop({super.key});
@@ -15,8 +20,6 @@ class HeroDesktop extends StatefulWidget {
 }
 
 class _HeroDesktopState extends State<HeroDesktop> {
-  List<Widget> projectCards = [];
-
   int _memberCount = 50;
   int _doneCount = 0;
   int _inProgressCount = 0;
@@ -26,27 +29,7 @@ class _HeroDesktopState extends State<HeroDesktop> {
   @override
   void initState() {
     super.initState();
-    getData();
     getStats();
-  }
-
-  Future<void> getData() async {
-    final items = await TfApiService.fetchCollection('allProjects');
-    projectCards.clear();
-    for (var doc in items) {
-      if (doc['published'] == true) {
-        projectCards.add(
-          buildProjectCard(
-            title: (doc['name'] ?? '').toString(),
-            description: (doc['description'] ?? '').toString(),
-            imagePath: (doc['imgURL'] ?? '').toString(),
-            projectUrl: (doc['projectURL'] ?? '').toString(),
-            published: true,
-          ),
-        );
-      }
-    }
-    if (mounted) setState(() {});
   }
 
   Future<void> getStats() async {
@@ -68,13 +51,15 @@ class _HeroDesktopState extends State<HeroDesktop> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => Scaffold(
-          backgroundColor: TFColors.canvas,
-          body: SingleChildScrollView(
-            child: ProjectsPage(initialFilter: filter),
-          ),
-        ),
+        builder: (_) => ProjectsScreen(initialFilter: filter),
       ),
+    );
+  }
+
+  void _goToPage(Widget page) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => page),
     );
   }
 
@@ -87,10 +72,125 @@ class _HeroDesktopState extends State<HeroDesktop> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1120),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 56, 24, 48),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 56),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Calm inline navigation & identity row (no full-width top bar)
+                ValueListenableBuilder(
+                  valueListenable: currentUser,
+                  builder: (context, user, _) {
+                    return Container(
+                      padding: const EdgeInsets.only(bottom: 18),
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(color: TFColors.border, width: 1),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Row(
+                            children: [
+                              TfLogoMark(size: 28),
+                              SizedBox(width: 10),
+                              Text(
+                                'TF Unions',
+                                style: TextStyle(
+                                  fontFamily: 'Bricolage Grotesque',
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w700,
+                                  color: TFColors.ink,
+                                  letterSpacing: -0.3,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: () => _goToPage(const AboutScreen()),
+                            child: const Text(
+                              'About',
+                              style: TextStyle(color: TFColors.muted, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () => _goToProjects(ProjectFilter.all),
+                            child: const Text(
+                              'Projects',
+                              style: TextStyle(color: TFColors.muted, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () => _goToPage(const DocsPage()),
+                            child: const Text(
+                              'Docs',
+                              style: TextStyle(color: TFColors.muted, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () => launchUrl(
+                              Uri.parse('https://www.tfunions.com/team/'),
+                              mode: LaunchMode.externalApplication,
+                            ),
+                            child: const Text(
+                              'Team',
+                              style: TextStyle(color: TFColors.muted, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          if (user == null) ...[
+                            OutlinedButton(
+                              onPressed: () => _goToPage(const LoginPage()),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: TFColors.ink,
+                                backgroundColor: TFColors.surface,
+                                side: const BorderSide(color: TFColors.border),
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              ),
+                              child: const Text('Sign in', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              onPressed: () => _goToPage(const RegisterPage()),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: TFColors.accent,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              ),
+                              child: const Text('Join TF Unions', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                            ),
+                          ] else
+                            GestureDetector(
+                              onTap: () => showProfileDialog(context: context),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                                decoration: BoxDecoration(
+                                  color: TFColors.tealSoft,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: TFColors.tealBorder),
+                                ),
+                                child: Text(
+                                  (user.displayName ?? user.email?.split('@').first ?? 'Scholar').trim(),
+                                  style: const TextStyle(
+                                    color: TFColors.gold,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 44),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
                 Expanded(
                   flex: 6,
                   child: Column(
@@ -270,9 +370,11 @@ class _HeroDesktopState extends State<HeroDesktop> {
                 ),
               ],
             ),
+            ],
           ),
         ),
       ),
+    ),
     );
   }
 }
