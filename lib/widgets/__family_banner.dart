@@ -13,36 +13,51 @@ class FamilyBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
       decoration: BoxDecoration(
-        color: TFColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: TFColors.border),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A0F172A),
-            blurRadius: 4,
-            offset: Offset(0, 1),
-          ),
-        ],
+        color: TFColors.navyAlt,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: TFColors.navyLine),
       ),
-      child: RichText(
-        text: TextSpan(
-          style: const TextStyle(
-            fontSize: 15,
-            color: TFColors.ink,
-            height: 1.4,
-          ),
+      child: IntrinsicHeight(
+        child: Row(
           children: [
-            const TextSpan(text: 'Community of '),
-            TextSpan(
-              text: '$memberCount',
-              style: const TextStyle(
-                color: TFColors.accent,
-                fontWeight: FontWeight.w700,
+            Container(
+              width: 4,
+              decoration: const BoxDecoration(
+                color: TFColors.gold,
+                borderRadius: BorderRadius.horizontal(left: Radius.circular(5)),
               ),
             ),
-            const TextSpan(text: ' standout students across Egypt.'),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 14,
+                ),
+                child: RichText(
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 14.5,
+                      color: Color(0xFFD6DCE8),
+                      height: 1.45,
+                    ),
+                    children: [
+                      const TextSpan(text: 'Community of '),
+                      TextSpan(
+                        text: '$memberCount',
+                        style: const TextStyle(
+                          color: TFColors.gold,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const TextSpan(
+                        text: ' standout STEM & university scholars across Egypt.',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

@@ -119,7 +119,7 @@ class _ProjectsPageState extends State<ProjectsPage>
   Widget build(BuildContext context) {
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1000),
+        constraints: const BoxConstraints(maxWidth: 1120),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -143,16 +143,15 @@ class _ProjectsPageState extends State<ProjectsPage>
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
-                  'TF SUB-ORGS',
+                  'Ecosystem Divisions',
                   style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.2,
-                    color: TFColors.muted,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: TFColors.navy,
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Wrap(
@@ -161,14 +160,15 @@ class _ProjectsPageState extends State<ProjectsPage>
                   children: _orgCards,
                 ),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 44),
             ],
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Container(
                 decoration: BoxDecoration(
-                  color: TFColors.tile,
-                  borderRadius: BorderRadius.circular(12),
+                  color: TFColors.inset,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: TFColors.border),
                 ),
                 padding: const EdgeInsets.all(4),
                 child: TabBar(
@@ -178,10 +178,12 @@ class _ProjectsPageState extends State<ProjectsPage>
                   dividerColor: Colors.transparent,
                   indicator: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(9),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: TFColors.border),
                   ),
                   indicatorSize: TabBarIndicatorSize.tab,
-                  labelColor: TFColors.ink,
+                  labelColor: TFColors.navy,
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w700),
                   unselectedLabelColor: TFColors.muted,
                   tabs: _tabLabels
                       .map((l) => Tab(text: l, height: 36))
@@ -189,7 +191,7 @@ class _ProjectsPageState extends State<ProjectsPage>
                 ),
               ),
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 24),
             if (!_loading) ...[
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -221,25 +223,27 @@ class _PageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.fromLTRB(24, 56, 24, 28),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          Container(width: 36, height: 3, color: TFColors.gold),
+          const SizedBox(height: 12),
+          const Text(
             'Services & Projects',
             style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.w700,
-              color: TFColors.ink,
+              color: TFColors.navy,
               letterSpacing: -0.8,
             ),
           ),
-          SizedBox(height: 8),
-          Text(
-            'Everything the union is building — past, present and future.',
+          const SizedBox(height: 6),
+          const Text(
+            'Everything the union builds — shipped tools, active initiatives, and upcoming releases.',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 15.5,
               color: TFColors.muted,
             ),
           ),

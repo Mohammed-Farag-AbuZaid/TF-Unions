@@ -40,93 +40,104 @@ class _HeroMobileState extends State<HeroMobile> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 48, 20, 32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'TF UNIONS FOUNDATION',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.0,
-              color: TFColors.muted,
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: TFColors.navy,
+        border: Border(
+          bottom: BorderSide(color: TFColors.navyLine, width: 1),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 36, 20, 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(width: 32, height: 3, color: TFColors.gold),
+            const SizedBox(height: 12),
+            const Text(
+              'Egyptian STEM & University Scholars Network',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: TFColors.gold,
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'A non-profit platform for standout students in Egypt.',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.w700,
-              height: 1.12,
-              letterSpacing: -1.0,
-              color: TFColors.ink,
+            const SizedBox(height: 8),
+            const Text(
+              'A non-profit platform for standout students in Egypt.',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.w700,
+                height: 1.12,
+                letterSpacing: -0.9,
+                color: Colors.white,
+              ),
             ),
-          ),
-          const SizedBox(height: 14),
-          const Text(
-            'Connecting students across Egypt with verified opportunities, tools, and learning communities.',
-            style: TextStyle(
-              fontSize: 15,
-              color: TFColors.muted,
-              height: 1.45,
+            const SizedBox(height: 12),
+            const Text(
+              'Connecting students across Egypt with verified opportunities, open tools, and peer communities.',
+              style: TextStyle(
+                fontSize: 14.5,
+                color: Color(0xFFD6DCE8),
+                height: 1.45,
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
-          if (!loggedIn)
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RegisterPage(),
+            const SizedBox(height: 20),
+            if (!loggedIn)
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RegisterPage(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: TFColors.accent,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 13,
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: TFColors.accent,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 22,
-                  vertical: 14,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    side: const BorderSide(color: Color(0xFF2853B8)),
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                child: const Text(
+                  'Join TF Unions',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                 ),
               ),
-              child: const Text(
-                'Join TF Unions',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-              ),
+            const SizedBox(height: 24),
+            FamilyBanner(memberCount: _memberCount),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _MobileStatCard(value: _doneCount, label: 'Done'),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _MobileStatCard(
+                    value: _inProgressCount,
+                    label: 'In progress',
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _MobileStatCard(
+                    value: _upcomingCount,
+                    label: 'Upcoming',
+                  ),
+                ),
+              ],
             ),
-          const SizedBox(height: 28),
-          FamilyBanner(memberCount: _memberCount),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                child: _MobileStatCard(value: _doneCount, label: 'Done'),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _MobileStatCard(
-                  value: _inProgressCount,
-                  label: 'In progress',
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _MobileStatCard(
-                  value: _upcomingCount,
-                  label: 'Upcoming',
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -142,16 +153,9 @@ class _MobileStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: TFColors.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: TFColors.border),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A0F172A),
-            blurRadius: 4,
-            offset: Offset(0, 1),
-          ),
-        ],
+        color: TFColors.navyAlt,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: TFColors.navyLine),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,13 +165,16 @@ class _MobileStatCard extends StatelessWidget {
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: TFColors.ink,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             label,
-            style: const TextStyle(fontSize: 11, color: TFColors.muted),
+            style: const TextStyle(
+              fontSize: 11,
+              color: Color(0xFFD6DCE8),
+            ),
           ),
         ],
       ),

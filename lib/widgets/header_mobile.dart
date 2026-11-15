@@ -18,9 +18,9 @@ class HeaderMobile extends StatelessWidget {
         return Container(
           height: 64,
           decoration: const BoxDecoration(
-            color: TFColors.surface,
+            color: TFColors.navy,
             border: Border(
-              bottom: BorderSide(color: TFColors.border, width: 1),
+              bottom: BorderSide(color: TFColors.navyLine, width: 1),
             ),
           ),
           child: Padding(
@@ -34,7 +34,7 @@ class HeaderMobile extends StatelessWidget {
                     height: 38,
                     child: Icon(
                       Icons.menu_rounded,
-                      color: TFColors.ink,
+                      color: Colors.white,
                       size: 22,
                     ),
                   ),
@@ -52,7 +52,7 @@ class HeaderMobile extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.w700,
-                          color: TFColors.ink,
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -74,15 +74,16 @@ class HeaderMobile extends StatelessWidget {
                         child: Container(
                           width: 32,
                           height: 32,
-                          decoration: const BoxDecoration(
-                            color: TFColors.tile,
+                          decoration: BoxDecoration(
+                            color: TFColors.navyAlt,
                             shape: BoxShape.circle,
+                            border: Border.all(color: TFColors.gold, width: 1.5),
                           ),
                           child: Center(
                             child: Text(
                               initial,
                               style: const TextStyle(
-                                color: TFColors.accent,
+                                color: Colors.white,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
                               ),

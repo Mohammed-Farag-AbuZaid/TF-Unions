@@ -28,14 +28,14 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
         return Container(
           height: 64,
           decoration: const BoxDecoration(
-            color: TFColors.surface,
+            color: TFColors.navy,
             border: Border(
-              bottom: BorderSide(color: TFColors.border, width: 1),
+              bottom: BorderSide(color: TFColors.navyLine, width: 1),
             ),
           ),
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1080),
+              constraints: const BoxConstraints(maxWidth: 1120),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Row(
@@ -54,7 +54,7 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
                             style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.w700,
-                              color: TFColors.ink,
+                              color: Colors.white,
                               letterSpacing: -0.3,
                             ),
                           ),
@@ -79,9 +79,11 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
                               ),
                               decoration: isActive
                                   ? BoxDecoration(
-                                      color: TFColors.inset,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: TFColors.border),
+                                      color: TFColors.navyAlt,
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                        color: TFColors.navyLine,
+                                      ),
                                     )
                                   : null,
                               child: Text(
@@ -89,11 +91,11 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
                                 style: TextStyle(
                                   fontSize: 13.5,
                                   fontWeight: isActive
-                                      ? FontWeight.w600
+                                      ? FontWeight.w700
                                       : FontWeight.w500,
                                   color: isActive
-                                      ? TFColors.accent
-                                      : TFColors.muted,
+                                      ? Colors.white
+                                      : const Color(0xFFD6DCE8),
                                 ),
                               ),
                             ),
@@ -114,7 +116,7 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
                               style: TextStyle(
                                 fontSize: 13.5,
                                 fontWeight: FontWeight.w500,
-                                color: TFColors.muted,
+                                color: Color(0xFFD6DCE8),
                               ),
                             ),
                           ),
@@ -137,7 +139,7 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
                             'Sign in',
                             style: TextStyle(
                               fontSize: 13,
-                              color: TFColors.muted,
+                              color: Color(0xFFD6DCE8),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -157,15 +159,16 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: TFColors.tile,
-                            borderRadius: BorderRadius.circular(10),
+                            color: TFColors.accent,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(color: const Color(0xFF2853B8)),
                           ),
                           child: const Text(
                             'Join TF Unions',
                             style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: TFColors.ink,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -206,15 +209,16 @@ class _AvatarButton extends StatelessWidget {
               Container(
                 width: 32,
                 height: 32,
-                decoration: const BoxDecoration(
-                  color: TFColors.tile,
+                decoration: BoxDecoration(
+                  color: TFColors.navyAlt,
                   shape: BoxShape.circle,
+                  border: Border.all(color: TFColors.gold, width: 1.5),
                 ),
                 child: Center(
                   child: Text(
                     initial,
                     style: const TextStyle(
-                      color: TFColors.accent,
+                      color: Colors.white,
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                     ),
@@ -227,7 +231,8 @@ class _AvatarButton extends StatelessWidget {
                   username,
                   style: const TextStyle(
                     fontSize: 13,
-                    color: TFColors.muted,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],

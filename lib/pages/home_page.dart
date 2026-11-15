@@ -67,18 +67,18 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   width: screenWidth,
                   decoration: const BoxDecoration(
-                    color: Colors.white,
+                    color: TFColors.navy,
                     border: Border(
-                      top: BorderSide(color: TFColors.hair, width: 0.5),
+                      top: BorderSide(color: TFColors.gold, width: 2),
                     ),
                   ),
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 28, horizontal: 24),
                     child: Text(
-                      'Copyright © 2026 TF Unions. All rights reserved.',
+                      'TF Unions Foundation · Copyright © 2026 TF Unions. All rights reserved.',
                       style: TextStyle(
-                        color: TFColors.muted,
-                        fontSize: 12,
+                        color: Color(0xFFD6DCE8),
+                        fontSize: 12.5,
                         height: 1.5,
                       ),
                       textAlign: TextAlign.center,

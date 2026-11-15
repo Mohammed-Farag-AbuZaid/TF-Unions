@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 
-/// Custom geometric TF Monogram mark matching the web & ecosystem identity.
+/// Geometric TF Oxford & Brass Monogram mark matching all TF Unions portals.
 class TfLogoMark extends StatelessWidget {
   final double size;
   const TfLogoMark({super.key, this.size = 28});
@@ -12,8 +12,9 @@ class TfLogoMark extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: TFColors.accent,
-        borderRadius: BorderRadius.circular(size * 0.22),
+        color: TFColors.navyAlt,
+        borderRadius: BorderRadius.circular(size * 0.18),
+        border: Border.all(color: TFColors.gold, width: 1.5),
       ),
       child: Stack(
         children: [
@@ -24,7 +25,7 @@ class TfLogoMark extends StatelessWidget {
                 color: Colors.white,
                 fontSize: 12,
                 fontWeight: FontWeight.w800,
-                letterSpacing: -0.5,
+                letterSpacing: -0.3,
                 height: 1.0,
               ),
             ),
@@ -37,7 +38,7 @@ class TfLogoMark extends StatelessWidget {
               height: size * 0.14,
               decoration: BoxDecoration(
                 color: TFColors.gold,
-                borderRadius: BorderRadius.circular(1.5),
+                borderRadius: BorderRadius.circular(1),
               ),
             ),
           ),

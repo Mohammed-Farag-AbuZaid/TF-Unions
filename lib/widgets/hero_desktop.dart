@@ -69,7 +69,7 @@ class _HeroDesktopState extends State<HeroDesktop> {
       context,
       MaterialPageRoute(
         builder: (_) => Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: TFColors.canvas,
           body: SingleChildScrollView(
             child: ProjectsPage(initialFilter: filter),
           ),
@@ -80,104 +80,181 @@ class _HeroDesktopState extends State<HeroDesktop> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1000),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 72, 24, 48),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'TF UNIONS FOUNDATION',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0,
-                  color: TFColors.muted,
-                ),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'A non-profit platform built\nfor standout students in Egypt.',
-                style: TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.w700,
-                  height: 1.08,
-                  letterSpacing: -1.5,
-                  color: TFColors.ink,
-                ),
-              ),
-              const SizedBox(height: 18),
-              const Text(
-                'Connecting ambitious students across Egypt with verified opportunities, open-source engineering tools, and peer communities.',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: TFColors.muted,
-                  height: 1.45,
-                ),
-              ),
-              const SizedBox(height: 28),
-              if (!loggedIn)
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterPage(),
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: TFColors.navy,
+        border: Border(
+          bottom: BorderSide(color: TFColors.navyLine, width: 1),
+        ),
+      ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1120),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 56, 24, 56),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  flex: 6,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(width: 40, height: 3, color: TFColors.gold),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Egyptian STEM & University Scholars Network',
+                        style: TextStyle(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w700,
+                          color: TFColors.gold,
+                          letterSpacing: 0.2,
+                        ),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: TFColors.accent,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 16,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'A non-profit institution built for standout students in Egypt.',
+                        style: TextStyle(
+                          fontSize: 44,
+                          fontWeight: FontWeight.w700,
+                          height: 1.08,
+                          letterSpacing: -1.3,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Connecting ambitious students across Egypt with verified university pathways, open-source engineering tools, and scholarly communities.',
+                        style: TextStyle(
+                          fontSize: 16.5,
+                          color: Color(0xFFD6DCE8),
+                          height: 1.55,
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: [
+                          if (!loggedIn)
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const RegisterPage(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: TFColors.accent,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 22,
+                                  vertical: 15,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                  side: const BorderSide(
+                                    color: Color(0xFF2853B8),
+                                  ),
+                                ),
+                              ),
+                              child: const Text(
+                                'Join TF Unions',
+                                style: TextStyle(
+                                  fontSize: 14.5,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          OutlinedButton(
+                            onPressed: () => _goToProjects(ProjectFilter.all),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: TFColors.navyAlt,
+                              side: const BorderSide(color: TFColors.navyLine),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 15,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                            ),
+                            child: const Text(
+                              'Browse Projects',
+                              style: TextStyle(
+                                fontSize: 14.5,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  child: const Text(
-                    'Join TF Unions',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                  ),
                 ),
-              const SizedBox(height: 40),
-              if (_statsLoaded) ...[
-                FamilyBanner(memberCount: _memberCount),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _StatCard(
-                        value: _doneCount,
-                        label: 'Published services',
-                        onTap: () => _goToProjects(ProjectFilter.done),
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: _StatCard(
-                        value: _inProgressCount,
-                        label: 'In progress',
-                        onTap: () => _goToProjects(ProjectFilter.inProgress),
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: _StatCard(
-                        value: _upcomingCount,
-                        label: 'Upcoming',
-                        onTap: () => _goToProjects(ProjectFilter.upcoming),
-                      ),
-                    ),
-                  ],
+                const SizedBox(width: 40),
+                Expanded(
+                  flex: 5,
+                  child: _statsLoaded
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            FamilyBanner(memberCount: _memberCount),
+                            const SizedBox(height: 14),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _StatCard(
+                                    value: _doneCount,
+                                    label: 'Published services',
+                                    onTap: () =>
+                                        _goToProjects(ProjectFilter.done),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _StatCard(
+                                    value: _inProgressCount,
+                                    label: 'In progress',
+                                    onTap: () =>
+                                        _goToProjects(ProjectFilter.inProgress),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _StatCard(
+                                    value: _upcomingCount,
+                                    label: 'Upcoming',
+                                    onTap: () =>
+                                        _goToProjects(ProjectFilter.upcoming),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                      : Container(
+                          height: 180,
+                          decoration: BoxDecoration(
+                            color: TFColors.navyAlt,
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: TFColors.navyLine),
+                          ),
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              color: TFColors.gold,
+                              strokeWidth: 2,
+                            ),
+                          ),
+                        ),
                 ),
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -201,18 +278,11 @@ class _StatCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(22),
+        padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: TFColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: TFColors.border),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x0A0F172A),
-              blurRadius: 4,
-              offset: Offset(0, 1),
-            ),
-          ],
+          color: TFColors.navyAlt,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: TFColors.navyLine),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,9 +290,9 @@ class _StatCard extends StatelessWidget {
             Text(
               value.toString(),
               style: const TextStyle(
-                fontSize: 28,
+                fontSize: 26,
                 fontWeight: FontWeight.w700,
-                color: TFColors.ink,
+                color: Colors.white,
                 letterSpacing: -0.5,
               ),
             ),
@@ -230,8 +300,9 @@ class _StatCard extends StatelessWidget {
             Text(
               label,
               style: const TextStyle(
-                fontSize: 13,
-                color: TFColors.muted,
+                fontSize: 12,
+                color: Color(0xFFD6DCE8),
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
