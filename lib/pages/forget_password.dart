@@ -55,30 +55,57 @@ class _ForgetPasswordState extends State<ForgetPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    final narrow = MediaQuery.of(context).size.width < 520;
     return Scaffold(
       backgroundColor: TFColors.canvas,
-      appBar: AppBar(
-        backgroundColor: TFColors.canvas,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: TFColors.ink),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 460),
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(28, 30, 28, 30),
-              decoration: BoxDecoration(
-                color: TFColors.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: TFColors.border),
-              ),
-              child: Form(
-                key: _forgetPasswordFormKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: narrow ? 14 : 24,
+              vertical: narrow ? 16 : 24,
+            ),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 460),
+              child: Container(
+                padding: EdgeInsets.fromLTRB(
+                  narrow ? 20 : 28,
+                  narrow ? 22 : 28,
+                  narrow ? 20 : 28,
+                  narrow ? 24 : 30,
+                ),
+                decoration: BoxDecoration(
+                  color: TFColors.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: TFColors.border),
+                ),
+                child: Form(
+                  key: _forgetPasswordFormKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton.icon(
+                          onPressed: () => Navigator.of(context)
+                              .pushReplacementNamed('login'),
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            foregroundColor: TFColors.muted,
+                          ),
+                          icon: const Icon(Icons.arrow_back_rounded, size: 16),
+                          label: const Text(
+                            'Back to Sign In',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
                     const Text(
                       'Reset your password',
                       style: TextStyle(
@@ -128,18 +155,6 @@ class _ForgetPasswordState extends State<ForgetPasswordPage> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    TextButton(
-                      onPressed: () =>
-                          Navigator.of(context).pushReplacementNamed('login'),
-                      child: const Text(
-                        'Back to Sign In',
-                        style: TextStyle(
-                          fontSize: 13.5,
-                          color: TFColors.accent,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -147,6 +162,7 @@ class _ForgetPasswordState extends State<ForgetPasswordPage> {
           ),
         ),
       ),
+    ),
     );
   }
 }

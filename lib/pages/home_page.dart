@@ -5,7 +5,6 @@ import 'package:tf_union/constants/variables.dart';
 import 'package:tf_union/pages/docs_page.dart';
 import 'package:tf_union/widgets/about.dart';
 import 'package:tf_union/widgets/header_desktop.dart';
-import 'package:tf_union/widgets/header_mobile.dart';
 import 'package:tf_union/widgets/hero_desktop.dart';
 import 'package:tf_union/widgets/hero_mobile.dart';
 import 'package:tf_union/widgets/drawer_mobile.dart';
@@ -51,13 +50,6 @@ class _HomePageState extends State<HomePage> {
                   HeaderDesktop(
                     onNavMenuTap: (int navIndex) {
                       scrollToSection(navIndex);
-                    },
-                  ),
-                if (constraints.maxWidth <= mobileWidth)
-                  HeaderMobile(
-                    onLogoTap: () {},
-                    onMenuTap: () {
-                      scaffoldKey.currentState?.openDrawer();
                     },
                   ),
                 if (constraints.maxWidth > mobileWidth) const HeroDesktop(),

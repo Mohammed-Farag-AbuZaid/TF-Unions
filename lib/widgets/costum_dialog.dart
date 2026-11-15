@@ -189,8 +189,8 @@ class _ProfileDialogState extends State<_ProfileDialog> {
               label,
               style: GoogleFonts.exo2(
                 fontSize: 12,
-                color: Colors.grey,
-                fontWeight: FontWeight.w500,
+                color: TFColors.muted,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -199,8 +199,8 @@ class _ProfileDialogState extends State<_ProfileDialog> {
               value,
               style: GoogleFonts.exo2(
                 fontSize: 13,
-                color: TFColors.whitePrimary,
-                fontWeight: FontWeight.w400,
+                color: TFColors.ink,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),

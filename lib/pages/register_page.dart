@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 import 'package:tf_union/constants/tfcolors.dart';
+import 'package:tf_union/utils/saved_accounts.dart';
 import 'package:tf_union/widgets/fields.dart';
 import 'package:tf_union/widgets/costum_dialog.dart';
 
@@ -91,6 +93,9 @@ class _RegisterPageState extends State<RegisterPage> {
       }
 
       await _saveUserData();
+      if (cred.user != null) {
+        SavedAccountsStore.saveFromUser(cred.user!);
+      }
       try {
         await cred.user?.sendEmailVerification();
       } catch (_) {}
@@ -185,70 +190,198 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  Future<void> _handleGoogleRegister() async {
+    setState(() => isLoading = true);
+    try {
+      final provider = GoogleAuthProvider()
+        ..addScope('email')
+        ..addScope('profile');
+      UserCredential cred;
+      if (kIsWeb) {
+        try {
+          cred = await FirebaseAuth.instance.signInWithPopup(provider);
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'popup-blocked' ||
+              e.code == 'operation-not-supported-in-this-environment') {
+            await FirebaseAuth.instance.signInWithRedirect(provider);
+            return;
+          }
+          if (e.code == 'popup-closed-by-user' ||
+              e.code == 'cancelled-popup-request') {
+            return;
+          }
+          rethrow;
+        }
+      } else {
+        cred = await FirebaseAuth.instance.signInWithProvider(provider);
+      }
+      final user = cred.user;
+      if (user != null) {
+        SavedAccountsStore.saveFromUser(user);
+        final fullName =
+            (user.displayName ?? user.email?.split('@').first ?? 'Scholar')
+                .trim();
+        final parts =
+            fullName.split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toList();
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'id': user.uid,
+          'uid': user.uid,
+          'firstName': parts.isNotEmpty ? parts.first : fullName,
+          'lastName': parts.length > 1 ? parts.sublist(1).join(' ') : '',
+          'fullName': fullName,
+          'username': fullName,
+          'email': user.email ?? '',
+          'profilePicture': user.photoURL ?? '',
+          'updatedAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      }
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed('homePage');
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      showCostumDialog(
+        context: context,
+        title: 'Google Sign-Up Error',
+        content: e.message ?? 'Could not sign up with Google.',
+        onConfirm: () => Navigator.pop(context),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      showCostumDialog(
+        context: context,
+        title: 'Google Sign-Up Error',
+        content: e.toString(),
+        onConfirm: () => Navigator.pop(context),
+      );
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final narrow = MediaQuery.of(context).size.width < 520;
     return Scaffold(
       backgroundColor: TFColors.canvas,
-      appBar: AppBar(
-        backgroundColor: TFColors.canvas,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: TFColors.ink),
-      ),
-      body: Stack(
-        children: [
-          Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 560),
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(28, 30, 28, 32),
-                  decoration: BoxDecoration(
-                    color: TFColors.surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: TFColors.border),
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.onUserInteractionIfError,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                      const Text(
-                        'Create your TF Passport',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w700,
-                          color: TFColors.ink,
-                          letterSpacing: -0.8,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      const Text(
-                        'One unified identity across TF Unions, TF News, STEM Union, and STEM Shop.',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: TFColors.muted,
-                          height: 1.45,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: TextButton(
-                          onPressed: () => Navigator.of(
-                            context,
-                          ).pushReplacementNamed('login'),
-                          child: const Text(
-                            'Already have an account? Sign in',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: TFColors.accent,
-                              fontWeight: FontWeight.w500,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Center(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: narrow ? 14 : 20,
+                  vertical: narrow ? 16 : 24,
+                ),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 560),
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(
+                      narrow ? 18 : 28,
+                      narrow ? 20 : 28,
+                      narrow ? 18 : 28,
+                      narrow ? 24 : 32,
+                    ),
+                    decoration: BoxDecoration(
+                      color: TFColors.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: TFColors.border),
+                    ),
+                    child: Form(
+                      key: _formKey,
+                      autovalidateMode: AutovalidateMode.onUserInteractionIfError,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: TextButton.icon(
+                              onPressed: () {
+                                if (Navigator.of(context).canPop()) {
+                                  Navigator.of(context).pop();
+                                } else {
+                                  Navigator.of(context)
+                                      .pushReplacementNamed('homePage');
+                                }
+                              },
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                foregroundColor: TFColors.muted,
+                              ),
+                              icon: const Icon(Icons.arrow_back_rounded, size: 16),
+                              label: const Text(
+                                'Home',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
+                          const SizedBox(height: 14),
+                          const Text(
+                            'Create your TF Passport',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w700,
+                              color: TFColors.ink,
+                              letterSpacing: -0.8,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          const Text(
+                            'One unified identity across TF Unions, TF News, STEM Union, and STEM Shop.',
+                            style: TextStyle(
+                              fontSize: 14.5,
+                              color: TFColors.muted,
+                              height: 1.45,
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          SizedBox(
+                            height: 46,
+                            child: OutlinedButton.icon(
+                              onPressed: isLoading ? null : _handleGoogleRegister,
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: TFColors.surface,
+                                foregroundColor: TFColors.ink,
+                                side: const BorderSide(color: TFColors.border),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              icon: const Icon(
+                                Icons.g_mobiledata_rounded,
+                                size: 26,
+                                color: TFColors.accent,
+                              ),
+                              label: const Text(
+                                'Continue with Google',
+                                style: TextStyle(
+                                  fontSize: 14.5,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: TextButton(
+                              onPressed: () => Navigator.of(
+                                context,
+                              ).pushReplacementNamed('login'),
+                              child: const Text(
+                                'Already have an account? Sign in',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: TFColors.accent,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
                       _sectionHeader('Personal Info'),
                       buildTextField(
                         controller: firstName,
@@ -455,6 +588,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ),
         ],
+      ),
       ),
     );
   }
