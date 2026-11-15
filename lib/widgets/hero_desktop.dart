@@ -82,17 +82,12 @@ class _HeroDesktopState extends State<HeroDesktop> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        color: TFColors.navy,
-        border: Border(
-          bottom: BorderSide(color: TFColors.navyLine, width: 1),
-        ),
-      ),
+      color: TFColors.canvas,
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1120),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 56, 24, 56),
+            padding: const EdgeInsets.fromLTRB(24, 56, 24, 48),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -101,26 +96,49 @@ class _HeroDesktopState extends State<HeroDesktop> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(width: 40, height: 3, color: TFColors.gold),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Egyptian STEM & University Scholars Network',
-                        style: TextStyle(
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w700,
-                          color: TFColors.gold,
-                          letterSpacing: 0.2,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: TFColors.tealSoft,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: TFColors.tealBorder),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: const BoxDecoration(
+                                color: TFColors.gold,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 7),
+                            const Text(
+                              'Egyptian STEM & university scholars network',
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w600,
+                                color: TFColors.gold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 16),
                       const Text(
                         'A non-profit institution built for standout students in Egypt.',
                         style: TextStyle(
+                          fontFamily: 'Bricolage Grotesque',
                           fontSize: 44,
                           fontWeight: FontWeight.w700,
                           height: 1.08,
                           letterSpacing: -1.3,
-                          color: Colors.white,
+                          color: TFColors.ink,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -128,8 +146,8 @@ class _HeroDesktopState extends State<HeroDesktop> {
                         'Connecting ambitious students across Egypt with verified university pathways, open-source engineering tools, and scholarly communities.',
                         style: TextStyle(
                           fontSize: 16.5,
-                          color: Color(0xFFD6DCE8),
-                          height: 1.55,
+                          color: TFColors.muted,
+                          height: 1.6,
                         ),
                       ),
                       const SizedBox(height: 28),
@@ -156,36 +174,33 @@ class _HeroDesktopState extends State<HeroDesktop> {
                                   vertical: 15,
                                 ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                  side: const BorderSide(
-                                    color: Color(0xFF2853B8),
-                                  ),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
                               child: const Text(
                                 'Join TF Unions',
                                 style: TextStyle(
                                   fontSize: 14.5,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
                           OutlinedButton(
                             onPressed: () => _goToProjects(ProjectFilter.all),
                             style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: TFColors.navyAlt,
-                              side: const BorderSide(color: TFColors.navyLine),
+                              foregroundColor: TFColors.ink,
+                              backgroundColor: TFColors.surface,
+                              side: const BorderSide(color: TFColors.border),
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 20,
                                 vertical: 15,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                             child: const Text(
-                              'Browse Projects',
+                              'Browse projects',
                               style: TextStyle(
                                 fontSize: 14.5,
                                 fontWeight: FontWeight.w600,
@@ -241,9 +256,9 @@ class _HeroDesktopState extends State<HeroDesktop> {
                       : Container(
                           height: 180,
                           decoration: BoxDecoration(
-                            color: TFColors.navyAlt,
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: TFColors.navyLine),
+                            color: TFColors.surface,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: TFColors.border),
                           ),
                           child: const Center(
                             child: CircularProgressIndicator(
@@ -280,9 +295,16 @@ class _StatCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: TFColors.navyAlt,
-          borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: TFColors.navyLine),
+          color: TFColors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: TFColors.border),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x0A161A22),
+              blurRadius: 4,
+              offset: Offset(0, 1),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,9 +312,10 @@ class _StatCard extends StatelessWidget {
             Text(
               value.toString(),
               style: const TextStyle(
+                fontFamily: 'Bricolage Grotesque',
                 fontSize: 26,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: TFColors.ink,
                 letterSpacing: -0.5,
               ),
             ),
@@ -300,8 +323,8 @@ class _StatCard extends StatelessWidget {
             Text(
               label,
               style: const TextStyle(
-                fontSize: 12,
-                color: Color(0xFFD6DCE8),
+                fontSize: 12.5,
+                color: TFColors.muted,
                 fontWeight: FontWeight.w500,
               ),
             ),

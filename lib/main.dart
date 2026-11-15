@@ -30,6 +30,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData.light(useMaterial3: true).copyWith(
         scaffoldBackgroundColor: TFColors.canvas,
+        textTheme: ThemeData.light().textTheme.apply(
+              fontFamily: 'Plus Jakarta Sans',
+            ),
         colorScheme: const ColorScheme.light(
           primary: TFColors.accent,
           secondary: TFColors.gold,

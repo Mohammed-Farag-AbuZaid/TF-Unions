@@ -67,9 +67,9 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   width: screenWidth,
                   decoration: const BoxDecoration(
-                    color: TFColors.navy,
+                    color: TFColors.surface,
                     border: Border(
-                      top: BorderSide(color: TFColors.gold, width: 2),
+                      top: BorderSide(color: TFColors.border, width: 1),
                     ),
                   ),
                   child: const Padding(
@@ -77,8 +77,8 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       'TF Unions Foundation · Copyright © 2026 TF Unions. All rights reserved.',
                       style: TextStyle(
-                        color: Color(0xFFD6DCE8),
-                        fontSize: 12.5,
+                        color: TFColors.muted,
+                        fontSize: 13,
                         height: 1.5,
                       ),
                       textAlign: TextAlign.center,

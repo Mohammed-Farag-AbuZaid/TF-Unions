@@ -11,12 +11,12 @@ class Logo extends StatelessWidget {
       child: const Padding(
         padding: EdgeInsets.only(left: 20),
         child: Text(
-          'TF-Unions',
+          'TF Unions',
           style: TextStyle(
-            color: TFColors.yellowPrimary,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-            fontFamily: 'Poppins',
+            color: TFColors.ink,
+            fontWeight: FontWeight.w700,
+            fontSize: 20,
+            fontFamily: 'Bricolage Grotesque',
           ),
         ),
       ),

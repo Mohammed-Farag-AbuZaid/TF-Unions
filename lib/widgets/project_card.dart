@@ -18,16 +18,16 @@ Widget buildProjectCard({
 }) {
   return Container(
     width: 288,
-    padding: const EdgeInsets.all(20),
+    padding: const EdgeInsets.all(22),
     decoration: BoxDecoration(
       color: TFColors.surface,
-      borderRadius: BorderRadius.circular(6),
+      borderRadius: BorderRadius.circular(12),
       border: Border.all(color: TFColors.border),
       boxShadow: const [
         BoxShadow(
-          color: Color(0x0D0A1931),
-          blurRadius: 6,
-          offset: Offset(0, 2),
+          color: Color(0x0A161A22),
+          blurRadius: 4,
+          offset: Offset(0, 1),
         ),
       ],
     ),
@@ -36,11 +36,11 @@ Widget buildProjectCard({
       children: [
         if (imagePath.isNotEmpty) ...[
           ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(8),
             child: Container(
               decoration: BoxDecoration(
                 border: Border.all(color: TFColors.border),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Image.network(
                 imagePath,
@@ -53,7 +53,7 @@ Widget buildProjectCard({
                   child: const Center(
                     child: Icon(
                       Icons.code_rounded,
-                      color: TFColors.navy,
+                      color: TFColors.ink,
                       size: 30,
                     ),
                   ),
@@ -64,17 +64,20 @@ Widget buildProjectCard({
           const SizedBox(height: 14),
         ],
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
           decoration: BoxDecoration(
-            color: TFColors.inset,
-            borderRadius: BorderRadius.circular(4),
+            color: published ? TFColors.tealSoft : TFColors.inset,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(
+              color: published ? TFColors.tealBorder : TFColors.wellBorder,
+            ),
           ),
           child: Text(
-            published ? 'Active Service' : 'Scheduled',
+            published ? 'Active service' : 'Scheduled',
             style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: published ? TFColors.success : TFColors.muted,
+              fontSize: 11.5,
+              fontWeight: FontWeight.w600,
+              color: published ? TFColors.gold : TFColors.muted,
             ),
           ),
         ),
@@ -82,9 +85,10 @@ Widget buildProjectCard({
         Text(
           title,
           style: const TextStyle(
-            fontSize: 17.5,
+            fontFamily: 'Bricolage Grotesque',
+            fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: TFColors.navy,
+            color: TFColors.ink,
             letterSpacing: -0.3,
           ),
         ),

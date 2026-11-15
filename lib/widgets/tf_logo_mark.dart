@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tf_union/constants/tfcolors.dart';
 
-/// Geometric TF Oxford & Brass Monogram mark matching all TF Unions portals.
+/// Geometric Fjord Slate & Botanical Teal Monogram mark matching all TF Unions portals.
 class TfLogoMark extends StatelessWidget {
   final double size;
   const TfLogoMark({super.key, this.size = 28});
@@ -12,11 +12,11 @@ class TfLogoMark extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: TFColors.navyAlt,
-        borderRadius: BorderRadius.circular(size * 0.18),
-        border: Border.all(color: TFColors.gold, width: 1.5),
+        color: TFColors.navy,
+        borderRadius: BorderRadius.circular(size * 0.28),
       ),
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
           const Center(
             child: Text(
@@ -31,14 +31,15 @@ class TfLogoMark extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: size * 0.14,
-            right: size * 0.14,
+            top: -1,
+            right: -1,
             child: Container(
-              width: size * 0.14,
-              height: size * 0.14,
+              width: size * 0.24,
+              height: size * 0.24,
               decoration: BoxDecoration(
                 color: TFColors.gold,
-                borderRadius: BorderRadius.circular(1),
+                shape: BoxShape.circle,
+                border: Border.all(color: TFColors.surface, width: 1.4),
               ),
             ),
           ),

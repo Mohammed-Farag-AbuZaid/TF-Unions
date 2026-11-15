@@ -18,9 +18,9 @@ class HeaderMobile extends StatelessWidget {
         return Container(
           height: 64,
           decoration: const BoxDecoration(
-            color: TFColors.navy,
+            color: TFColors.surface,
             border: Border(
-              bottom: BorderSide(color: TFColors.navyLine, width: 1),
+              bottom: BorderSide(color: TFColors.border, width: 1),
             ),
           ),
           child: Padding(
@@ -34,7 +34,7 @@ class HeaderMobile extends StatelessWidget {
                     height: 38,
                     child: Icon(
                       Icons.menu_rounded,
-                      color: Colors.white,
+                      color: TFColors.ink,
                       size: 22,
                     ),
                   ),
@@ -50,9 +50,10 @@ class HeaderMobile extends StatelessWidget {
                       Text(
                         'TF Unions',
                         style: TextStyle(
+                          fontFamily: 'Bricolage Grotesque',
                           fontSize: 17,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: TFColors.ink,
                         ),
                       ),
                     ],
@@ -75,15 +76,18 @@ class HeaderMobile extends StatelessWidget {
                           width: 32,
                           height: 32,
                           decoration: BoxDecoration(
-                            color: TFColors.navyAlt,
+                            color: TFColors.tealSoft,
                             shape: BoxShape.circle,
-                            border: Border.all(color: TFColors.gold, width: 1.5),
+                            border: Border.all(
+                              color: TFColors.tealBorder,
+                              width: 1.5,
+                            ),
                           ),
                           child: Center(
                             child: Text(
                               initial,
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: TFColors.gold,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
                               ),

@@ -14,9 +14,9 @@ class FamilyBanner extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: TFColors.navyAlt,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: TFColors.navyLine),
+        color: TFColors.tealSoft,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: TFColors.tealBorder),
       ),
       child: IntrinsicHeight(
         child: Row(
@@ -25,7 +25,7 @@ class FamilyBanner extends StatelessWidget {
               width: 4,
               decoration: const BoxDecoration(
                 color: TFColors.gold,
-                borderRadius: BorderRadius.horizontal(left: Radius.circular(5)),
+                borderRadius: BorderRadius.horizontal(left: Radius.circular(12)),
               ),
             ),
             Expanded(
@@ -38,7 +38,7 @@ class FamilyBanner extends StatelessWidget {
                   text: TextSpan(
                     style: const TextStyle(
                       fontSize: 14.5,
-                      color: Color(0xFFD6DCE8),
+                      color: TFColors.ink,
                       height: 1.45,
                     ),
                     children: [
@@ -46,6 +46,7 @@ class FamilyBanner extends StatelessWidget {
                       TextSpan(
                         text: '$memberCount',
                         style: const TextStyle(
+                          fontFamily: 'JetBrains Mono',
                           color: TFColors.gold,
                           fontWeight: FontWeight.w700,
                         ),

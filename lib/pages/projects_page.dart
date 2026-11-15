@@ -143,11 +143,12 @@ class _ProjectsPageState extends State<ProjectsPage>
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
-                  'Ecosystem Divisions',
+                  'Ecosystem divisions',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontFamily: 'Bricolage Grotesque',
+                    fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: TFColors.navy,
+                    color: TFColors.ink,
                   ),
                 ),
               ),
@@ -167,8 +168,8 @@ class _ProjectsPageState extends State<ProjectsPage>
               child: Container(
                 decoration: BoxDecoration(
                   color: TFColors.inset,
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: TFColors.border),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: TFColors.wellBorder),
                 ),
                 padding: const EdgeInsets.all(4),
                 child: TabBar(
@@ -177,12 +178,12 @@ class _ProjectsPageState extends State<ProjectsPage>
                   isScrollable: false,
                   dividerColor: Colors.transparent,
                   indicator: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(4),
+                    color: TFColors.surface,
+                    borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: TFColors.border),
                   ),
                   indicatorSize: TabBarIndicatorSize.tab,
-                  labelColor: TFColors.navy,
+                  labelColor: TFColors.ink,
                   labelStyle: const TextStyle(fontWeight: FontWeight.w700),
                   unselectedLabelColor: TFColors.muted,
                   tabs: _tabLabels
@@ -228,14 +229,22 @@ class _PageHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(width: 36, height: 3, color: TFColors.gold),
+          Container(
+            width: 28,
+            height: 2,
+            decoration: BoxDecoration(
+              color: TFColors.gold,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
           const SizedBox(height: 12),
           const Text(
-            'Services & Projects',
+            'Services & projects',
             style: TextStyle(
+              fontFamily: 'Bricolage Grotesque',
               fontSize: 32,
               fontWeight: FontWeight.w700,
-              color: TFColors.navy,
+              color: TFColors.ink,
               letterSpacing: -0.8,
             ),
           ),

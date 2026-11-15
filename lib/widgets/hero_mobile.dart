@@ -42,36 +42,38 @@ class _HeroMobileState extends State<HeroMobile> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        color: TFColors.navy,
-        border: Border(
-          bottom: BorderSide(color: TFColors.navyLine, width: 1),
-        ),
-      ),
+      color: TFColors.canvas,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 36, 20, 32),
+        padding: const EdgeInsets.fromLTRB(20, 32, 20, 28),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(width: 32, height: 3, color: TFColors.gold),
-            const SizedBox(height: 12),
-            const Text(
-              'Egyptian STEM & University Scholars Network',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: TFColors.gold,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: TFColors.tealSoft,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: TFColors.tealBorder),
+              ),
+              child: const Text(
+                'Egyptian STEM & university scholars network',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: TFColors.gold,
+                ),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             const Text(
               'A non-profit platform for standout students in Egypt.',
               style: TextStyle(
+                fontFamily: 'Bricolage Grotesque',
                 fontSize: 30,
                 fontWeight: FontWeight.w700,
                 height: 1.12,
                 letterSpacing: -0.9,
-                color: Colors.white,
+                color: TFColors.ink,
               ),
             ),
             const SizedBox(height: 12),
@@ -79,8 +81,8 @@ class _HeroMobileState extends State<HeroMobile> {
               'Connecting students across Egypt with verified opportunities, open tools, and peer communities.',
               style: TextStyle(
                 fontSize: 14.5,
-                color: Color(0xFFD6DCE8),
-                height: 1.45,
+                color: TFColors.muted,
+                height: 1.5,
               ),
             ),
             const SizedBox(height: 20),
@@ -103,13 +105,12 @@ class _HeroMobileState extends State<HeroMobile> {
                     vertical: 13,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    side: const BorderSide(color: Color(0xFF2853B8)),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 child: const Text(
                   'Join TF Unions',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                 ),
               ),
             const SizedBox(height: 24),
@@ -153,9 +154,9 @@ class _MobileStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: TFColors.navyAlt,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: TFColors.navyLine),
+        color: TFColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: TFColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,17 +164,18 @@ class _MobileStatCard extends StatelessWidget {
           Text(
             value.toString(),
             style: const TextStyle(
+              fontFamily: 'Bricolage Grotesque',
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: TFColors.ink,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             label,
             style: const TextStyle(
-              fontSize: 11,
-              color: Color(0xFFD6DCE8),
+              fontSize: 11.5,
+              color: TFColors.muted,
             ),
           ),
         ],

@@ -28,9 +28,9 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
         return Container(
           height: 64,
           decoration: const BoxDecoration(
-            color: TFColors.navy,
+            color: TFColors.surface,
             border: Border(
-              bottom: BorderSide(color: TFColors.navyLine, width: 1),
+              bottom: BorderSide(color: TFColors.border, width: 1),
             ),
           ),
           child: Center(
@@ -52,9 +52,10 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
                           Text(
                             'TF Unions',
                             style: TextStyle(
+                              fontFamily: 'Bricolage Grotesque',
                               fontSize: 17,
                               fontWeight: FontWeight.w700,
-                              color: Colors.white,
+                              color: TFColors.ink,
                               letterSpacing: -0.3,
                             ),
                           ),
@@ -79,10 +80,10 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
                               ),
                               decoration: isActive
                                   ? BoxDecoration(
-                                      color: TFColors.navyAlt,
-                                      borderRadius: BorderRadius.circular(5),
+                                      color: TFColors.inset,
+                                      borderRadius: BorderRadius.circular(8),
                                       border: Border.all(
-                                        color: TFColors.navyLine,
+                                        color: TFColors.wellBorder,
                                       ),
                                     )
                                   : null,
@@ -94,8 +95,8 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
                                       ? FontWeight.w700
                                       : FontWeight.w500,
                                   color: isActive
-                                      ? Colors.white
-                                      : const Color(0xFFD6DCE8),
+                                      ? TFColors.ink
+                                      : TFColors.muted,
                                 ),
                               ),
                             ),
@@ -116,7 +117,7 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
                               style: TextStyle(
                                 fontSize: 13.5,
                                 fontWeight: FontWeight.w500,
-                                color: Color(0xFFD6DCE8),
+                                color: TFColors.muted,
                               ),
                             ),
                           ),
@@ -138,8 +139,8 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
                           child: Text(
                             'Sign in',
                             style: TextStyle(
-                              fontSize: 13,
-                              color: Color(0xFFD6DCE8),
+                              fontSize: 13.5,
+                              color: TFColors.muted,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -160,14 +161,13 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
                           ),
                           decoration: BoxDecoration(
                             color: TFColors.accent,
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(color: const Color(0xFF2853B8)),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Text(
                             'Join TF Unions',
                             style: TextStyle(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
                               color: Colors.white,
                             ),
                           ),
@@ -210,15 +210,15 @@ class _AvatarButton extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: TFColors.navyAlt,
+                  color: TFColors.tealSoft,
                   shape: BoxShape.circle,
-                  border: Border.all(color: TFColors.gold, width: 1.5),
+                  border: Border.all(color: TFColors.tealBorder, width: 1.5),
                 ),
                 child: Center(
                   child: Text(
                     initial,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: TFColors.gold,
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                     ),
@@ -231,7 +231,7 @@ class _AvatarButton extends StatelessWidget {
                   username,
                   style: const TextStyle(
                     fontSize: 13,
-                    color: Colors.white,
+                    color: TFColors.ink,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

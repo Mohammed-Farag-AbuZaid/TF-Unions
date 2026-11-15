@@ -20,14 +20,22 @@ class About extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(width: 36, height: 3, color: TFColors.gold),
+                Container(
+                  width: 28,
+                  height: 2,
+                  decoration: BoxDecoration(
+                    color: TFColors.gold,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
                 const SizedBox(height: 12),
                 const Text(
                   'About TF Unions',
                   style: TextStyle(
+                    fontFamily: 'Bricolage Grotesque',
                     fontSize: 32,
                     fontWeight: FontWeight.w700,
-                    color: TFColors.navy,
+                    color: TFColors.ink,
                     letterSpacing: -0.8,
                   ),
                 ),
@@ -139,16 +147,16 @@ class _AboutCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: TFColors.surface,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: TFColors.border),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x0D0A1931),
-            blurRadius: 6,
-            offset: Offset(0, 2),
+            color: Color(0x0A161A22),
+            blurRadius: 4,
+            offset: Offset(0, 1),
           ),
         ],
       ),
@@ -156,17 +164,18 @@ class _AboutCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
             decoration: BoxDecoration(
-              color: TFColors.inset,
-              borderRadius: BorderRadius.circular(4),
+              color: TFColors.tealSoft,
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
               code,
               style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: TFColors.accent,
+                fontFamily: 'JetBrains Mono',
+                fontSize: 11.5,
+                fontWeight: FontWeight.w600,
+                color: TFColors.gold,
               ),
             ),
           ),
