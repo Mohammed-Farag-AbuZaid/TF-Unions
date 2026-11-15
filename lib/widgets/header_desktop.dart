@@ -6,6 +6,8 @@ import 'package:tf_union/pages/login.dart';
 import 'package:tf_union/pages/register_page.dart';
 import 'package:tf_union/utils/tf_api.dart';
 import 'package:tf_union/widgets/costum_dialog.dart';
+import 'package:tf_union/widgets/tf_logo_mark.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HeaderDesktop extends StatefulWidget {
   const HeaderDesktop({super.key, required this.onNavMenuTap});
@@ -26,14 +28,14 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
         return Container(
           height: 64,
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: TFColors.surface,
             border: Border(
-              bottom: BorderSide(color: TFColors.hair, width: 0.5),
+              bottom: BorderSide(color: TFColors.border, width: 1),
             ),
           ),
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1000),
+              constraints: const BoxConstraints(maxWidth: 1080),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Row(
@@ -43,45 +45,81 @@ class _HeaderDesktopState extends State<HeaderDesktop> {
                         setState(() => _activeIndex = 0);
                         widget.onNavMenuTap(0);
                       },
-                      child: const Text(
-                        'TF Unions',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: TFColors.ink,
-                          letterSpacing: -0.4,
-                        ),
+                      child: const Row(
+                        children: [
+                          TfLogoMark(size: 28),
+                          SizedBox(width: 10),
+                          Text(
+                            'TF Unions',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                              color: TFColors.ink,
+                              letterSpacing: -0.3,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const Spacer(),
                     Row(
-                      children: List.generate(navItems.length, (i) {
-                        final isActive = _activeIndex == i;
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() => _activeIndex = i);
-                            widget.onNavMenuTap(i);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 8,
+                      children: [
+                        ...List.generate(navItems.length, (i) {
+                          final isActive = _activeIndex == i;
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() => _activeIndex = i);
+                              widget.onNavMenuTap(i);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 7,
+                              ),
+                              decoration: isActive
+                                  ? BoxDecoration(
+                                      color: TFColors.inset,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: TFColors.border),
+                                    )
+                                  : null,
+                              child: Text(
+                                navItems[i],
+                                style: TextStyle(
+                                  fontSize: 13.5,
+                                  fontWeight: isActive
+                                      ? FontWeight.w600
+                                      : FontWeight.w500,
+                                  color: isActive
+                                      ? TFColors.accent
+                                      : TFColors.muted,
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                        GestureDetector(
+                          onTap: () => launchUrl(
+                            Uri.parse('https://www.tfunions.com/team/'),
+                            mode: LaunchMode.externalApplication,
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 7,
                             ),
                             child: Text(
-                              navItems[i],
+                              'Team',
                               style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: isActive
-                                    ? FontWeight.w600
-                                    : FontWeight.w400,
-                                color: isActive
-                                    ? TFColors.ink
-                                    : TFColors.muted,
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w500,
+                                color: TFColors.muted,
                               ),
                             ),
                           ),
-                        );
-                      }),
+                        ),
+                      ],
                     ),
                     const Spacer(),
                     if (user == null) ...[

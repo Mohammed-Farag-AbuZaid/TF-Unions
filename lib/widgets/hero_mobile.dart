@@ -142,8 +142,16 @@ class _MobileStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: TFColors.tile,
+        color: TFColors.surface,
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: TFColors.border),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0A0F172A),
+            blurRadius: 4,
+            offset: Offset(0, 1),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

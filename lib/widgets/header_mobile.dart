@@ -3,6 +3,7 @@ import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/constants/variables.dart';
 import 'package:tf_union/utils/tf_api.dart';
 import 'package:tf_union/widgets/costum_dialog.dart';
+import 'package:tf_union/widgets/tf_logo_mark.dart';
 
 class HeaderMobile extends StatelessWidget {
   const HeaderMobile({super.key, this.onLogoTap, this.onMenuTap});
@@ -17,9 +18,9 @@ class HeaderMobile extends StatelessWidget {
         return Container(
           height: 64,
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: TFColors.surface,
             border: Border(
-              bottom: BorderSide(color: TFColors.hair, width: 0.5),
+              bottom: BorderSide(color: TFColors.border, width: 1),
             ),
           ),
           child: Padding(
@@ -41,13 +42,20 @@ class HeaderMobile extends StatelessWidget {
                 const Spacer(),
                 GestureDetector(
                   onTap: onLogoTap,
-                  child: const Text(
-                    'TF Unions',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                      color: TFColors.ink,
-                    ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TfLogoMark(size: 26),
+                      SizedBox(width: 8),
+                      Text(
+                        'TF Unions',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          color: TFColors.ink,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const Spacer(),

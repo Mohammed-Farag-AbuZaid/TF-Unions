@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context, constraints) {
         return Scaffold(
           key: scaffoldKey,
-          backgroundColor: Colors.white,
+          backgroundColor: TFColors.canvas,
           drawer: constraints.maxWidth > mobileWidth
               ? null
               : DrawerMobile(

@@ -29,14 +29,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.light(useMaterial3: true).copyWith(
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: TFColors.canvas,
         colorScheme: const ColorScheme.light(
           primary: TFColors.accent,
-          surface: Colors.white,
+          secondary: TFColors.gold,
+          surface: TFColors.surface,
           onSurface: TFColors.ink,
         ),
       ),
-      title: 'TF-Unions',
+      title: 'TF Unions',
       debugShowCheckedModeBanner: false,
       home: const HomePage(),
       routes: {

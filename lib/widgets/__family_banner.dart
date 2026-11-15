@@ -15,8 +15,16 @@ class FamilyBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
       decoration: BoxDecoration(
-        color: TFColors.tile,
+        color: TFColors.surface,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: TFColors.border),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0A0F172A),
+            blurRadius: 4,
+            offset: Offset(0, 1),
+          ),
+        ],
       ),
       child: RichText(
         text: TextSpan(

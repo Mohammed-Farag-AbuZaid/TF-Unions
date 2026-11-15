@@ -203,8 +203,16 @@ class _StatCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(22),
         decoration: BoxDecoration(
-          color: TFColors.tile,
-          borderRadius: BorderRadius.circular(20),
+          color: TFColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: TFColors.border),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x0A0F172A),
+              blurRadius: 4,
+              offset: Offset(0, 1),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
