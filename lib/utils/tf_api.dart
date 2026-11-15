@@ -6,6 +6,11 @@ const String kTfApiBaseUrl = 'https://n8n.tfunions.com/tf-api';
 
 class TfApiService {
   static Future<List<Map<String, dynamic>>> fetchCollection(String name) async {
+    if (name == 'users') {
+      final snap = await FirebaseFirestore.instance.collection('users').get();
+      return snap.docs.map((d) => {'id': d.id, ...d.data()}).toList();
+    }
+
     try {
       final res = await http
           .get(Uri.parse('$kTfApiBaseUrl/api/collections/$name'))
@@ -22,6 +27,12 @@ class TfApiService {
   }
 
   static Future<Map<String, dynamic>?> fetchDoc(String collection, String id) async {
+    if (collection == 'users') {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(id).get();
+      if (!doc.exists) return null;
+      return {'id': doc.id, ...(doc.data() ?? {})};
+    }
+
     try {
       final res = await http
           .get(Uri.parse('$kTfApiBaseUrl/api/collections/$collection/$id'))
@@ -43,6 +54,14 @@ class TfApiService {
     String id,
     Map<String, dynamic> data,
   ) async {
+    if (collection == 'users') {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(id)
+          .set(data, SetOptions(merge: true));
+      return;
+    }
+
     try {
       final clean = Map<String, dynamic>.from(data)
         ..removeWhere((_, v) => v is FieldValue);

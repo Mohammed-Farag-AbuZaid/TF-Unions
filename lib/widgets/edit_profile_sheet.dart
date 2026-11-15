@@ -74,9 +74,11 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
       final uid = FirebaseAuth.instance.currentUser!.uid;
       final level = _selectedValue!;
 
-      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        'uid': uid,
         'firstName': firstName.text.trim(),
         'lastName': lastName.text.trim(),
+        'fullName': '${firstName.text.trim()} ${lastName.text.trim()}'.trim(),
         'phone': phone.text.trim(),
         'gender': _selectedGender,
         'birthDate': birthDate.text,
@@ -88,7 +90,8 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
         'faculty': level == 'University' ? faculty.text.trim() : null,
         'grade': level != 'University' ? _selectedGrade : null,
         'year': level == 'University' ? _selectedYear : null,
-      });
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
 
       if (!mounted) return;
       Navigator.pop(context);
@@ -125,21 +128,21 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
       padding: const EdgeInsets.only(top: 24, bottom: 4),
       child: Row(
         children: [
-          Icon(icon, color: TFColors.yellowPrimary, size: 16),
+          Icon(icon, color: TFColors.accent, size: 16),
           const SizedBox(width: 8),
           Text(
             title,
-            style: GoogleFonts.robotoSlab(
-              fontSize: 13,
+            style: GoogleFonts.bricolageGrotesque(
+              fontSize: 13.5,
               fontWeight: FontWeight.bold,
-              color: TFColors.yellowPrimary,
+              color: TFColors.accent,
             ),
           ),
           const SizedBox(width: 10),
-          Expanded(
-            child: Container(
+          const Expanded(
+            child: Divider(
               height: 1,
-              color: TFColors.yellowPrimary.withAlpha(50),
+              color: TFColors.border,
             ),
           ),
         ],
@@ -151,8 +154,9 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Color(0xFF111111),
+        color: TFColors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border(top: BorderSide(color: TFColors.border)),
       ),
       child: DraggableScrollableSheet(
         initialChildSize: 1,
@@ -174,7 +178,7 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
                     height: 4,
                     margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
-                      color: Colors.white24,
+                      color: TFColors.border,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -183,10 +187,10 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
                 Text(
                   'Edit Profile',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.robotoSlab(
-                    fontSize: 20,
+                  style: GoogleFonts.bricolageGrotesque(
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: TFColors.whitePrimary,
+                    color: TFColors.ink,
                   ),
                 ),
 
@@ -218,7 +222,7 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
                         borderSide: BorderSide(color: TFColors.hintDark),
                       ),
                       focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue),
+                        borderSide: BorderSide(color: TFColors.accent, width: 1.5),
                       ),
                     ),
                   ),
@@ -327,10 +331,11 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
                   child: ElevatedButton(
                     onPressed: _saving ? null : _save,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: TFColors.yellowPrimary,
-                      foregroundColor: Colors.black,
+                      backgroundColor: TFColors.accent,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: _saving
@@ -339,12 +344,12 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.black,
+                              color: Colors.white,
                             ),
                           )
                         : Text(
                             'Save Changes',
-                            style: GoogleFonts.robotoSlab(
+                            style: GoogleFonts.bricolageGrotesque(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
                             ),

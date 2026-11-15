@@ -1,11 +1,8 @@
-import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
-import 'package:http/http.dart' as http;
 import 'package:tf_union/constants/tfcolors.dart';
-import 'package:tf_union/utils/tf_api.dart';
 import 'package:tf_union/widgets/fields.dart';
 import 'package:tf_union/widgets/costum_dialog.dart';
 
@@ -62,36 +59,9 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() => isLoading = true);
 
     try {
-      final selectedSchool = _selectedValue == 'Prep School'
-          ? prepSchool.text.trim()
-          : _selectedValue == 'Thanawy'
-              ? thanawySchool.text.trim()
-              : _selectedValue == 'STEM'
-                  ? (stemSchool ?? 'General / Alumni')
-                  : (university.text.trim().isNotEmpty
-                      ? university.text.trim()
-                      : 'General / Alumni');
-
-      // 1. Register on VPS SSO API
+      late final UserCredential cred;
       try {
-        await http
-            .post(
-              Uri.parse('$kTfApiBaseUrl/auth/register'),
-              headers: {'Content-Type': 'application/json'},
-              body: jsonEncode({
-                'email': email.text.trim(),
-                'password': password.text,
-                'full_name':
-                    '${firstName.text.trim()} ${lastName.text.trim()}'.trim(),
-                'school_chapter': selectedSchool,
-              }),
-            )
-            .timeout(const Duration(seconds: 8));
-      } catch (_) {}
-
-      // 2. Also create in Firebase Auth for dual compatibility
-      try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        cred = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email.text.trim(),
           password: password.text,
         );
@@ -114,7 +84,17 @@ class _RegisterPageState extends State<RegisterPage> {
         rethrow;
       }
 
+      final fullName =
+          '${firstName.text.trim()} ${lastName.text.trim()}'.trim();
+      if (fullName.isNotEmpty) {
+        await cred.user?.updateDisplayName(fullName);
+      }
+
       await _saveUserData();
+      try {
+        await cred.user?.sendEmailVerification();
+      } catch (_) {}
+
       if (!mounted) return;
       setState(() => isLoading = false);
       Navigator.of(context).pushReplacementNamed('homePage');
@@ -137,11 +117,16 @@ class _RegisterPageState extends State<RegisterPage> {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
     final level = _selectedValue ?? 'STEM';
+    final fullName = '${firstName.text.trim()} ${lastName.text.trim()}'.trim();
 
     final payload = {
       'uid': user.uid,
       'firstName': firstName.text.trim(),
       'lastName': lastName.text.trim(),
+      'fullName': fullName,
+      'username': username.text.trim().isNotEmpty
+          ? username.text.trim()
+          : fullName,
       'email': email.text.trim(),
       'birthDate': _birthDate.text,
       'gender': _selectedGender,
@@ -149,6 +134,8 @@ class _RegisterPageState extends State<RegisterPage> {
       'academicLevel': level,
       'level': level,
       'stemSchool': level == 'STEM' ? stemSchool : '',
+      'prepSchool': level == 'Prep School' ? prepSchool.text.trim() : null,
+      'thanawySchool': level == 'Thanawy' ? thanawySchool.text.trim() : null,
       'school': level == 'Prep School'
           ? prepSchool.text.trim()
           : level == 'Thanawy'
@@ -160,12 +147,13 @@ class _RegisterPageState extends State<RegisterPage> {
       'university': level == 'University' ? university.text.trim() : null,
       'year': level == 'University' ? _selectedYear : null,
       'faculty': level == 'University' ? faculty.text.trim() : null,
+      'createdAt': FieldValue.serverTimestamp(),
     };
 
-    await TfApiService.saveDoc('users', user.uid, {
-      ...payload,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .set(payload, SetOptions(merge: true));
   }
 
   Future<void> _selectDate() async {
@@ -200,9 +188,9 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: TFColors.canvas,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: TFColors.canvas,
         elevation: 0,
         iconTheme: const IconThemeData(color: TFColors.ink),
       ),
@@ -210,15 +198,22 @@ class _RegisterPageState extends State<RegisterPage> {
         children: [
           Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 520),
-                child: Form(
-                  key: _formKey,
-                  autovalidateMode: AutovalidateMode.onUserInteractionIfError,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
+                constraints: const BoxConstraints(maxWidth: 560),
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(28, 30, 28, 32),
+                  decoration: BoxDecoration(
+                    color: TFColors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: TFColors.border),
+                  ),
+                  child: Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteractionIfError,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
                       const Text(
                         'Create your TF Passport',
                         style: TextStyle(
@@ -444,12 +439,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
               ),
             ),
+          ),
           ),
           if (isLoading)
             Container(

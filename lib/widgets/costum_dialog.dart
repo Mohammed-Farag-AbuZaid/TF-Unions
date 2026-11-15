@@ -20,50 +20,68 @@ void showCostumDialog({
   showDialog(
     context: context,
     builder: (context) => Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: title.toLowerCase().contains('error')
-                    ? Colors.red
-                    : TFColors.whitePrimary,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+      backgroundColor: TFColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: TFColors.border),
+      ),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 380),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontFamily: 'Bricolage Grotesque',
+                  color: title.toLowerCase().contains('error') ||
+                          title.toLowerCase().contains('delete')
+                      ? const Color(0xFFB91C1C)
+                      : TFColors.ink,
+                  fontSize: 19,
+                  fontWeight: FontWeight.w700,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              content,
-              style: GoogleFonts.exo2(
-                color: TFColors.whitePrimary,
-                fontSize: 12,
+              const SizedBox(height: 12),
+              Text(
+                content,
+                style: const TextStyle(
+                  color: TFColors.muted,
+                  fontSize: 13.5,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: onConfirm,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+              const SizedBox(height: 22),
+              SizedBox(
+                width: double.infinity,
+                height: 44,
+                child: ElevatedButton(
+                  onPressed: onConfirm,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: title.toLowerCase().contains('delete')
+                        ? const Color(0xFFB91C1C)
+                        : TFColors.accent,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    confirmText,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
-              child: Text(
-                confirmText,
-                style: GoogleFonts.robotoSlab(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     ),
@@ -130,9 +148,10 @@ class _ProfileDialogState extends State<_ProfileDialog> {
       if (url != null) {
         final uid = FirebaseAuth.instance.currentUser?.uid;
         if (uid != null) {
-          await FirebaseFirestore.instance.collection('users').doc(uid).update({
+          await FirebaseFirestore.instance.collection('users').doc(uid).set({
             'profilePicture': url,
-          });
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
         }
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -199,14 +218,14 @@ class _ProfileDialogState extends State<_ProfileDialog> {
 
   Widget _defaultAvatar(String firstName) {
     return Container(
-      color: const Color(0xFF1A1A2E),
+      color: TFColors.tealSoft,
       child: Center(
         child: Text(
           firstName.isNotEmpty ? firstName[0].toUpperCase() : '?',
-          style: GoogleFonts.robotoSlab(
+          style: GoogleFonts.bricolageGrotesque(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: TFColors.yellowPrimary,
+            color: TFColors.gold,
           ),
         ),
       ),
@@ -218,8 +237,11 @@ class _ProfileDialogState extends State<_ProfileDialog> {
     final uid = FirebaseAuth.instance.currentUser?.uid;
 
     return Dialog(
-      backgroundColor: const Color(0xFF111111),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      backgroundColor: TFColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: TFColors.border),
+      ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 420, maxHeight: 620),
         child: uid == null
@@ -227,7 +249,7 @@ class _ProfileDialogState extends State<_ProfileDialog> {
                 padding: EdgeInsets.all(24),
                 child: Text(
                   'Not logged in',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: TFColors.ink),
                 ),
               )
             : StreamBuilder<DocumentSnapshot>(
@@ -241,7 +263,7 @@ class _ProfileDialogState extends State<_ProfileDialog> {
                       height: 200,
                       child: Center(
                         child: CircularProgressIndicator(
-                          color: TFColors.yellowPrimary,
+                          color: TFColors.accent,
                         ),
                       ),
                     );
@@ -282,16 +304,16 @@ class _ProfileDialogState extends State<_ProfileDialog> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: TFColors.yellowPrimary,
+                                  color: TFColors.tealBorder,
                                   width: 2.5,
                                 ),
-                                color: const Color(0xFF1A1A2E),
+                                color: TFColors.tealSoft,
                               ),
                               child: ClipOval(
                                 child: _uploadingImage
                                     ? const Center(
                                         child: CircularProgressIndicator(
-                                          color: TFColors.yellowPrimary,
+                                          color: TFColors.accent,
                                           strokeWidth: 2,
                                         ),
                                       )
@@ -308,15 +330,15 @@ class _ProfileDialogState extends State<_ProfileDialog> {
                             GestureDetector(
                               onTap: _uploadingImage ? null : _pickAndUpload,
                               child: Container(
-                                padding: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(6),
                                 decoration: const BoxDecoration(
-                                  color: TFColors.yellowPrimary,
+                                  color: TFColors.accent,
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
                                   Icons.edit,
                                   size: 13,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
@@ -328,23 +350,24 @@ class _ProfileDialogState extends State<_ProfileDialog> {
                         // ── Name & username ────────────────────────────
                         Text(
                           fullName.isNotEmpty ? fullName : 'Your Name',
-                          style: GoogleFonts.robotoSlab(
-                            fontSize: 18,
+                          style: GoogleFonts.bricolageGrotesque(
+                            fontSize: 19,
                             fontWeight: FontWeight.bold,
-                            color: TFColors.whitePrimary,
+                            color: TFColors.ink,
                           ),
                         ),
                         if (username.isNotEmpty)
                           Text(
                             '@$username',
-                            style: GoogleFonts.exo2(
-                              fontSize: 12,
-                              color: TFColors.yellowPrimary,
+                            style: const TextStyle(
+                              fontSize: 12.5,
+                              color: TFColors.gold,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
 
-                        const SizedBox(height: 20),
-                        const Divider(color: Colors.white12),
+                        const SizedBox(height: 18),
+                        const Divider(color: TFColors.border),
                         const SizedBox(height: 12),
 
                         // ── Info rows ──────────────────────────────────
@@ -362,13 +385,14 @@ class _ProfileDialogState extends State<_ProfileDialog> {
                           _infoRow('Grade', data['grade'] as String?),
                         ],
 
-                        const SizedBox(height: 20),
-                        const Divider(color: Colors.white12),
+                        const SizedBox(height: 18),
+                        const Divider(color: TFColors.border),
                         const SizedBox(height: 12),
 
                         // ── Edit button ────────────────────────────────
                         SizedBox(
                           width: double.infinity,
+                          height: 44,
                           child: ElevatedButton.icon(
                             onPressed: () {
                               Navigator.pop(context);
@@ -383,8 +407,9 @@ class _ProfileDialogState extends State<_ProfileDialog> {
                             icon: const Icon(Icons.edit_outlined, size: 15),
                             label: const Text('Edit Profile'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: TFColors.bglight1,
-                              foregroundColor: TFColors.whitePrimary,
+                              backgroundColor: TFColors.accent,
+                              foregroundColor: Colors.white,
+                              elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -409,8 +434,8 @@ class _ProfileDialogState extends State<_ProfileDialog> {
                                 icon: const Icon(Icons.logout, size: 15),
                                 label: const Text('Log Out'),
                                 style: OutlinedButton.styleFrom(
-                                  foregroundColor: TFColors.whitePrimary,
-                                  side: const BorderSide(color: Colors.white24),
+                                  foregroundColor: TFColors.ink,
+                                  side: const BorderSide(color: TFColors.border),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -461,10 +486,10 @@ class _ProfileDialogState extends State<_ProfileDialog> {
                                 ),
                                 label: const Text('Delete'),
                                 style: OutlinedButton.styleFrom(
-                                  foregroundColor: Colors.redAccent,
+                                  foregroundColor: const Color(0xFFB91C1C),
                                   side: const BorderSide(
-                                    color: Colors.red,
-                                    width: 0.5,
+                                    color: Color(0xFFFECACA),
+                                    width: 1,
                                   ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
