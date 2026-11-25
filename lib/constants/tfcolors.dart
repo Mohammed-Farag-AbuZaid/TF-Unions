@@ -18,6 +18,8 @@ class TFColors {
   static const Color accent = Color(0xFF1B365D);
   static const Color accentDark = Color(0xFF132847);
   static const Color gold = Color(0xFF0F766E);       // Botanical Teal crafted accent
+  static const Color accentText = Color(0xFF0B5F58); // AA-safe teal for text on Stone/Canvas
+  static const Color signal = Color(0xFFA2570F);     // Warm ochre signal highlight
   static const Color tealSoft = Color(0xFFEDF7F5);
   static const Color tealBorder = Color(0xFFBCE3DC);
   static const Color ochre = Color(0xFFB45309);
@@ -28,7 +30,9 @@ class TFColors {
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF161A22);
   static const Color blue = Color(0xFF1B365D);
+  // ignore: constant_identifier_names
   static const Color SkyBlue = Color(0xFF1B365D);
+  // ignore: constant_identifier_names
   static const Color BabyBlue = Color(0xFFEAE8E1);
   static const Color beige = Color(0xFFF3F2EE);
   static const Color tile = Color(0xFFEAE8E1);

@@ -1,13 +1,15 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:js_interop';
 import 'dart:typed_data';
-import 'dart:html' as html;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:tf_union/constants/tfcolors.dart';
 import 'package:tf_union/widgets/edit_profile_sheet.dart';
+import 'package:web/web.dart' as web;
 
 // ─── Custom Dialog ────────────────────────────────────────────────────────────
 void showCostumDialog({
@@ -126,23 +128,41 @@ class _ProfileDialogState extends State<_ProfileDialog> {
     setState(() => _uploadingImage = true);
 
     try {
-      final uploadInput = html.FileUploadInputElement()
-        ..accept = 'image/*'
-        ..click();
+      final uploadInput = web.document.createElement('input') as web.HTMLInputElement
+        ..type = 'file'
+        ..accept = 'image/*';
 
-      await uploadInput.onChange.first;
+      final completer = Completer<web.File?>();
+      late JSFunction onChange;
+      late JSFunction onCancel;
+      onChange = ((web.Event _) {
+        uploadInput.removeEventListener('change', onChange);
+        uploadInput.removeEventListener('cancel', onCancel);
+        final files = uploadInput.files;
+        if (!completer.isCompleted) {
+          completer.complete(
+            files != null && files.length > 0 ? files.item(0) : null,
+          );
+        }
+      }).toJS;
+      onCancel = ((web.Event _) {
+        uploadInput.removeEventListener('change', onChange);
+        uploadInput.removeEventListener('cancel', onCancel);
+        if (!completer.isCompleted) completer.complete(null);
+      }).toJS;
 
-      final file = uploadInput.files?.first;
+      uploadInput.addEventListener('change', onChange);
+      uploadInput.addEventListener('cancel', onCancel);
+      uploadInput.click();
+
+      final file = await completer.future;
       if (file == null) {
-        setState(() => _uploadingImage = false);
+        if (mounted) setState(() => _uploadingImage = false);
         return;
       }
 
-      final reader = html.FileReader();
-      reader.readAsArrayBuffer(file);
-      await reader.onLoad.first;
-
-      final bytes = reader.result as Uint8List;
+      final ab = await file.arrayBuffer().toDart;
+      final bytes = ab.toDart.asUint8List();
       final url = await _uploadToCloudinary(bytes, file.name);
 
       if (url != null) {
@@ -187,7 +207,8 @@ class _ProfileDialogState extends State<_ProfileDialog> {
             width: 110,
             child: Text(
               label,
-              style: GoogleFonts.exo2(
+              style: const TextStyle(
+                fontFamily: 'Plus Jakarta Sans',
                 fontSize: 12,
                 color: TFColors.muted,
                 fontWeight: FontWeight.w600,
@@ -197,7 +218,8 @@ class _ProfileDialogState extends State<_ProfileDialog> {
           Expanded(
             child: Text(
               value,
-              style: GoogleFonts.exo2(
+              style: const TextStyle(
+                fontFamily: 'Plus Jakarta Sans',
                 fontSize: 13,
                 color: TFColors.ink,
                 fontWeight: FontWeight.w500,
