@@ -134,7 +134,7 @@ class _DocsAppBar extends StatelessWidget implements PreferredSizeWidget {
           const SizedBox(width: 12),
           Text(
             'Docs',
-            style: GoogleFonts.exo2(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 15,
               fontWeight: FontWeight.w500,
               color: TFColors.whitePrimary.withValues(alpha: 0.5),
@@ -164,7 +164,7 @@ class _Sidebar extends StatelessWidget {
           children: [
             Text(
               'ON THIS PAGE',
-              style: GoogleFonts.exo2(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.6,
@@ -209,7 +209,7 @@ class _Sidebar extends StatelessWidget {
                             faqs[i]['q']!,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.exo2(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
                               fontWeight: active
                                   ? FontWeight.w600
@@ -260,7 +260,7 @@ class _ContentArea extends StatelessWidget {
                 // ── Intro ──────────────────────────────────────────────────
                 Text(
                   'OVERVIEW',
-                  style: GoogleFonts.exo2(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.8,
@@ -270,7 +270,7 @@ class _ContentArea extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   'TF Unions',
-                  style: GoogleFonts.exo2(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 32,
                     fontWeight: FontWeight.w700,
                     color: TFColors.whitePrimary,
@@ -282,7 +282,7 @@ class _ContentArea extends StatelessWidget {
                   'TF Union is an educational platform that connects students with '
                   'tools, resources, projects, and learning communities to help '
                   'them grow faster and learn in a more structured way.',
-                  style: GoogleFonts.exo2(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 15,
                     color: TFColors.whitePrimary.withValues(alpha: 0.65),
                     height: 1.8,
@@ -296,7 +296,7 @@ class _ContentArea extends StatelessWidget {
                   children: [
                     Text(
                       'FREQUENTLY ASKED',
-                      style: GoogleFonts.exo2(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.6,
@@ -410,7 +410,7 @@ class _FaqItemState extends State<_FaqItem>
                     child: Center(
                       child: Text(
                         '${widget.index + 1}',
-                        style: GoogleFonts.exo2(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                           color: _expanded
@@ -424,7 +424,7 @@ class _FaqItemState extends State<_FaqItem>
                   Expanded(
                     child: Text(
                       widget.question,
-                      style: GoogleFonts.exo2(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: _expanded
@@ -473,7 +473,7 @@ class _FaqItemState extends State<_FaqItem>
             ),
             child: Text(
               widget.answer,
-              style: GoogleFonts.exo2(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 color: TFColors.whitePrimary.withValues(alpha: 0.60),
                 height: 1.85,
